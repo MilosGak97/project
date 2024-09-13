@@ -4,12 +4,12 @@ phases:
   pre_build:
     commands:
       - echo Logging in to Amazon ECR...
-      - aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 156041405089.dkr.ecr.us-east-1.amazonaws.com
+      - aws ecr get-login-password --region eu-north-1 | docker login --username AWS --password-stdin 156041405089.dkr.ecr.eu-north-1.amazonaws.com
   build:
     commands:
       - echo Building the Docker image...
-      - docker build -t 156041405089.dkr.ecr.us-east-1.amazonaws.com/projectspace/projectrepository:latest .
+      - docker build -t 156041405089.dkr.ecr.eu-north-1.amazonaws.com/projectspace/projectrepository:latest .
   post_build:
     commands:
       - echo Pushing the Docker image...
-      - docker push 156041405089.dkr.ecr.us-east-1.amazonaws.com/projectspace/projectrepository:latest
+      - docker push 156041405089.dkr.ecr.eu-north-1.amazonaws.com/projectspace/projectrepository:latest
