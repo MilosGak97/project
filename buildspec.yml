@@ -13,3 +13,8 @@ phases:
     commands:
       - echo Pushing the Docker image...
       - docker push 156041405089.dkr.ecr.eu-north-1.amazonaws.com/projectspace/projectrepository:latest
+      - echo Creating imagedefinitions.json file...
+      - printf '[{"name":"nestjs","imageUri":"%s"}]' 156041405089.dkr.ecr.eu-north-1.amazonaws.com/projectspace/projectrepository:latest > imagedefinitions.json
+artifacts:
+  files:
+    - imagedefinitions.json
