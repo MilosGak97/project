@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { AdminUsersModule } from './admin_users/admin_users.module';
+import { AdminUsersModule } from './admin/admin_users/admin_users.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 @Module({
