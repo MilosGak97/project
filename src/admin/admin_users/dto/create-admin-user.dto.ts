@@ -1,21 +1,18 @@
 // src/admin_users/dto/create-admin-user.dto.ts
-import { IsNotEmpty, IsString, IsOptional, IsEmail, IsPhoneNumber } from 'class-validator';
+import { IsNotEmpty, IsString, IsOptional, IsEmail, IsPhoneNumber, IsEnum } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+import { AdminRole } from './admin-role.enum';
 
 export class CreateAdminUserDto {
 
   @ApiProperty({ 
-    description: 'The name of the user', 
-    example: 'John Doe', // Example value to help frontend devs
-    required: true       // Indicates that this field is required
+    required: true // Indicates this field is required
   })
   @IsNotEmpty()
   @IsString()
   name: string;
 
   @ApiProperty({ 
-    description: 'The email of the user', 
-    example: 'johndoe@example.com',
     required: true
   })
   @IsNotEmpty()
@@ -23,50 +20,29 @@ export class CreateAdminUserDto {
   email: string;
 
   @ApiProperty({ 
-    description: 'The phone number of the user (International format with country code)', 
-    example: '+1234567890', 
-    required: true
-  })
-  @IsNotEmpty()
-  @IsPhoneNumber(null) // Specify the country code if needed, e.g., 'US'
-  phone_number: string;
-
-  @ApiProperty({ 
-    description: 'The password of the user. If not provided, system will generate one.',
-    example: 'strongPassword123!', // Example value
-    required: false,
-    default: 'Auto-generated if not provided' // Helpful default value message
-  })
-  @IsOptional()
-  @IsString()
-  password?: string;
-
-  @ApiProperty({ 
-    description: 'The role of the user (e.g., admin, manager, user)', 
-    example: 'admin', 
-    required: false,
-    enum: ['admin', 'manager', 'user']  // Helps indicate valid role options
-  })
-  @IsOptional()
-  @IsString()
-  role?: string;
-
-  @ApiProperty({ 
-    description: 'ID of the admin who created this user (auto-populated by system)', 
-    example: 'system_user_id', 
     required: false
   })
   @IsOptional()
-  @IsString()
-  created_by?: string;
+  @IsPhoneNumber(null) // Optional field for phone number
+  phone_number?: string;
 
   @ApiProperty({ 
-    description: 'The status of the user account (e.g., active, suspended)', 
-    example: 'active', 
-    required: false,
-    enum: ['active', 'suspended', 'pending'] // Provide valid statuses
+    enum: AdminRole, // Enum for available roles
+    required: true
   })
-  @IsOptional()
+  @IsNotEmpty()
+  @IsEnum(AdminRole)
+  role: string;
+
+  @ApiProperty({ 
+    description: 'admin_user.id, id of the admin user that is creating the account (logged in admin user)',
+    example: 'fa882578-8795-46f5-b70d-f8f8e2f9d2bf', // Example UUID for created_by
+    required: true
+  })
+  @IsNotEmpty()
   @IsString()
-  status?: string;
+  created_by: string;
 }
+
+
+
