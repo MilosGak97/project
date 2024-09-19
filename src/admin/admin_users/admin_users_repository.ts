@@ -8,6 +8,8 @@ import { AdminRole } from "./dto/admin-role.enum";
 import { AdminStatus } from "./dto/admin-status.enum";
 import { EmailService } from "src/email/email.service";
 import { JwtService } from "src/jwt/jwt.service";
+import { SignInAdminDto } from "./dto/sign-in-admin.dto";
+import { JwtPayload } from "jsonwebtoken";
 
 @Injectable()
 export class AdminUserRepository extends Repository<AdminUser> {
@@ -139,6 +141,23 @@ export class AdminUserRepository extends Repository<AdminUser> {
                 throw new Error('Error verifying email')
             }
          }
+    }
+
+    async signInAdmin(signInAdminDto: SignInAdminDto):Promise<{}>{
+        const {email, password} = signInAdminDto
+        const user = await this.findOne({where: {email}})
+        if(!user){
+            throw new UnauthorizedException()
+        }
+
+        const userId = user.id
+        if(user && (await bcrypt.compare(password, user.password) )){
+            const payload:JwtPayload = {userId}
+            const accessToken:string = await this.jwtService.generateToken(payload)
+            return { accessToken }
+        }else{
+            throw new UnauthorizedException('Please check your login credentials')
+        }
     }
 
     async getAdminUsers(getAdminUsersDto:GetAdminUsersDto):Promise<any>{

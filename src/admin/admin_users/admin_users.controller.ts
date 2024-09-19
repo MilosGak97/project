@@ -1,16 +1,18 @@
-import { Body, Controller, Post, Get, Param, Query, HttpCode, HttpStatus } from '@nestjs/common';
+import { Body, Controller, Post, Get, Param, Query, HttpCode, HttpStatus, UseGuards } from '@nestjs/common';
 import { AdminUsersService } from './admin_users.service';
 import { CreateAdminUserDto } from './dto/create-admin-user.dto';
 import { AdminUser } from './admin_user.entity';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { GetAdminUsersDto } from './dto/get-admin-users.dto';
+import { SignInAdminDto } from './dto/sign-in-admin.dto';
+import { AuthGuard } from '@nestjs/passport';
 
 @ApiTags('Admin Users')  // Groups endpoints under 'Admin Users' in Swagger UI
 @Controller('/admin/admin-users')
 export class AdminUsersController {
     constructor(private adminUsersService: AdminUsersService) {}
 
-    @Post()
+    @Post('create')
     @ApiOperation({summary: 'Create new adminusers as a head admin'})
     @ApiResponse({ status: 201, description: 'Admin user created successfully.' })
     @ApiResponse({ status: 400, description: 'Bad request or validation error.' })
@@ -27,6 +29,7 @@ export class AdminUsersController {
     @ApiResponse({ status: 200, description: 'A list of all admin users.', type: [AdminUser] }) 
     @ApiResponse({ status: 500, description: 'Internal Server Error: Something went wrong on the server.' })
     
+    @UseGuards(AuthGuard())
     getAdminUsers(@Query() getAdminUsersDto: GetAdminUsersDto): Promise<any> {
         return this.adminUsersService.getAdminUsers(getAdminUsersDto);
     }
@@ -41,6 +44,14 @@ export class AdminUsersController {
     verifyEmail(@Query('jwtToken') token:string){
         
         return this.adminUsersService.verifyAdminEmail(token)
+    }
+
+
+    @Post('signin')
+    @ApiOperation({summary:"Sign in admin end point"})
+    @ApiResponse({status:401, description: 'Unauthorized'})
+    signInAdmin(@Body() signInAdminDto: SignInAdminDto):Promise<{}>{
+        return this.adminUsersService.signInAdmin(signInAdminDto)
     }
 
 }
