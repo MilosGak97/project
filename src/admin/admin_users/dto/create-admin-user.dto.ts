@@ -23,7 +23,7 @@ export class CreateAdminUserDto {
     required: false
   })
   @IsOptional()
-  @IsPhoneNumber(null) // Optional field for phone number
+  @IsPhoneNumber('US') // Optional field for phone number
   phone_number?: string;
 
   @ApiProperty({ 
@@ -32,7 +32,7 @@ export class CreateAdminUserDto {
   })
   @IsNotEmpty()
   @IsEnum(AdminRole)
-  role: string;
+  role: AdminRole;
 
   @ApiProperty({ 
     description: 'admin_user.id, id of the admin user that is creating the account (logged in admin user)',
