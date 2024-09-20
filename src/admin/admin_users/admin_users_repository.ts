@@ -6,18 +6,18 @@ import { GetAdminUsersDto } from "./dto/get-admin-users.dto";
 import * as bcrypt from 'bcrypt' 
 import { AdminRole } from "./dto/admin-role.enum";
 import { AdminStatus } from "./dto/admin-status.enum";
-import { EmailService } from "src/email/email.service";
-import { JwtService } from "src/jwt/jwt.service";
+import { EmailService } from "src/email/email.service"; 
 import { SignInAdminDto } from "./dto/sign-in-admin.dto";
 import { JwtPayload } from "jsonwebtoken";
+import { JwtService } from "@nestjs/jwt";
 
 @Injectable()
 export class AdminUserRepository extends Repository<AdminUser> {
     private readonly logger = new Logger(AdminUserRepository.name);
     constructor(
         private readonly dataSource: DataSource,
-        private readonly emailService: EmailService,
-        private readonly jwtService: JwtService,    
+        private readonly emailService: EmailService, 
+        private readonly jwtService: JwtService,
     ) {
         super(AdminUser, dataSource.createEntityManager());
  
@@ -92,7 +92,7 @@ export class AdminUserRepository extends Repository<AdminUser> {
             this.logger.log(`Admin user created with ID: ${newAdminUser.id}`);
 
             const jwtPayload = { userId: newAdminUser.id, expireIn: '3600' };
-            const jwtToken = await this.jwtService.generateToken(jwtPayload);
+            const jwtToken = await this.jwtService.sign(jwtPayload)
             const verifyUrl = `https://subrosahub.com/admin/admin-users/verify?jwtToken=${encodeURIComponent(jwtToken)}`;
             await this.emailService.sendAdminWelcomeEmail(email, randomPassword, verifyUrl);
 
@@ -119,7 +119,7 @@ export class AdminUserRepository extends Repository<AdminUser> {
         }
         return password;
     }
-    
+    /*
     async verifyAdminEmail(token: string):Promise<any>{
          try{
             const payload = await this.jwtService.verifyToken(token)
@@ -146,7 +146,8 @@ export class AdminUserRepository extends Repository<AdminUser> {
             }
          }
     }
-    async signInAdmin(signInAdminDto: SignInAdminDto): Promise<{}> {
+         */
+    async signInAdmin(signInAdminDto: SignInAdminDto): Promise<any> {
         const { email, password } = signInAdminDto;
         this.logger.log(`Attempting to sign in admin with email: ${email}`); // Log the email
     
@@ -164,7 +165,7 @@ export class AdminUserRepository extends Repository<AdminUser> {
             if (isPasswordValid) {
                 const userId = user.id;
                 const payload: JwtPayload = { userId };
-                const accessToken: string = await this.jwtService.generateToken(payload);
+                const accessToken: string = await this.jwtService.sign(payload) 
     
                 this.logger.log(`JWT token generated successfully for user ID: ${userId}`);
                 this.logger.log(`Sign-in successful for user ID: ${userId}`);

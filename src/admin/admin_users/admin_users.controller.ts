@@ -39,7 +39,7 @@ export class AdminUsersController {
         return this.adminUsersService.getAdminUsers(getAdminUsersDto);
     }
 
-
+/*
     @Get('verify')
     
     @ApiOperation({ summary: "Verify user email with JWT Token"})
@@ -50,13 +50,12 @@ export class AdminUsersController {
         
         return this.adminUsersService.verifyAdminEmail(token)
     }
-
+*/
 
     @Post('signin')
     @ApiOperation({summary:"Sign in admin end point"})
     @ApiResponse({status:401, description: 'Unauthorized'})
-    signInAdmin(@Body() signInAdminDto: SignInAdminDto):Promise<{}>{
+    signInAdmin(@Body() signInAdminDto: SignInAdminDto):Promise<any>{
         return this.adminUsersService.signInAdmin(signInAdminDto)
     }
-
 }

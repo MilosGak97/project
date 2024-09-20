@@ -13,12 +13,12 @@ export class AdminUsersService {
     async createAdminUser(createAdminUserDto: CreateAdminUserDto): Promise<any>{
         return this.adminUserRepository.createAdminUser(createAdminUserDto)
     }
-
+/*
     async verifyAdminEmail(token:string):Promise<any>{
         return this.adminUserRepository.verifyAdminEmail(token);
-    }
+    }*/
 
-    async signInAdmin(signInAdminDto:SignInAdminDto):Promise<{}>{
+    async signInAdmin(signInAdminDto:SignInAdminDto):Promise<any>{
         return this.adminUserRepository.signInAdmin(signInAdminDto)
     }
 
