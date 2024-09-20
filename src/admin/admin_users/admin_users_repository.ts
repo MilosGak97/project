@@ -152,7 +152,7 @@ export class AdminUserRepository extends Repository<AdminUser> {
     
         try {
             const user = await this.findOne({ where: { email } });
-            
+    
             if (!user) {
                 this.logger.warn(`Sign-in failed: No user found with email: ${email}`);
                 throw new UnauthorizedException('No user found with this email');
@@ -166,6 +166,7 @@ export class AdminUserRepository extends Repository<AdminUser> {
                 const payload: JwtPayload = { userId };
                 const accessToken: string = await this.jwtService.generateToken(payload);
     
+                this.logger.log(`JWT token generated successfully for user ID: ${userId}`);
                 this.logger.log(`Sign-in successful for user ID: ${userId}`);
                 return { accessToken };
             } else {
@@ -177,6 +178,7 @@ export class AdminUserRepository extends Repository<AdminUser> {
             throw new UnauthorizedException('An error occurred during sign-in');
         }
     }
+    
     async getAdminUsers(getAdminUsersDto:GetAdminUsersDto):Promise<any>{
         const { searchQuery, role, status, limit, offset} = getAdminUsersDto
 
