@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 import { AdminUsersModule } from './admin/admin_users/admin_users.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { EmailModule } from './email/email.module';
-import { JwtModule } from './jwt/jwt.module';
 import { HealthController } from './app.controller';
 
 @Module({
@@ -21,8 +20,7 @@ import { HealthController } from './app.controller';
       synchronize: true,
     }),
     AdminUsersModule,
-    EmailModule,
-    JwtModule,],
+    EmailModule,],
     
 controllers: [HealthController]
 })

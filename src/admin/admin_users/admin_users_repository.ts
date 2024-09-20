@@ -8,7 +8,7 @@ import { AdminRole } from "./dto/admin-role.enum";
 import { AdminStatus } from "./dto/admin-status.enum";
 import { EmailService } from "src/email/email.service"; 
 import { SignInAdminDto } from "./dto/sign-in-admin.dto";
-import { JwtPayload } from "jsonwebtoken";
+import { JwtPayload } from "./dto/jwt-payload.interface";
 import { JwtService } from "@nestjs/jwt";
 
 @Injectable()
@@ -163,12 +163,12 @@ export class AdminUserRepository extends Repository<AdminUser> {
     
             const isPasswordValid = await bcrypt.compare(password, user.password);
             if (isPasswordValid) {
-                const userId = user.id;
-                const payload: JwtPayload = { userId };
+                const adminId = user.id;
+                const payload: JwtPayload = { adminId };
                 const accessToken: string = await this.jwtService.sign(payload) 
     
-                this.logger.log(`JWT token generated successfully for user ID: ${userId}`);
-                this.logger.log(`Sign-in successful for user ID: ${userId}`);
+                this.logger.log(`JWT token generated successfully for user ID: ${adminId}`);
+                this.logger.log(`Sign-in successful for user ID: ${adminId}`);
                 return { accessToken };
             } else {
                 this.logger.warn(`Sign-in failed: Invalid password for email: ${email}`);
