@@ -1,4 +1,4 @@
-export interface JwyPayload{
+export interface JwtPayload{
     adminId:string
      
 }
