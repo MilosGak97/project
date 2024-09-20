@@ -3,6 +3,7 @@ import { AdminUsersModule } from './admin/admin_users/admin_users.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { EmailModule } from './email/email.module';
 import { JwtModule } from './jwt/jwt.module';
+import { HealthController } from './app.controller';
 
 @Module({
   imports: [
@@ -22,5 +23,7 @@ import { JwtModule } from './jwt/jwt.module';
     AdminUsersModule,
     EmailModule,
     JwtModule,],
+    
+controllers: [HealthController]
 })
 export class AppModule {}
