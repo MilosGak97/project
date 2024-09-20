@@ -6,6 +6,9 @@ import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { GetAdminUsersDto } from './dto/get-admin-users.dto';
 import { SignInAdminDto } from './dto/sign-in-admin.dto';
 import { AuthGuard } from '@nestjs/passport';
+import { RolesGuard } from './roles.guard';
+import { Roles } from './roles.decorator';
+import { AdminRole } from './dto/admin-role.enum';
 
 @ApiTags('Admin Users')  // Groups endpoints under 'Admin Users' in Swagger UI
 @Controller('/admin/admin-users')
@@ -27,9 +30,11 @@ export class AdminUsersController {
     @Get()
     @ApiOperation({ summary: 'Retrieve all Admin Users that matches Query' })  // Describes what the endpoint does
     @ApiResponse({ status: 200, description: 'A list of all admin users.', type: [AdminUser] }) 
+    @ApiResponse({ status: 401, description: 'Not authorized'}) 
+    @ApiResponse({ status: 403, description: 'You do not have access to this resource'}) 
     @ApiResponse({ status: 500, description: 'Internal Server Error: Something went wrong on the server.' })
-    
-    @UseGuards(AuthGuard())
+    @UseGuards(AuthGuard(), RolesGuard) 
+    @Roles(AdminRole.HEAD)
     getAdminUsers(@Query() getAdminUsersDto: GetAdminUsersDto): Promise<any> {
         return this.adminUsersService.getAdminUsers(getAdminUsersDto);
     }
