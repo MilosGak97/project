@@ -15,9 +15,9 @@ import { JwtService } from "@nestjs/jwt";
 export class AdminUserRepository extends Repository<AdminUser> {
     private readonly logger = new Logger(AdminUserRepository.name);
     constructor(
-        private readonly dataSource: DataSource,
         private readonly emailService: EmailService, 
         private readonly jwtService: JwtService,
+        private readonly dataSource: DataSource,
     ) {
         super(AdminUser, dataSource.createEntityManager());
  
@@ -163,10 +163,17 @@ export class AdminUserRepository extends Repository<AdminUser> {
     
             const isPasswordValid = await bcrypt.compare(password, user.password);
             if (isPasswordValid) {
+                
+                this.logger.log(`here1`);
                 const adminId = user.id;
+                
+                this.logger.log(adminId);
+                this.logger.log(`here2`);
                 const payload: JwtPayload = { adminId };
+                
+                this.logger.log(payload);
+                this.logger.log(`here3`);
                 const accessToken: string = await this.jwtService.sign(payload) 
-    
                 this.logger.log(`JWT token generated successfully for user ID: ${adminId}`);
                 this.logger.log(`Sign-in successful for user ID: ${adminId}`);
                 return { accessToken };
