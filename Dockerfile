@@ -7,8 +7,11 @@ WORKDIR /usr/src/app
 # Copy package.json and package-lock.json files to install dependencies
 COPY package*.json ./
 
-# Install dependencies
-RUN npm install
+# Install dependencies (use npm ci for faster and more reliable installs if package-lock.json is present)
+RUN npm ci
+
+# Rebuild bcrypt for the correct platform inside the container
+RUN npm rebuild bcrypt --build-from-source
 
 # Copy the rest of the app source code into the container
 COPY . .
@@ -22,13 +25,17 @@ FROM node:18-alpine
 # Set the working directory for the final container
 WORKDIR /usr/src/app
 
-# Copy the built app and necessary files from the builder stage
-COPY --from=builder /usr/src/app/dist ./dist
-COPY --from=builder /usr/src/app/node_modules ./node_modules
+# Install production dependencies (to avoid including dev dependencies)
 COPY --from=builder /usr/src/app/package*.json ./
+COPY --from=builder /usr/src/app/node_modules ./node_modules
+COPY --from=builder /usr/src/app/dist ./dist
+
+# Add a non-root user to improve security
+RUN addgroup appgroup && adduser -S appuser -G appgroup
+USER appuser
 
 # Expose the port that your NestJS app listens on
 EXPOSE 3000
 
 # Set the default command to run the app
-CMD ["sh", "-c", "node dist/main"]
+CMD ["node", "dist/main"]
