@@ -168,7 +168,7 @@ export class AuthRepository extends Repository<Admin>{
 
             const jwtPayload = { userId: newAdminUser.id, expireIn: '3600' };
             const jwtToken = await this.jwtService.sign(jwtPayload)
-            const verifyUrl = `https://uniqueproject-229b37d9b8ca.herokuapp.com/admin/admin-users/verify?jwtToken=${encodeURIComponent(jwtToken)}`;
+            const verifyUrl = `https://uniqueproject-229b37d9b8ca.herokuapp.com/admin/auth/verify?jwtToken=${encodeURIComponent(jwtToken)}`;
             await this.emailService.sendAdminWelcomeEmail(email, randomPassword, verifyUrl);
 
             // Return success response
