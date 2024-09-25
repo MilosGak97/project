@@ -5,7 +5,7 @@ import { SignInDto } from './dto/sign-in-admin.dto';
 import { CreateAdminDto } from '../admins/dto/create-admin.dto';
 
 @ApiTags('Auth')
-@Controller('auth')
+@Controller('admin/auth')
 export class AuthController {
     constructor( private readonly authService: AuthService ){}
 
