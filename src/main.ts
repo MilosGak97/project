@@ -1,9 +1,11 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { ValidationPipe, Logger } from '@nestjs/common'; // Import Logger
+import { ValidationPipe, Logger } from '@nestjs/common'; // Import Logger 
+import * as dotenv from 'dotenv'; // Import dotenv
 
 async function bootstrap() {
+  dotenv.config(); // Load environment variables from .env file
   const app = await NestFactory.create(AppModule);
 
   // Enable global validation
