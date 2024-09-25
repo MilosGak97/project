@@ -39,7 +39,7 @@ export class AdminUsersController {
         return this.adminUsersService.getAdminUsers(getAdminUsersDto);
     }
 
-/*
+
     @Get('verify')
     
     @ApiOperation({ summary: "Verify user email with JWT Token"})
@@ -50,7 +50,7 @@ export class AdminUsersController {
         
         return this.adminUsersService.verifyAdminEmail(token)
     }
-*/
+
 
     @Post('signin')
     @ApiOperation({summary:"Sign in admin end point"})

@@ -3,11 +3,14 @@ import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ValidationPipe, Logger } from '@nestjs/common'; // Import Logger 
 import * as dotenv from 'dotenv'; // Import dotenv
+import { HttpExceptionFilter } from './http-exception.filter';
+
 
 async function bootstrap() {
   dotenv.config(); // Load environment variables from .env file
   const app = await NestFactory.create(AppModule);
-
+  app.useGlobalFilters(new HttpExceptionFilter()); // Register the filter globally
+  
   // Enable global validation
   app.useGlobalPipes(new ValidationPipe({
     whitelist: true,
