@@ -119,10 +119,10 @@ export class AdminUserRepository extends Repository<AdminUser> {
         }
         return password;
     }
-    /*
+    
     async verifyAdminEmail(token: string):Promise<any>{
          try{
-            const payload = await this.jwtService.verifyToken(token)
+            const payload = await this.jwtService.verify(token)
 
             const user = await this.findOne({where: {id: payload.userId}})
 
@@ -146,7 +146,7 @@ export class AdminUserRepository extends Repository<AdminUser> {
             }
          }
     }
-    */
+    
     async signInAdmin(signInAdminDto: SignInAdminDto): Promise<any> {
         const { email, password } = signInAdminDto;
         this.logger.log(`Attempting to sign in admin with email: ${email}`); // Log the email
