@@ -9,7 +9,6 @@ import { HttpExceptionFilter } from './http-exception.filter';
 async function bootstrap() {
   dotenv.config(); // Load environment variables from .env file
   const app = await NestFactory.create(AppModule);
-  app.useGlobalFilters(new HttpExceptionFilter()); // Register the filter globally
   
   // Enable global validation
   app.useGlobalPipes(new ValidationPipe({
@@ -19,7 +18,11 @@ async function bootstrap() {
   }));
 
   // Override logger to get more detailed logs
-  Logger.overrideLogger(['log', 'error', 'warn', 'debug', 'verbose']);
+ // Logger.overrideLogger(['log', 'error', 'warn', 'debug', 'verbose']);
+
+
+  
+  app.useGlobalFilters(new HttpExceptionFilter()); // Register the filter globally
 
   // Swagger setup
   const config = new DocumentBuilder()

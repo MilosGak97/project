@@ -27,18 +27,17 @@ export class AdminUserRepository extends Repository<AdminUser> {
 
     
     async createAdminUser(createAdminUserDto: CreateAdminUserDto): Promise<any> {
-        this.logger.log('Creating admin user...'); // Log the start of the process
+        //this.logger.log('Creating admin user...'); // Log the start of the process
 
         const { name, email, phone_number, role, created_by } = createAdminUserDto;
-
-        try {
+ 
             // 1. Check if an admin user with this email already exists
             const existingEmailUser = await this.findOne({
                 where: { email: email },
             });
 
             if (existingEmailUser) {
-                this.logger.warn(`Email conflict for email: ${email}`);
+             this.logger.warn(`Email conflict for email: ${email}`);
                 throw new HttpException({
                     success: false,
                     message: "An admin user with this email already exists",
@@ -52,7 +51,7 @@ export class AdminUserRepository extends Repository<AdminUser> {
 
                 // 3. Validate if phone number contains exactly 10 digits
                 if (!/^\d{10}$/.test(cleanedPhoneNumber)) {
-                    this.logger.warn(`Invalid phone number: ${cleanedPhoneNumber}`);
+                   this.logger.warn(`Invalid phone number: ${cleanedPhoneNumber}`);
                     throw new HttpException({
                         success: false,
                         message: 'Phone number must contain exactly 10 digits.',
@@ -65,7 +64,7 @@ export class AdminUserRepository extends Repository<AdminUser> {
                 });
 
                 if (existingPhoneUser) {
-                    this.logger.warn(`Phone number conflict for phone: ${cleanedPhoneNumber}`);
+                   this.logger.warn(`Phone number conflict for phone: ${cleanedPhoneNumber}`);
                     throw new HttpException({
                         success: false,
                         message: 'An admin user with this phone number already exists.',
@@ -73,6 +72,7 @@ export class AdminUserRepository extends Repository<AdminUser> {
                 }
             }
 
+            try {
             // Generate random password
             const randomPassword = this.generateRandomPassword();
             const hashedPassword = await bcrypt.hash(randomPassword, 10);
@@ -89,7 +89,7 @@ export class AdminUserRepository extends Repository<AdminUser> {
 
             // Save the new admin user to the database
             await this.save(newAdminUser);
-            this.logger.log(`Admin user created with ID: ${newAdminUser.id}`);
+           this.logger.log(`Admin user created with ID: ${newAdminUser.id}`);
 
             const jwtPayload = { userId: newAdminUser.id, expireIn: '3600' };
             const jwtToken = await this.jwtService.sign(jwtPayload)
@@ -102,12 +102,12 @@ export class AdminUserRepository extends Repository<AdminUser> {
                 message: 'Admin user created successfully.',
             };
         } catch (error) {
-            this.logger.error('Error creating admin user', error.stack); // Log the error stack
+           this.logger.error('Error creating admin user', error.stack); // Log the error stack
             throw new HttpException({
                 success: false,
                 message: 'An error occurred while creating the admin user.',
             }, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        } 
     }
 
     private generateRandomPassword(length: number = 8): string {

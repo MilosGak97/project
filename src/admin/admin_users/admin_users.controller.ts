@@ -1,4 +1,4 @@
-import { Body, Controller, Post, Get, Param, Query, HttpCode, HttpStatus, UseGuards } from '@nestjs/common';
+import { Body, Controller, Post, Get, Param, Query, HttpCode, HttpStatus, UseGuards, UseFilters } from '@nestjs/common';
 import { AdminUsersService } from './admin_users.service';
 import { CreateAdminUserDto } from './dto/create-admin-user.dto';
 import { AdminUser } from './admin_user.entity';
@@ -9,6 +9,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { RolesGuard } from './roles.guard';
 import { Roles } from './roles.decorator';
 import { AdminRole } from './dto/admin-role.enum';
+import { HttpExceptionFilter } from 'src/http-exception.filter';
 
 @ApiTags('Admin Users')  // Groups endpoints under 'Admin Users' in Swagger UI
 @Controller('/admin/admin-users')
@@ -21,7 +22,7 @@ export class AdminUsersController {
     @ApiResponse({ status: 400, description: 'Bad request or validation error.' })
     @ApiResponse({ status: 409, description: 'Conflict: Email or phone number already exists.' })
     @ApiResponse({ status: 500, description: 'Internal server error.' })
-  
+    @UseFilters(HttpExceptionFilter) // Optionally apply the filter here as well
     createAdminUser(@Body() createAdminUserDto: CreateAdminUserDto):Promise<any>{
         return this.adminUsersService.createAdminUser(createAdminUserDto)
     }
