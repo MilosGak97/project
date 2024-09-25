@@ -1,13 +1,14 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { ValidationPipe, Logger } from '@nestjs/common'; // Import Logger 
-import * as dotenv from 'dotenv'; // Import dotenv
-import { HttpExceptionFilter } from './http-exception.filter';
-
+import { DocumentBuilder, SwaggerDocumentOptions, SwaggerModule } from '@nestjs/swagger';
+import { ValidationPipe } from '@nestjs/common'; 
+import * as dotenv from 'dotenv'; 
+import { AdminModule } from './admin/admin.module';
+import { ClientModule } from './client/client.module';
+import { Admin } from 'typeorm';
 
 async function bootstrap() {
-  dotenv.config(); // Load environment variables from .env file
+  dotenv.config(); 
   const app = await NestFactory.create(AppModule);
   
   // Enable global validation
@@ -17,26 +18,41 @@ async function bootstrap() {
     transform: true,
   }));
 
-  // Override logger to get more detailed logs
- // Logger.overrideLogger(['log', 'error', 'warn', 'debug', 'verbose']);
-
-
-  
-  app.useGlobalFilters(new HttpExceptionFilter()); // Register the filter globally
-
-  // Swagger setup
-  const config = new DocumentBuilder()
+  // Swagger setup for Admin API
+  const adminConfig = new DocumentBuilder()
     .setTitle('Admin API')
-    .setDescription('Admin Users API description')
+    .setDescription('Admin Application API')
+    .setVersion('1.0')
+    .build(); 
+
+    const optionAdmin:SwaggerDocumentOptions = {
+      include: [AdminModule],
+      deepScanRoutes: true
+    }
+
+  const adminDocument = SwaggerModule.createDocument(app, adminConfig, optionAdmin); // No include option here
+  SwaggerModule.setup('admin/api', app, adminDocument); // Admin Swagger UI
+
+  // Swagger setup for Client API
+  const clientConfig = new DocumentBuilder()
+    .setTitle('Client API')
+    .setDescription('Client Application API')
     .setVersion('1.0')
     .build();
-  const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api', app, document);
+
+    const optionClient:SwaggerDocumentOptions = {
+      include: [ClientModule],
+      deepScanRoutes: true
+    }
+
+    const clientDocument = SwaggerModule.createDocument(app, clientConfig, optionClient);
+ 
+  SwaggerModule.setup('client/api', app, clientDocument); // Client Swagger UI
 
   const PORT = process.env.PORT || 3000;
   await app.listen(PORT);
   console.log(`Application is running on: http://localhost:${PORT}`);
-
 }
 
 bootstrap();
+

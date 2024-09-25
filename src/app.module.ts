@@ -1,8 +1,9 @@
 import { Module } from '@nestjs/common';
-import { AdminUsersModule } from './admin/admin_users/admin_users.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { EmailModule } from './email/email.module';
 import { HealthController } from './app.controller';
+import { AdminModule } from './admin/admin.module';
+import { ClientModule } from './client/client.module';
 
 @Module({
   imports: [
@@ -19,8 +20,9 @@ import { HealthController } from './app.controller';
       autoLoadEntities: true,
       synchronize: true,
     }),
-    AdminUsersModule,
-    EmailModule,],
+    EmailModule,
+    AdminModule,
+    ClientModule,],
     
 controllers: [HealthController]
 })
