@@ -1,11 +1,11 @@
 import { Entity, PrimaryGeneratedColumn, Column } from "typeorm";
 import { IsEmail, IsOptional, IsString, IsPhoneNumber, IsEnum, IsBoolean, IsNotEmpty } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
-import { AdminStatus } from "./dto/admin-status.enum";
-import { AdminRole } from "./dto/admin-role.enum";
+import { AdminStatus } from "../enums/admin-status.enum";
+import { AdminRole } from "../enums/admin-role.enum";
 
-@Entity('admin_users')  // Explicitly name the table
-export class AdminUser {
+@Entity('admins')  // Explicitly name the table
+export class Admin {
 
     @ApiProperty({
         description: 'Unique identifier of the Admin User',

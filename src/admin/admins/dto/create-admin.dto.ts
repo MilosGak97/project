@@ -1,9 +1,9 @@
 // src/admin_users/dto/create-admin-user.dto.ts
 import { IsNotEmpty, IsString, IsOptional, IsEmail, IsPhoneNumber, IsEnum } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
-import { AdminRole } from './admin-role.enum';
+import { AdminRole } from '../../../enums/admin-role.enum';
 
-export class CreateAdminUserDto {
+export class CreateAdminDto {
 
   @ApiProperty({ 
     required: true // Indicates this field is required

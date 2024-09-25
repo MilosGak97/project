@@ -1,7 +1,7 @@
 import { Injectable, CanActivate, ExecutionContext, ForbiddenException } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { AdminUser } from './admin_user.entity'; 
-import { AdminRole } from './dto/admin-role.enum';
+import { Admin } from '../../entities/admin.entity'; 
+import { AdminRole } from '../../enums/admin-role.enum';
 
 @Injectable()
 export class RolesGuard implements CanActivate {
@@ -14,7 +14,7 @@ export class RolesGuard implements CanActivate {
     }
 
     const request = context.switchToHttp().getRequest();
-    const user: AdminUser = request.user;
+    const user: Admin = request.user;
 
     if (!user) {
       throw new ForbiddenException('User not authenticated');

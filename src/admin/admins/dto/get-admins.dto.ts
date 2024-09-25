@@ -1,10 +1,10 @@
 import { ApiProperty, ApiRequestTimeoutResponse } from "@nestjs/swagger";
 import { IsEnum, IsNotEmpty, IsOptional, IsString } from "class-validator";
-import { AdminRole } from "./admin-role.enum";
+import { AdminRole } from "../../../enums/admin-role.enum";
 import { Type } from "class-transformer";
-import { AdminStatus } from "./admin-status.enum";
+import { AdminStatus } from "../../../enums/admin-status.enum";
 
-export class GetAdminUsersDto{
+export class GetAdminsDto{
 
 @ApiProperty({ 
     description: "This field could contain Name, Phone Number or Email of admin user",

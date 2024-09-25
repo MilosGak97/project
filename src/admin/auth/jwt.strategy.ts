@@ -1,15 +1,15 @@
 import { Injectable, Logger, UnauthorizedException } from "@nestjs/common";
 import { PassportStrategy } from "@nestjs/passport";
-import { ExtractJwt, Strategy } from "passport-jwt";
-import { AdminUserRepository } from "./admin_users_repository"; 
+import { ExtractJwt, Strategy } from "passport-jwt"; 
 import { JwtPayload } from "./dto/jwt-payload.interface";
-import { AdminUser } from "./admin_user.entity";
+import { Admin } from "../../entities/admin.entity";
+import { AuthRepository } from "./auth.repository";
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy){
     
-    private readonly logger = new Logger(AdminUserRepository.name);
-    constructor(private adminUsersRepository: AdminUserRepository){
+    private readonly logger = new Logger(AuthRepository.name);
+    constructor(private authRepository: AuthRepository){
         super({
             secretOrKey: 'topSecret51',
             jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
@@ -18,9 +18,9 @@ export class JwtStrategy extends PassportStrategy(Strategy){
 
  
 
-    async validate(payload: JwtPayload): Promise<AdminUser> {
+    async validate(payload: JwtPayload): Promise<Admin> {
         const { adminId } = payload;
-        const user: AdminUser = await this.adminUsersRepository.findOne({ where: { id: adminId } });
+        const user: Admin = await this.authRepository.findOne({ where: { id: adminId } });
     
         if (!user) {
             this.logger.warn(`Unauthorized access attempt for userId: ${adminId}`);
