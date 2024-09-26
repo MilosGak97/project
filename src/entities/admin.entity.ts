@@ -70,4 +70,11 @@ export class Admin {
     @IsEnum(AdminStatus)
     @Column()
     status: AdminStatus;
+
+
+    @ApiProperty({required:false})
+    @IsOptional()
+    @IsString()
+    refreshToken: string
+
 }

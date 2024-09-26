@@ -1,96 +1,71 @@
-import { HttpException, HttpStatus, Injectable, Logger, NotFoundException, UnauthorizedException } from "@nestjs/common";
-import { JwtService } from "@nestjs/jwt";
-import { Admin } from "src/entities/admin.entity";
-import { AdminStatus } from "src/enums/admin-status.enum";
+import { Admin } from "../../../entities/admin.entity";
 import { DataSource, Repository } from "typeorm";
-import { SignInDto } from "./dto/sign-in-admin.dto";
+import { CreateAdminDto } from './dto/create-admin.dto';
+import { Injectable , HttpException, HttpStatus, NotFoundException, UnauthorizedException, Logger} from "@nestjs/common";
+import { GetAdminsDto } from "./dto/get-admins.dto"; 
 import * as bcrypt from 'bcrypt' 
-import { JwtPayload } from "./dto/jwt-payload.interface";
-import { AdminRole } from "src/enums/admin-role.enum";
-import { CreateAdminDto } from "../admins/dto/create-admin.dto";
-import { EmailService } from "src/email/email.service";
+import { AdminRole } from "../../../enums/admin-role.enum";
+import { AdminStatus } from "../../../enums/admin-status.enum";
+import { EmailService } from "src/email/email.service"; 
+import { SignInDto } from "../auth/dto/sign-in-admin.dto";
+import { JwtPayload } from "../auth/dto/jwt-payload.interface";
+import { JwtService } from "@nestjs/jwt";
 
 @Injectable()
-export class AuthRepository extends Repository<Admin>{
-    
-    private readonly logger = new Logger(AuthRepository.name);
-    constructor(
-        private readonly dataSource: DataSource ,
+export class AdminManagementRepository extends Repository<Admin> {
+    private readonly logger = new Logger(AdminManagementRepository.name);
+    constructor( 
+        private readonly dataSource: DataSource,
         private readonly jwtService: JwtService,
         private readonly emailService: EmailService
-    ){super( Admin, dataSource.createEntityManager())}
-
-
-    async verifyAdminEmail(token:string):Promise<any>{ 
-         try{
-            const payload = await this.jwtService.verify(token)
-
-            const user = await this.findOne({where: {id: payload.userId}})
-
-            if(!user){
-                throw new NotFoundException('User not found')
-            }
-
-            user.email_verified = true
-            user.status = AdminStatus.ACTIVE
-            await this.save(user)
-            return {
-                success:true,
-                message: "Email verified successfully"
-            }
-         }
-         catch(error){
-            if(error.name==='JsonWebTokenError' || error.name==='TokenExpiredError'){
-                throw new UnauthorizedException('Token invalid or expired')
-            }else{
-                throw new Error('Error verifying email')
-            }
-         } 
-            
+    ) {
+        super(Admin, dataSource.createEntityManager());
     }
-    
 
-    async signInAdmin(signInAdminDto: SignInDto): Promise<any> {
-        const { email, password } = signInAdminDto;
-        this.logger.log(`Attempting to sign in admin with email: ${email}`); // Log the email
+
     
-        try {
-            const user = await this.findOne({ where: { email } });
-    
-            if (!user) {
-                this.logger.warn(`Sign-in failed: No user found with email: ${email}`);
-                throw new UnauthorizedException('No user found with this email');
-            }
-    
-            this.logger.log(`User found with ID: ${user.id}. Verifying password...`);
-    
-            const isPasswordValid = await bcrypt.compare(password, user.password);
-            if (isPasswordValid) {
-                
-                this.logger.log(`here1`);
-                const adminId = user.id;
-                
-                this.logger.log(adminId);
-                this.logger.log(`here2`);
-                const payload: JwtPayload = { adminId };
-                
-                this.logger.log(payload);
-                this.logger.log(`here3`);
-                const accessToken: string = await this.jwtService.sign(payload) 
-                this.logger.log(`JWT token generated successfully for user ID: ${adminId}`);
-                this.logger.log(`Sign-in successful for user ID: ${adminId}`);
-                return { accessToken };
-            } else {
-                this.logger.warn(`Sign-in failed: Invalid password for email: ${email}`);
-                throw new UnauthorizedException('Please check your login credentials');
-            }
-        } catch (error) {
-            this.logger.error(`Error during sign-in process for email: ${email}`, error.stack);
-            throw new UnauthorizedException('An error occurred during sign-in');
+    async getAdmins(getAdminsDto:GetAdminsDto):Promise<any>{
+        const { searchQuery, role, status, limit, offset} = getAdminsDto
+
+        const query = this.createQueryBuilder('adminUser')
+
+        if(searchQuery){
+            query.andWhere(
+                '(adminUser.name LIKE :searchQuery OR adminUser.email LIKE :searchQuery OR adminUser.phone_number LIKE :searchQuery)',
+                { searchQuery: `%${searchQuery}`}
+            )
         }
-    }
 
-     
+        if(role){
+
+            query.andWhere('(adminUser.role = :role)', { role });
+        }
+
+        if(status){
+            query.andWhere('(adminUser.status = :status)', {status})
+        }
+
+
+        const totalRecords = await query.getCount()
+        query.take(limit)
+        query.skip(offset)
+
+        const adminUsers = await query.getMany();
+
+        const currentPage = Math.ceil(offset/limit) + 1
+
+        const totalPages = Math.ceil(totalRecords / limit);
+
+        return {
+            totalRecords,
+            currentPage,
+            totalPages,
+            adminUsers,
+            limit, 
+            offset
+        }
+    } 
+
     private generateRandomPassword(length: number = 8): string {
         const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
         let password = '';
@@ -100,8 +75,9 @@ export class AuthRepository extends Repository<Admin>{
         }
         return password;
     }
+
     
-    async createAdminUser(createAdminUserDto: CreateAdminDto): Promise<any> {
+    async createAdmin(createAdminUserDto: CreateAdminDto): Promise<any> {
         //this.logger.log('Creating admin user...'); // Log the start of the process
 
         const { name, email, phone_number, role, created_by } = createAdminUserDto;
@@ -165,10 +141,10 @@ export class AuthRepository extends Repository<Admin>{
             // Save the new admin user to the database
             await this.save(newAdminUser);
            this.logger.log(`Admin user created with ID: ${newAdminUser.id}`);
-
+                
             const jwtPayload = { userId: newAdminUser.id, expireIn: '3600' };
             const jwtToken = await this.jwtService.sign(jwtPayload)
-            const verifyUrl = `https://uniqueproject-229b37d9b8ca.herokuapp.com/admin/auth/verify?jwtToken=${encodeURIComponent(jwtToken)}`;
+            const verifyUrl = `https://uniqueproject-229b37d9b8ca.herokuapp.com/admin/auth/email?jwtToken=${encodeURIComponent(jwtToken)}`;
             await this.emailService.sendAdminWelcomeEmail(email, randomPassword, verifyUrl);
 
             // Return success response
@@ -184,6 +160,5 @@ export class AuthRepository extends Repository<Admin>{
             }, HttpStatus.INTERNAL_SERVER_ERROR);
         } 
     }
-
-
+    
 }

@@ -1,8 +1,8 @@
 import { ApiProperty, ApiRequestTimeoutResponse } from "@nestjs/swagger";
 import { IsEnum, IsNotEmpty, IsOptional, IsString } from "class-validator";
-import { AdminRole } from "../../../enums/admin-role.enum";
+import { AdminRole } from "../../../../enums/admin-role.enum";
 import { Type } from "class-transformer";
-import { AdminStatus } from "../../../enums/admin-status.enum";
+import { AdminStatus } from "../../../../enums/admin-status.enum";
 
 export class GetAdminsDto{
 

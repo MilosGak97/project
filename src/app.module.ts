@@ -2,12 +2,16 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { EmailModule } from './email/email.module';
 import { HealthController } from './app.controller';
-import { AdminModule } from './admin/admin.module';
-import { ClientModule } from './client/client.module';
+import { AdminModule } from './api/admin/admin.module';
+import { ClientModule } from './api/client/client.module';
+import { ConfigModule } from '@nestjs/config'; 
 
 @Module({
-  imports: [
-    TypeOrmModule.forRoot({
+  imports: [  
+     ConfigModule.forRoot({
+      isGlobal: true, // Makes the configuration accessible globally
+    }),
+     TypeOrmModule.forRoot({
       type: 'postgres',
       host: 'postgres-1.ch6caoe88tbd.eu-north-1.rds.amazonaws.com',
       port: 5432,
@@ -19,7 +23,7 @@ import { ClientModule } from './client/client.module';
       },
       autoLoadEntities: true,
       synchronize: true,
-    }),
+    }), 
     EmailModule,
     AdminModule,
     ClientModule,],
