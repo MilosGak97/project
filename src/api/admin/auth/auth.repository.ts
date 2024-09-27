@@ -79,8 +79,31 @@ export class AuthRepository extends Repository<Admin>{
                 }
         }
         
+    async logout(token: string ){
 
-        async passwordReset(passwordResetDto: PasswordResetDto, admin: Admin ):Promise<any>{
+        try {
+            const payload: JwtPayload = await this.jwtService.verify(token);
+            const adminId = payload.adminId
+
+            const adminUser = await this.findOne( {where: {id: adminId}})
+            if(!adminUser){
+                throw new NotFoundException('Admin user with this id doesnt exist')
+            }
+    
+            adminUser.refreshToken = "";
+            await this.save(adminUser)
+            return true;
+        
+        } catch (error) {
+            throw new UnauthorizedException('Invalid or expired token');
+        }
+    }
+ 
+       
+    
+
+
+    async passwordReset(passwordResetDto: PasswordResetDto, admin: Admin ):Promise<any>{
             const {oldPassword , newPassword , newPasswordRepeat} = passwordResetDto;
 
             const user = await this.findOne({where: {id: admin.id}})
@@ -115,7 +138,7 @@ export class AuthRepository extends Repository<Admin>{
          return {
             message: "Password is successfully updated"
          }
-        }
+    }
 
     async whoAmI(token):Promise<Admin>{
 

@@ -1,5 +1,5 @@
 import { ApiProperty, ApiRequestTimeoutResponse } from "@nestjs/swagger";
-import { IsEnum, IsNotEmpty, IsOptional, IsString } from "class-validator";
+import { IsBoolean, IsEnum, IsNotEmpty, IsOptional, IsString } from "class-validator";
 import { AdminRole } from "../../../../enums/admin-role.enum";
 import { Type } from "class-transformer";
 import { AdminStatus } from "../../../../enums/admin-status.enum";
@@ -37,6 +37,14 @@ role?: AdminRole
 @IsOptional()
 @IsEnum(AdminStatus)
 status?: AdminStatus
+
+@ApiProperty({required:false})
+@IsOptional()
+initial_password?: boolean
+
+@ApiProperty({required:false})
+@IsOptional()
+email_verified?: boolean
 
 @ApiProperty({required: true})
 @IsNotEmpty()

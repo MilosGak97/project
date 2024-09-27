@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpStatus, NotFoundException, Post, Query, Req, Res, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpStatus, NotFoundException, Post, Query, Req, Res, UseGuards } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { SignInDto } from './dto/sign-in-admin.dto'; 
@@ -71,8 +71,25 @@ export class AuthController {
 
     }
 
+    @Delete()
+    @ApiOperation({summary: "Logout user and delete refresh and access token"})
+    @UseGuards(AuthGuard())
+    async logout(@Req() req: Request, @Res() res:Response):Promise<any>{
+        const token = req.cookies['accessToken']
+       const removedRefreshToken = await this.authService.logout(token) 
+    
+       if(!removedRefreshToken){
+        throw new NotFoundException('couldnt find refresh token in database')
+       }
+
+       res.clearCookie('accessToken', { httpOnly: true, secure:true, sameSite:'strict'})
+       res.clearCookie('refreshToken', {httpOnly:true, sameSite:"strict", secure:true})
+ // Send response back
+        return res.send("User is logged out");
+    }
+
     @Post('password')
-    @ApiOperation({summary: "Change logged admin password, no old password needed for the initial_password=true "})
+    @ApiOperation({summary: "Change logged admin password, no old password needed for the initial "})
     @UseGuards(AuthGuard())
     async passwordReset(@Body() passwordResetDto: PasswordResetDto, @GetAdmin() admin: Admin){
         return this.authService.passwordReset(passwordResetDto, admin)

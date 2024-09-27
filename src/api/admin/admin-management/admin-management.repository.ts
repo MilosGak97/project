@@ -25,7 +25,7 @@ export class AdminManagementRepository extends Repository<Admin> {
 
     
     async getAdmins(getAdminsDto:GetAdminsDto):Promise<any>{
-        const { searchQuery, role, status, limit, offset} = getAdminsDto
+        const { searchQuery, role, status, email_verified , initial_password, limit, offset} = getAdminsDto
 
         const query = this.createQueryBuilder('adminUser')
 
@@ -45,6 +45,13 @@ export class AdminManagementRepository extends Repository<Admin> {
             query.andWhere('(adminUser.status = :status)', {status})
         }
 
+        if(initial_password){
+            query.andWhere('(adminUser.initial_password = :initial_password)', {initial_password})
+        }
+
+        if(email_verified){
+            query.andWhere('(adminUser.email_verified = :email_verified)', {email_verified})
+        }
 
         const totalRecords = await query.getCount()
         query.take(limit)

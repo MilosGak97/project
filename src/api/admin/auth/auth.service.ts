@@ -17,6 +17,9 @@ export class AuthService {
     async signIn(signInDto:SignInDto):Promise<any>{
         return this.authRepository.signIn(signInDto)     
     }
+    async logout(token){
+        return await this.authRepository.logout(token)
+    }
 
     async passwordReset(passwordResetDto: PasswordResetDto, admin: Admin){
         return this.authRepository.passwordReset(passwordResetDto, admin);
