@@ -1,8 +1,12 @@
-import { Body, Controller, Get, HttpStatus, Post, Query, Req, Res } from '@nestjs/common';
+import { Body, Controller, Get, HttpStatus, NotFoundException, Post, Query, Req, Res, UseGuards } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { SignInDto } from './dto/sign-in-admin.dto'; 
-import { Request, Response } from 'express';
+import { Request, Response } from 'express'; 
+import { PasswordResetDto } from './dto/password-reset.dto';
+import { GetAdmin } from './get-admin.decorator';
+import { Admin } from 'src/entities/admin.entity';
+import { AuthGuard } from '@nestjs/passport';
 
 @ApiTags('Auth')
 @Controller('admin/auth')
@@ -68,6 +72,13 @@ export class AuthController {
 
     }
 
+    @Post('password')
+    @ApiOperation({summary: "Change password"})
+    @UseGuards(AuthGuard())
+    async passwordReset(@Body() passwordResetDto: PasswordResetDto, @GetAdmin() admin: Admin){
+        return this.authService.passwordReset(passwordResetDto, admin)
+    }
+
     @Get('who-am-i')
     @ApiOperation({summary: 'Get information about logged user'})
     whoAmI(@Req() req: Request){
@@ -75,4 +86,25 @@ export class AuthController {
         return this.authService.whoAmI(token);
     }
  
+
+
+    @Post('token')
+    @ApiOperation({summary: 'Refresh Access Token'})
+    async refreshAccesToken(@Req() req: Request, @Res() res: Response):Promise<any>{
+       const refreshToken =  req.cookies['refreshToken']
+       if(!refreshToken){
+        throw new NotFoundException('No refresh token found')
+       }
+
+       const newAccessToken = await this.authService.refreshAccessToken(refreshToken);
+       res.cookie('accessToken', newAccessToken, {
+        httpOnly:true,
+        maxAge: 60*60*1000,
+        secure: process.env.NODE_ENV === 'production', // Use secure cookies in production
+        sameSite: 'lax', // Adjust as necessary
+       })
+       
+       res.status(200).send('Token is refreshed')
+
+    }
 }

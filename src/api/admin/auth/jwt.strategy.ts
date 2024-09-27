@@ -1,6 +1,6 @@
 import { Injectable, Logger, UnauthorizedException } from "@nestjs/common";
 import { PassportStrategy } from "@nestjs/passport";
-import { ExtractJwt, Strategy } from "passport-jwt"; 
+import { Strategy } from "passport-jwt"; 
 import { JwtPayload } from "./dto/jwt-payload.interface";
 import { Admin } from "../../../entities/admin.entity";
 import { AuthRepository } from "./auth.repository";
@@ -22,14 +22,13 @@ export class JwtStrategy extends PassportStrategy(Strategy){
  
 
     async validate(payload: JwtPayload): Promise<Admin> {
-        const { adminId } = payload;
+        const { adminId } = payload; 
         const user: Admin = await this.authRepository.findOne({ where: { id: adminId } });
     
         if (!user) {
             this.logger.warn(`Unauthorized access attempt for userId: ${adminId}`);
             throw new UnauthorizedException();
         }
-    
         return user;
     }
 

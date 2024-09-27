@@ -11,12 +11,7 @@ import { EmailService } from 'src/email/email.service';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Admin]),  
-    JwtModule.register({
-      secret: 'topSecret51',
-      signOptions: {
-        expiresIn: 3600
-      }
-    }),
+    JwtModule.register({secret: 'topSecret51'}),
     PassportModule.register({ defaultStrategy: 'jwt'}),] ,
   providers: [AuthService, JwtStrategy, AuthRepository, EmailService],
   controllers: [AuthController],

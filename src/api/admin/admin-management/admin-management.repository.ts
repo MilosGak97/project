@@ -137,6 +137,7 @@ export class AdminManagementRepository extends Repository<Admin> {
             newAdminUser.created_by = created_by;
             newAdminUser.status = AdminStatus.UNVERIFIED;
             newAdminUser.email_verified = false;
+            newAdminUser.initial_password= true;
 
             // Save the new admin user to the database
             await this.save(newAdminUser);

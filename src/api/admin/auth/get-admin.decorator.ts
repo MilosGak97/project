@@ -1,7 +1,9 @@
-import { createParamDecorator } from "@nestjs/common";
+import { createParamDecorator, ExecutionContext } from "@nestjs/common";
 import { Admin } from "../../../entities/admin.entity";
 
-export const GetAdminUser = createParamDecorator((data, ctx): Admin => {
+export const GetAdmin = createParamDecorator(
+  (data: unknown, ctx: ExecutionContext): Admin => {
     const req = ctx.switchToHttp().getRequest();
-    return req.AdminUser;
-})
+    return req.user; // Extracting the admin from req.user
+  }
+);

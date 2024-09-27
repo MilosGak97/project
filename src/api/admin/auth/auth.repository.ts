@@ -1,4 +1,4 @@
-import { Injectable, Logger, NotFoundException, UnauthorizedException } from "@nestjs/common";
+import { BadRequestException, Injectable, Logger, NotFoundException, UnauthorizedException } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import { Admin } from "src/entities/admin.entity";
 import { AdminStatus } from "src/enums/admin-status.enum";
@@ -6,6 +6,7 @@ import { DataSource, Repository } from "typeorm";
 import { SignInDto } from "./dto/sign-in-admin.dto";
 import * as bcrypt from 'bcrypt' 
 import { JwtPayload } from "./dto/jwt-payload.interface";
+import { PasswordResetDto } from "./dto/password-reset.dto";
 
 @Injectable()
 export class AuthRepository extends Repository<Admin>{
@@ -16,35 +17,32 @@ export class AuthRepository extends Repository<Admin>{
         private readonly jwtService: JwtService,
     ){super( Admin, dataSource.createEntityManager())}
 
-
-    async verifyEmail(token:string):Promise<any>{ 
-         try{
-            const payload = await this.jwtService.verify(token)
-
-            const user = await this.findOne({where: {id: payload.userId}})
-
-            const accessToken = await this.jwtService.sign(payload);
-            const refreshToken = await this.jwtService.sign(payload, { expiresIn: '7d' });
-            if(!user){
-                throw new NotFoundException('User not found')
-            }
-
-            user.email_verified = true
-            user.status = AdminStatus.ACTIVE
-            await this.save(user)
-            return {
-                refreshToken,
-                accessToken
-            }
-         }
-         catch(error){
-            if(error.name==='JsonWebTokenError' || error.name==='TokenExpiredError'){
-                throw new UnauthorizedException('Token invalid or expired')
-            }else{
-                throw new Error('Error verifying email')
-            }
-         } 
-            
+    async verifyEmail(token: string): Promise<any> {
+        // Verify the token and extract the payload
+        const payload = await this.jwtService.verify(token);
+    
+        // Find the user based on the userId from the payload
+        const user = await this.findOne({ where: { id: payload.userId } });
+    
+        // Sign new access and refresh tokens without the exp property
+        const accessToken = await this.jwtService.sign(payload);
+        const refreshToken = await this.jwtService.sign(payload);
+    
+        // If user is not found, throw an error
+        if (!user) {
+            throw new NotFoundException('User not found');
+        }
+    
+        // Update user's email verification status and set them to active
+        user.email_verified = true;
+        user.status = AdminStatus.ACTIVE;
+        await this.save(user);
+    
+        // Return the new tokens
+        return {
+            refreshToken,
+            accessToken,
+        };
     }
     
 
@@ -52,7 +50,6 @@ export class AuthRepository extends Repository<Admin>{
             const { email, password } = signInAdminDto;
             this.logger.log(`Attempting to sign in admin with email: ${email}`);
         
-            try {
                 const user = await this.findOne({ where: { email } });
         
                 if (!user) {
@@ -80,12 +77,37 @@ export class AuthRepository extends Repository<Admin>{
                     this.logger.warn(`Sign-in failed: Invalid password for email: ${email}`);
                     throw new UnauthorizedException('Please check your login credentials');
                 }
-            } catch (error) {
-                this.logger.error(`Error during sign-in process for email: ${email}`, error.stack);
-                throw new UnauthorizedException('An error occurred during sign-in');
-            }
         }
         
+
+        async passwordReset(passwordResetDto: PasswordResetDto, admin: Admin ):Promise<any>{
+            const {oldPassword , newPassword , newPasswordRepeat} = passwordResetDto;
+
+            const user = await this.findOne({where: {id: admin.id}})
+
+            if(!user){
+                throw new NotFoundException('User with that id is not found')
+            }
+
+         const passwordMatched = await bcrypt.compare(oldPassword, user.password)
+
+         if(!passwordMatched){
+            throw new BadRequestException('Old password is incorect')
+         }
+
+         if(newPassword !== newPasswordRepeat ){
+            throw new BadRequestException('New Passwords are not matchin')
+         }
+
+         const salt = await bcrypt.genSalt(10)
+         user.password = await bcrypt.hash(newPassword, salt)
+
+         await this.save(user)
+
+         return {
+            message: "Password is successfully updated"
+         }
+        }
 
     async whoAmI(token):Promise<Admin>{
 
@@ -112,6 +134,26 @@ export class AuthRepository extends Repository<Admin>{
     }catch(error){
         throw new UnauthorizedException(error)
     }
+    }
+
+    async refreshAccessToken(refreshToken:string):Promise<string>{
+        try{
+            const payload:JwtPayload = await this.jwtService.verify(refreshToken)
+
+            const adminId = payload.adminId;
+
+            const adminProfile = await this.findOne({where: {id: adminId}})
+
+            if(!adminProfile){
+                throw new NotFoundException('Didnt find the user with that id')
+            }
+
+            // Create a new access token
+            const newAccessToken = this.jwtService.sign({ adminId }, {expiresIn: '1h'});
+            return newAccessToken;
+        }catch(error){
+            throw new UnauthorizedException('Invalid refresh token')
+        }
     }
 
   

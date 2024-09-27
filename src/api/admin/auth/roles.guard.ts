@@ -1,4 +1,4 @@
-import { Injectable, CanActivate, ExecutionContext, ForbiddenException } from '@nestjs/common';
+import { Injectable, CanActivate, ExecutionContext, ForbiddenException, Redirect, UnauthorizedException } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { Admin } from '../../../entities/admin.entity'; 
 import { AdminRole } from '../../../enums/admin-role.enum';
@@ -21,6 +21,10 @@ export class RolesGuard implements CanActivate {
 
         if (!roles.includes(user.role)) {
             throw new ForbiddenException('You do not have access to this resource');
+        }
+
+        if(user.initial_password){
+            throw new UnauthorizedException('Initial password is true')
         }
 
         return true; // User has the necessary role

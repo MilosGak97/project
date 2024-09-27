@@ -75,6 +75,13 @@ export class Admin {
     @ApiProperty({required:false})
     @IsOptional()
     @IsString()
+    @Column({ nullable: true })
     refreshToken: string
 
+
+
+    @ApiProperty({required:true})
+    @IsBoolean()
+    @Column()
+    initial_password: boolean
 }
