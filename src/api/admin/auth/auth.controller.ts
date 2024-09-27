@@ -14,7 +14,6 @@ export class AuthController {
     constructor( private readonly authService: AuthService ){}
 
     @Get('email')
-    
     @ApiOperation({ summary: "Verify user email with JWT Token"})
     @ApiResponse({status: 200, description: 'User email is authorized'})
     @ApiResponse({status: 401, description: 'Unauthorized - Expired or invalid token'})
@@ -73,7 +72,7 @@ export class AuthController {
     }
 
     @Post('password')
-    @ApiOperation({summary: "Change password"})
+    @ApiOperation({summary: "Change logged admin password, no old password needed for the initial_password=true "})
     @UseGuards(AuthGuard())
     async passwordReset(@Body() passwordResetDto: PasswordResetDto, @GetAdmin() admin: Admin){
         return this.authService.passwordReset(passwordResetDto, admin)

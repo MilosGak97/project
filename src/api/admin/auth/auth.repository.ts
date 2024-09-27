@@ -89,19 +89,27 @@ export class AuthRepository extends Repository<Admin>{
                 throw new NotFoundException('User with that id is not found')
             }
 
-         const passwordMatched = await bcrypt.compare(oldPassword, user.password)
+            if(oldPassword){
+                const passwordMatched = await bcrypt.compare(oldPassword, user.password)
 
-         if(!passwordMatched){
-            throw new BadRequestException('Old password is incorect')
-         }
+                if(!passwordMatched){
+                    throw new BadRequestException('Old password is incorect')
+                 }
+            }
+
+      
 
          if(newPassword !== newPasswordRepeat ){
-            throw new BadRequestException('New Passwords are not matchin')
+            throw new BadRequestException('New Passwords are not matching')
          }
 
          const salt = await bcrypt.genSalt(10)
          user.password = await bcrypt.hash(newPassword, salt)
-
+         
+         if(user.initial_password){
+            user.initial_password = false
+         }
+         
          await this.save(user)
 
          return {
