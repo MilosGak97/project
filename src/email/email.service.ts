@@ -7,7 +7,7 @@ export class EmailService {
     sgMail.setApiKey(process.env.SENDGRID_API_KEY); // Ensure your SENDGRID_API_KEY is set in the environment variables
   }
 
-  async sendAdminWelcomeEmail(to: string, password: string, verifyUrl: string) { 
+  async sendAdminWelcomeEmail(to: string, verifyUrl: string, password: string) { 
     const htmlContent = `
     <!DOCTYPE html>
     <html lang="en">
@@ -69,8 +69,8 @@ export class EmailService {
                 <h1>Welcome!</h1>
             </div>
             <div class="content">
-                <p>Your password is: <strong>${password}</strong></p>
-                <p>Please verify your email by clicking on the button below:</p>
+               ${password ? `<p>Your password is: <strong>${password}</strong></p>` : ''}
+                 <p>Please verify your email by clicking on the button below:</p>
                 <a href="${verifyUrl}" class="button">Verify Email</a>
             </div>
             <div class="footer">

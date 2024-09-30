@@ -1,5 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column } from "typeorm";
-import { IsEmail, IsOptional, IsString, IsPhoneNumber, IsEnum, IsBoolean, IsNotEmpty } from 'class-validator';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from "typeorm";
+import { IsEmail, IsOptional, IsString, IsPhoneNumber, IsEnum, IsBoolean, IsNotEmpty, IsDate } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { AdminStatus } from "../enums/admin-status.enum";
 import { AdminRole } from "../enums/admin-role.enum";
@@ -84,4 +84,20 @@ export class Admin {
     @IsBoolean()
     @Column()
     initial_password: boolean
-}
+
+
+    @ApiProperty({required:true})
+    @IsDate()
+    @Column()
+    status_changed_at: Date
+
+    // Automatically handles 'created at' timestamp
+    @CreateDateColumn()
+    created_at: Date;
+    
+    // Automatically handles 'updated at' timestamp, updated whenever entity is modified
+    @UpdateDateColumn()
+    updated_at: Date;
+
+} 
+ 

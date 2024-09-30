@@ -1,4 +1,4 @@
-import { Body, Controller, Post, Get, Query, UseGuards } from '@nestjs/common'; 
+import { Body, Controller, Post, Get, Query, UseGuards, Patch, Param, Delete } from '@nestjs/common'; 
 import { CreateAdminDto } from './dto/create-admin.dto';
 import { Admin } from '../../../entities/admin.entity';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
@@ -8,6 +8,8 @@ import { RolesGuard } from '../auth/roles.guard';
 import { Roles } from '../auth/roles.decorator';
 import { AdminRole } from '../../../enums/admin-role.enum';
 import { AdminManagementService } from './admin-management.service';
+import { updateAdminDto } from './dto/update-admin.dto';
+import { SummaryKeyType } from '@aws-sdk/client-iam';
 
 
 
@@ -26,7 +28,9 @@ export class AdminManagementController {
     @ApiResponse({ status: 500, description: 'Internal Server Error: Something went wrong on the server.' })
     @UseGuards(AuthGuard(), RolesGuard) 
     @Roles(AdminRole.HEAD)
-    getAdminUsers(@Query() getAdminsDto: GetAdminsDto): Promise<any> {
+    getAdminUsers(
+        @Query() getAdminsDto: GetAdminsDto
+    ): Promise<any> {
         return this.adminManagementService.getAdmins(getAdminsDto);
     }
 
@@ -37,9 +41,37 @@ export class AdminManagementController {
     @ApiResponse({ status: 400, description: 'Bad request or validation error.' })
     @ApiResponse({ status: 409, description: 'Conflict: Email or phone number already exists.' })
     @ApiResponse({ status: 500, description: 'Internal server error.' })
-    createAdminUser(@Body() createAdminDto: CreateAdminDto):Promise<any>{
+    createAdmin(
+        @Body() createAdminDto: CreateAdminDto
+    ):Promise<any>{
         return this.adminManagementService.createAdmin(createAdminDto)
     }
 
+    @Patch('admins/:id')
+    @ApiOperation({summary: 'Update admin user fields or suspend/delete user'})
+    updateAdmin(
+        @Body() updateAdminDto: updateAdminDto, 
+        @Param('id') id: string
+    ):Promise<any>{
+        return this.adminManagementService.updateAdmin(updateAdminDto, id)
+    }
 
+    @Post('admins/:id/email')
+    @ApiOperation({summary: 'Re-Send email for email verification'})
+    resendEmailVerification(@Param('id') id: string){
+        return this.adminManagementService.resendEmailVerification(id)
+        
+    }
+
+    @Post('admins/:id/password')
+    @ApiOperation({summary: 'Reset password and send to email, set inital password to true'})
+    resetPassword(@Param('id') id: string){
+        return this.adminManagementService.resetPassword(id)
+    }
+
+    @Delete('admins/:id')
+    @ApiOperation({summary: 'Delete admin, set status to deleted '})
+    deleteAdmin(@Param('id') id:string):Promise<any>{
+        return this.adminManagementService.deleteAdmin(id)
+    }
 }

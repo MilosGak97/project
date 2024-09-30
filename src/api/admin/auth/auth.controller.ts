@@ -84,7 +84,7 @@ export class AuthController {
 
        res.clearCookie('accessToken', { httpOnly: true, secure:true, sameSite:'strict'})
        res.clearCookie('refreshToken', {httpOnly:true, sameSite:"strict", secure:true})
- // Send response back
+         // Send response back
         return res.send("User is logged out");
     }
 
