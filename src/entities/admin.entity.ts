@@ -4,7 +4,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { AdminStatus } from "../enums/admin-status.enum";
 import { AdminRole } from "../enums/admin-role.enum";
 
-@Entity('admins')  // Explicitly name the table
+@Entity('admins')   
 export class Admin {
 
     @ApiProperty({
@@ -75,8 +75,8 @@ export class Admin {
     @ApiProperty({required:false})
     @IsOptional()
     @IsString()
-    @Column({ nullable: true })
-    refreshToken: string
+    @Column({nullable:true})
+    refreshToken?: string
 
 
 
@@ -92,10 +92,12 @@ export class Admin {
     status_changed_at: Date
 
     // Automatically handles 'created at' timestamp
+    @ApiProperty()
     @CreateDateColumn()
     created_at: Date;
     
     // Automatically handles 'updated at' timestamp, updated whenever entity is modified
+    @ApiProperty()
     @UpdateDateColumn()
     updated_at: Date;
 

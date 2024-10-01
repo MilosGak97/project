@@ -2,7 +2,7 @@ import { Injectable, Inject } from '@nestjs/common';
 import { AdminManagementRepository } from './admin-management.repository';
 import { CreateAdminDto } from './dto/create-admin.dto'; 
 import { GetAdminsDto } from './dto/get-admins.dto';  
-import { updateAdminDto } from './dto/update-admin.dto';
+import { UpdateAdminDto } from './dto/update-admin.dto';
 
 @Injectable()
 export class AdminManagementService { 
@@ -21,7 +21,11 @@ export class AdminManagementService {
         return this.adminManagementRepository.createAdmin(createAdminDto)
     }
 
-    async updateAdmin( updateAdminDto: updateAdminDto, id: string){
+    async showAdminData(id:string):Promise<any>{
+        return this.adminManagementRepository.showAdminData(id)
+    }
+
+    async updateAdmin( updateAdminDto: UpdateAdminDto, id: string){
         return this.adminManagementRepository.updateAdmin(updateAdminDto, id);
     }
 

@@ -7,7 +7,7 @@ export class EmailService {
     sgMail.setApiKey(process.env.SENDGRID_API_KEY); // Ensure your SENDGRID_API_KEY is set in the environment variables
   }
 
-  async sendAdminWelcomeEmail(to: string, verifyUrl: string, password: string) { 
+  async authEmail(to: string, verifyUrl: string, password: string) { 
     const htmlContent = `
     <!DOCTYPE html>
     <html lang="en">
@@ -102,4 +102,7 @@ export class EmailService {
       }
       
   }
+
+
+ 
 }

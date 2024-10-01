@@ -4,7 +4,7 @@ import { EmailModule } from './email/email.module';
 import { HealthController } from './app.controller';
 import { AdminModule } from './api/admin/admin.module';
 import { ClientModule } from './api/client/client.module';
-import { ConfigModule } from '@nestjs/config'; 
+import { ConfigModule } from '@nestjs/config';  
 
 @Module({
   imports: [  
@@ -26,7 +26,8 @@ import { ConfigModule } from '@nestjs/config';
     }), 
     EmailModule,
     AdminModule,
-    ClientModule,],
+    ClientModule,
+     ],
     
 controllers: [HealthController]
 })

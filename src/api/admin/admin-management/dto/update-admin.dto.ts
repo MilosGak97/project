@@ -3,7 +3,7 @@ import { IsEmail, IsEnum, IsOptional, IsPhoneNumber, IsString } from "class-vali
 import { AdminRole } from "src/enums/admin-role.enum";
 import { AdminStatus } from "src/enums/admin-status.enum";
 
-export class updateAdminDto{
+export class UpdateAdminDto{
     @ApiProperty({required:false})
     @IsOptional()
     @IsString()

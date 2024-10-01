@@ -7,13 +7,13 @@ import { AuthGuard } from '@nestjs/passport';
 import { RolesGuard } from '../auth/roles.guard';
 import { Roles } from '../auth/roles.decorator';
 import { AdminRole } from '../../../enums/admin-role.enum';
-import { AdminManagementService } from './admin-management.service';
-import { updateAdminDto } from './dto/update-admin.dto';
+import { AdminManagementService } from './admin-management.service'; 
 import { SummaryKeyType } from '@aws-sdk/client-iam';
+import { UpdateAdminDto } from './dto/update-admin.dto';
 
 
 
-@ApiTags('Admins') // This will group the endpoints under "Admin Users"
+@ApiTags('Admin Management') // This will group the endpoints under "Admin Users"
 @Controller('admin/admin-management') // Example route
 export class AdminManagementController {
     constructor(private adminManagementService: AdminManagementService) {}
@@ -47,10 +47,17 @@ export class AdminManagementController {
         return this.adminManagementService.createAdmin(createAdminDto)
     }
 
+    @Get('admins/:id')
+    @ApiOperation({summary: "Show information of single admin"})
+    showAdminData(@Param('id') id:string){
+        return this.adminManagementService.showAdminData(id)
+    }
+
+
     @Patch('admins/:id')
     @ApiOperation({summary: 'Update admin user fields or suspend/delete user'})
     updateAdmin(
-        @Body() updateAdminDto: updateAdminDto, 
+        @Body() updateAdminDto: UpdateAdminDto, 
         @Param('id') id: string
     ):Promise<any>{
         return this.adminManagementService.updateAdmin(updateAdminDto, id)

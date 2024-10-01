@@ -1,7 +1,7 @@
 import { Admin } from "../../../entities/admin.entity";
 import { DataSource, Repository } from "typeorm";
 import { CreateAdminDto } from './dto/create-admin.dto';
-import { Injectable , HttpException, HttpStatus, NotFoundException, UnauthorizedException, Logger, ConflictException} from "@nestjs/common";
+import { Injectable , HttpException, HttpStatus, NotFoundException, Logger, ConflictException} from "@nestjs/common";
 import { GetAdminsDto } from "./dto/get-admins.dto"; 
 import * as bcrypt from 'bcrypt' 
 import { AdminRole } from "../../../enums/admin-role.enum";
@@ -9,9 +9,7 @@ import { AdminStatus } from "../../../enums/admin-status.enum";
 import { EmailService } from "src/email/email.service";  
 import { JwtService } from "@nestjs/jwt";
 import * as dotenv from 'dotenv';
-import { updateAdminDto } from "./dto/update-admin.dto";
-import { ExceptionsHandler } from "@nestjs/core/exceptions/exceptions-handler";
-import { stat } from "fs";
+import { UpdateAdminDto } from "./dto/update-admin.dto"; 
 
 
 @Injectable()
@@ -56,21 +54,19 @@ export class AdminManagementRepository extends Repository<Admin> {
             query.andWhere('(adminUser.email_verified = :email_verified)', {email_verified})
         }
 
-        const totalRecords = await query.getCount()
         query.take(limit)
         query.skip(offset)
 
-        const adminUsers = await query.getMany();
-
+        const result = await query.getMany();
+        const totalRecords = await query.getCount()
         const currentPage = Math.ceil(offset/limit) + 1
-
         const totalPages = Math.ceil(totalRecords / limit);
 
         return {
+            result,
             totalRecords,
             currentPage,
-            totalPages,
-            adminUsers,
+            totalPages, 
             limit, 
             offset
         }
@@ -90,7 +86,7 @@ export class AdminManagementRepository extends Repository<Admin> {
         const jwtPayload = { userId: userId, expireIn: '3600' };
         const jwtToken = await this.jwtService.sign(jwtPayload)
         const verifyUrl = `${process.env.BASE_URL}admin/auth/email?jwtToken=${encodeURIComponent(jwtToken)}`;
-        await this.emailService.sendAdminWelcomeEmail(email, verifyUrl, randomPassword || '' );
+        await this.emailService.authEmail(email, verifyUrl, randomPassword || '' );
 
     }
     
@@ -178,7 +174,18 @@ export class AdminManagementRepository extends Repository<Admin> {
         } 
     }
 
-    async updateAdmin(updateAdminDto: updateAdminDto, id:string): Promise<any> {
+    async showAdminData(id:string):Promise<any>{
+        const adminData = await this.findOne({where: {id}})
+
+        if(!adminData){
+            throw new NotFoundException('Admin with this ID is not found.')
+        }
+        
+        return adminData
+
+    }
+
+    async updateAdmin(updateAdminDto: UpdateAdminDto, id:string): Promise<any> {
         const { name, email, phone_number, status, role } = updateAdminDto
 
         const adminData = await this.findOne({where: { id: id}})
