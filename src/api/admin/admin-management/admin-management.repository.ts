@@ -51,7 +51,7 @@ export class AdminManagementRepository extends Repository<Admin> {
 
     /* ---------- PUBLIC METHOD ------------- */
 
-    // method to get all admin data
+// method to get all admin data
     async getAdmins(getAdminsDto:GetAdminsDto):Promise<{
         result: Admin[],
         totalRecords: number,
@@ -112,8 +112,10 @@ export class AdminManagementRepository extends Repository<Admin> {
 
 
 
-    
-    async createAdmin(createAdminDto: CreateAdminDto): Promise<any> {
+// method to create admin
+    async createAdmin(createAdminDto: CreateAdminDto): Promise<{
+        message: string
+    }> {
         //this.logger.log('Creating admin user...'); // Log the start of the process
 
         const { name, email, phone_number, role, created_by } = createAdminDto;
@@ -185,7 +187,6 @@ export class AdminManagementRepository extends Repository<Admin> {
 
             // Return success response
             return {
-                success: true,
                 message: 'The user has been created successfully.',
             };
         } catch (error) {
@@ -197,18 +198,25 @@ export class AdminManagementRepository extends Repository<Admin> {
         } 
     }
 
-    async showAdminData(id:string):Promise<any>{
+
+ // method to show single admin data   
+    async showAdminData(id:string):Promise<{
+        adminData: Admin
+    }>{
         const adminData = await this.findOne({where: {id}})
 
         if(!adminData){
             throw new NotFoundException('Admin with this ID is not found.')
         }
         
-        return adminData
-
+        return {adminData}
     }
 
-    async updateAdmin(updateAdminDto: UpdateAdminDto, id:string): Promise<any> {
+
+// method to update single admin data    
+    async updateAdmin(updateAdminDto: UpdateAdminDto, id:string): Promise<{
+        message:string
+    }> {
         const { name, email, phone_number, status, role } = updateAdminDto
 
         const adminData = await this.findOne({where: { id: id}})
@@ -252,8 +260,11 @@ export class AdminManagementRepository extends Repository<Admin> {
 
         return {message: "User is updated"}
     }
-    
-    async resendEmailVerification(id:string):Promise<any>{
+
+// method to resend email verification 
+    async resendEmailVerification(id:string):Promise<{
+        message: string
+    }>{
         const adminData = await this.findOne({where: {id:id}})
         if(!adminData){
             throw new NotFoundException('No user found with this ID.')
@@ -262,7 +273,10 @@ export class AdminManagementRepository extends Repository<Admin> {
         return {message: "A new email verification link has been sent."}
     }
 
-    async resetPassword(id:string):Promise<any>{
+// method to reset password    
+    async resetPassword(id:string):Promise<{
+        message:string
+    }>{
         const adminData =await this.findOne({where: {id:id}})
         if(!adminData){
             throw new NotFoundException('No user found with this ID.')
@@ -282,8 +296,10 @@ export class AdminManagementRepository extends Repository<Admin> {
         return {message: "A new password has been sent to: " + adminData.email}
     }
 
-
-    async deleteAdmin(id:string):Promise<any>{
+// method to delete admin
+    async deleteAdmin(id:string):Promise<{
+        message: string
+    }>{
         const userData = await this.findOne({where: {id}})
 
         if(!userData){

@@ -13,7 +13,7 @@ export class AdminManagementService {
 
 
 
-    // method to get all admins
+// method to get all admins
     async getAdmins(getAdminsDto:GetAdminsDto):Promise<{
         result: Admin[],
         totalRecords: number,
@@ -26,36 +26,48 @@ export class AdminManagementService {
         return await this.adminManagementRepository.getAdmins(getAdminsDto)
     }
 
-    // method to create admin
-    async createAdmin(createAdminDto: CreateAdminDto): Promise<any>{
+// method to create admin
+    async createAdmin(createAdminDto: CreateAdminDto): Promise<{
+        message: string
+    }>{
         return this.adminManagementRepository.createAdmin(createAdminDto)
     }
 
 
-    // method to show single admin data
-    async showAdminData(id:string):Promise<any>{
+// method to show single admin data
+    async showAdminData(id:string):Promise<{
+        adminData:Admin
+    }>{
         return this.adminManagementRepository.showAdminData(id)
     }
 
 
-    // method to update single admin data
-    async updateAdmin( updateAdminDto: UpdateAdminDto, id: string){
+// method to update single admin data
+    async updateAdmin( updateAdminDto: UpdateAdminDto, id: string):Promise<{
+        message:string
+    }>{
         return this.adminManagementRepository.updateAdmin(updateAdminDto, id);
     }
 
 
-    // method to resend email verification
-    async resendEmailVerification(id:string):Promise<any>{
+// method to resend email verification
+    async resendEmailVerification(id:string):Promise<{
+        message:string
+    }>{
         return this.adminManagementRepository.resendEmailVerification(id);
     }
 
-    // method to reset password
-    async resetPassword(id:string):Promise<any>{
+// method to reset password
+    async resetPassword(id:string):Promise<{
+        message:string
+    }>{
         return this.adminManagementRepository.resetPassword(id)
     }
 
-    // method to delete admin
-    async deleteAdmin(id:string):Promise<any>{
+// method to delete admin
+    async deleteAdmin(id:string):Promise<{
+        message:string
+    }>{
         return this.adminManagementRepository.deleteAdmin(id)
     }
 }

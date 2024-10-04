@@ -18,7 +18,7 @@ export class AdminManagementController {
     constructor(private adminManagementService: AdminManagementService) {}
 
 
-
+// GET - end point to get all admins
     @Get('admins')
     @ApiOperation({ summary: 'Retrieve all Admin Users that matches Query' })  // Describes what the endpoint does
     @ApiResponse({ status: 200, description: 'A list of all admin users.', type: [Admin] }) 
@@ -41,7 +41,7 @@ export class AdminManagementController {
         return this.adminManagementService.getAdmins(getAdminsDto);
     }
 
-
+// POST - end point to create new admin
     @Post('admins')
     @ApiOperation({summary: 'Create new admin user as a head admin'})
     @ApiResponse({ status: 201, description: 'Admin user created successfully.' })
@@ -50,42 +50,59 @@ export class AdminManagementController {
     @ApiResponse({ status: 500, description: 'Internal server error.' })
     createAdmin(
         @Body() createAdminDto: CreateAdminDto
-    ):Promise<any>{
+    ):Promise<{
+        message: string
+    }>{
         return this.adminManagementService.createAdmin(createAdminDto)
     }
 
+// GET - end point to show informatiof of single admin    
     @Get('admins/:id')
     @ApiOperation({summary: "Show information of single admin"})
-    showAdminData(@Param('id') id:string){
+    showAdminData(@Param('id') id:string):Promise<{
+        adminData: Admin
+    }>{
         return this.adminManagementService.showAdminData(id)
     }
 
 
+// PATCH - end point to update admin users field    
     @Patch('admins/:id')
-    @ApiOperation({summary: 'Update admin user fields or suspend/delete user'})
+    @ApiOperation({summary: 'Update admin user fields or suspend user'})
     updateAdmin(
         @Body() updateAdminDto: UpdateAdminDto, 
         @Param('id') id: string
-    ):Promise<any>{
+    ):Promise<{
+        message: string
+    }>{
         return this.adminManagementService.updateAdmin(updateAdminDto, id)
     }
 
+// POST - end point to resend email for email verification    
     @Post('admins/:id/email')
     @ApiOperation({summary: 'Re-Send email for email verification'})
-    resendEmailVerification(@Param('id') id: string){
+    resendEmailVerification(@Param('id') id: string):Promise<{
+        message:string
+    }>{
         return this.adminManagementService.resendEmailVerification(id)
         
     }
 
+// POST - end point to reset password of admin    
     @Post('admins/:id/password')
     @ApiOperation({summary: 'Reset password and send to email, set inital password to true'})
-    resetPassword(@Param('id') id: string){
+    resetPassword(@Param('id') id: string):Promise<{
+        message:string
+    }>{
         return this.adminManagementService.resetPassword(id)
     }
 
+// DELETE - end point to delete admin user    
     @Delete('admins/:id')
     @ApiOperation({summary: 'Delete admin, set status to deleted '})
-    deleteAdmin(@Param('id') id:string):Promise<any>{
+    deleteAdmin(@Param('id') id:string):Promise<{
+        message:string
+    }>{
         return this.adminManagementService.deleteAdmin(id)
     }
 }
