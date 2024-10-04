@@ -19,23 +19,33 @@ export class UserRepository extends Repository<User>{
         super(User, dataSource.createEntityManager())
     }
 
-    private async verifyEmail(userId: string, email: string, randomPassword?:string ){
+/* -------- PRIVATE METHODS ---------- */
+
+// method to verify email
+    private async verifyEmail(userId: string, email: string, randomPassword?:string ):Promise<{
+        message:string
+    }>{
         const jwtPayload = { userId: userId, expireIn: '3600' };
         const jwtToken = await this.jwtService.sign(jwtPayload)
         const verifyUrl = `${process.env.BASE_URL}admin/auth/email?jwtToken=${encodeURIComponent(jwtToken)}`;
-        await this.emailService.authEmail(email, verifyUrl, randomPassword || '' );
+       return await this.emailService.authEmail(email, verifyUrl, randomPassword || '' );
     }
-
-    private generateRandomPassword(length: number = 8): string {
+// method to generate random string (password)
+    private async generateRandomPassword(length: number = 8):Promise<{
+        password: string
+    }>{
         const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-        let password = '';
+        let password: string = '';
         for (let i = 0; i < length; i++) {
             const randomIndex = Math.floor(Math.random() * characters.length);
             password += characters[randomIndex];
         }
-        return password;
+        return { password };
     }
 
+/* -------------- PUBLIC METHODS --------------- */
+
+// method to list all users
     async listAllUsers(companyId:string, listAllUsersDto:ListAllUsersDto):Promise<{
         result: User[],
         totalRecords: number,
@@ -102,7 +112,7 @@ export class UserRepository extends Repository<User>{
 
     }
 
-
+// method to show single user data
     async showUserData(companyId:string, userId: string):Promise<{
         userData: User,
         companyData: Company
@@ -125,6 +135,7 @@ export class UserRepository extends Repository<User>{
         }
     }
 
+// method to update single user    
     async updateUser(companyId:string, userId:string , updateUserDto: UpdateUserDto):Promise<{
         message:string
     }>{
@@ -174,7 +185,7 @@ export class UserRepository extends Repository<User>{
         }
     }
 
-
+// method to delete single user
     async deleteUser(companyId:string, userId:string):Promise<{
         message:string
     }>{
@@ -192,6 +203,8 @@ export class UserRepository extends Repository<User>{
         }
     }
 
+
+// method to reset password for user    
     async resetPassword(companyId:string, userId:string):Promise<{
         message:string
     }>{
