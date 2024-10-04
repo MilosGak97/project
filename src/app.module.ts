@@ -4,23 +4,23 @@ import { EmailModule } from './email/email.module';
 import { HealthController } from './app.controller';
 import { AdminModule } from './api/admin/admin.module';
 import { ClientModule } from './api/client/client.module';
-import { ConfigModule } from '@nestjs/config';  
-import { Mongoose } from 'mongoose';
+import { ConfigModule } from '@nestjs/config';   
 import { MongooseModule } from '@nestjs/mongoose';
+
 
 @Module({
   imports: [  
-     ConfigModule.forRoot({
+    ConfigModule.forRoot({
       isGlobal: true, // Makes the configuration accessible globally
     }),
-    MongooseModule.forRoot('mongodb+srv://milo:f85gl9aTve39BkEu@cluster0.5gbca.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0'),
+    MongooseModule.forRoot(process.env.MONGO_URI),
     TypeOrmModule.forRoot({
       type: 'postgres',
-      host: 'postgres-1.ch6caoe88tbd.eu-north-1.rds.amazonaws.com',
-      port: 5432,
-      username: 'postgres',
-      password: 'Jebemnevadim1.',
-      database: 'newdb', 
+      host: process.env.POSTGRES_HOST,
+      port: parseInt(process.env.POSTGRES_PORT, 10) || 5432,
+      username: process.env.POSTGRES_USER,
+      password: process.env.POSTGRES_PASSWORD,
+      database: process.env.POSTGRES_DB, 
       ssl: {
         rejectUnauthorized: false,
       },
@@ -30,8 +30,10 @@ import { MongooseModule } from '@nestjs/mongoose';
     EmailModule,
     AdminModule,
     ClientModule,
-     ],
-    
-controllers: [HealthController]
+  ],
+  controllers: [HealthController]
 })
 export class AppModule {}
+
+
+
