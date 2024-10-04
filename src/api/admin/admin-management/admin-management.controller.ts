@@ -12,21 +12,21 @@ import { UpdateAdminDto } from './dto/update-admin.dto';
 
 
 
-@ApiTags('Admin Management') // This will group the endpoints under "Admin Users"
-@Controller('admin/admin-management') // Example route
+@ApiTags('Admin Management') 
+@Controller('admin/admin-management') 
+@UseGuards(AuthGuard(), RolesGuard) 
+@Roles(AdminRole.HEAD)
 export class AdminManagementController {
     constructor(private adminManagementService: AdminManagementService) {}
 
 
 // GET - end point to get all admins
     @Get('admins')
-    @ApiOperation({ summary: 'Retrieve all Admin Users that matches Query' })  // Describes what the endpoint does
+    @ApiOperation({ summary: 'Retrieve all Admin Users that matches Query' })  
     @ApiResponse({ status: 200, description: 'A list of all admin users.', type: [Admin] }) 
     @ApiResponse({ status: 401, description: 'Not authorized'}) 
     @ApiResponse({ status: 403, description: 'You do not have access to this resource'}) 
     @ApiResponse({ status: 500, description: 'Internal Server Error: Something went wrong on the server.' })
-    @UseGuards(AuthGuard(), RolesGuard) 
-    @Roles(AdminRole.HEAD)
     getAdminUsers(
         @Query() getAdminsDto: GetAdminsDto
     ):Promise<{
@@ -56,7 +56,7 @@ export class AdminManagementController {
         return this.adminManagementService.createAdmin(createAdminDto)
     }
 
-// GET - end point to show informatiof of single admin    
+// GET - end point to show information of single admin    
     @Get('admins/:id')
     @ApiOperation({summary: "Show information of single admin"})
     showAdminData(@Param('id') id:string):Promise<{

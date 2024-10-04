@@ -10,18 +10,26 @@ export class AuthService {
         private readonly authRepository: AuthRepository
     ){}
     
-    async verifyEmail(token){
+    async verifyEmail(token):Promise<{
+        refreshToken:string,
+        accessToken: string
+    }>{
         return this.authRepository.verifyEmail(token)
     }
   
-    async signIn(signInDto:SignInDto):Promise<any>{
+    async signIn(signInDto:SignInDto):Promise<{
+        refreshToken:string,
+        accessToken: string
+    }>{
         return this.authRepository.signIn(signInDto)     
     }
-    async logout(token){
+    async logout(token):Promise<boolean>{
         return await this.authRepository.logout(token)
     }
 
-    async passwordReset(passwordResetDto: PasswordResetDto, admin: Admin){
+    async passwordReset(passwordResetDto: PasswordResetDto, admin: Admin):Promise<{
+        message:string
+    }>{
         return this.authRepository.passwordReset(passwordResetDto, admin);
     }
 
@@ -29,7 +37,9 @@ export class AuthService {
         return this.authRepository.whoAmI(token)
     }
      
-    async refreshAccessToken(refreshToken):Promise<any>{
+    async refreshAccessToken(refreshToken):Promise<{
+        newAccessToken: string
+    }>{
         return this.authRepository.refreshAccessToken(refreshToken)
     }
 

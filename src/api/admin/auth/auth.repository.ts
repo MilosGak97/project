@@ -17,7 +17,10 @@ export class AuthRepository extends Repository<Admin>{
         private readonly jwtService: JwtService,
     ){super( Admin, dataSource.createEntityManager())}
 
-    async verifyEmail(token: string): Promise<any> {
+    async verifyEmail(token: string): Promise<{
+        refreshToken: string,
+        accessToken: string
+    }> {
         // Verify the token and extract the payload
         const payload = await this.jwtService.verify(token);
     
@@ -46,7 +49,10 @@ export class AuthRepository extends Repository<Admin>{
     }
     
 
-    async signIn(signInAdminDto: SignInDto): Promise<any> { 
+    async signIn(signInAdminDto: SignInDto): Promise<{
+        refreshToken:string,
+        accessToken: string
+    }> { 
             const { email, password } = signInAdminDto;
             this.logger.log(`Attempting to sign in admin with email: ${email}`);
         
@@ -79,7 +85,7 @@ export class AuthRepository extends Repository<Admin>{
                 }
         }
         
-    async logout(token: string ){
+    async logout(token: string ):Promise<boolean>{
 
         try {
             const payload: JwtPayload = await this.jwtService.verify(token);
@@ -96,6 +102,7 @@ export class AuthRepository extends Repository<Admin>{
         
         } catch (error) {
             throw new UnauthorizedException('Invalid or expired token');
+            return false
         }
     }
  
@@ -103,7 +110,9 @@ export class AuthRepository extends Repository<Admin>{
     
 
 
-    async passwordReset(passwordResetDto: PasswordResetDto, admin: Admin ):Promise<any>{
+    async passwordReset(passwordResetDto: PasswordResetDto, admin: Admin ):Promise<{
+        message: string
+    }>{
             const {oldPassword , newPassword , newPasswordRepeat} = passwordResetDto;
 
             const user = await this.findOne({where: {id: admin.id}})
@@ -167,7 +176,9 @@ export class AuthRepository extends Repository<Admin>{
     }
     }
 
-    async refreshAccessToken(refreshToken:string):Promise<string>{
+    async refreshAccessToken(refreshToken:string):Promise<{
+        newAccessToken: string
+    }>{
         try{
             const payload:JwtPayload = await this.jwtService.verify(refreshToken)
 
@@ -181,7 +192,7 @@ export class AuthRepository extends Repository<Admin>{
 
             // Create a new access token
             const newAccessToken = this.jwtService.sign({ adminId }, {expiresIn: '1h'});
-            return newAccessToken;
+            return {newAccessToken};
         }catch(error){
             throw new UnauthorizedException('Invalid refresh token')
         }
