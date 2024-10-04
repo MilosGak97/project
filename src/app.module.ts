@@ -13,7 +13,7 @@ import { MongooseModule } from '@nestjs/mongoose';
      ConfigModule.forRoot({
       isGlobal: true, // Makes the configuration accessible globally
     }),
-    MongooseModule.forRoot('mongodb+srv://milo:TheDVTN2020!@cluster0.5gbca.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0'),
+    MongooseModule.forRoot('mongodb+srv://milo:f85gl9aTve39BkEu@cluster0.5gbca.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0'),
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: 'postgres-1.ch6caoe88tbd.eu-north-1.rds.amazonaws.com',
