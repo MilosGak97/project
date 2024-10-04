@@ -7,8 +7,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { RolesGuard } from '../auth/roles.guard';
 import { Roles } from '../auth/roles.decorator';
 import { AdminRole } from '../../../enums/admin-role.enum';
-import { AdminManagementService } from './admin-management.service'; 
-import { SummaryKeyType } from '@aws-sdk/client-iam';
+import { AdminManagementService } from './admin-management.service';  
 import { UpdateAdminDto } from './dto/update-admin.dto';
 
 
@@ -30,7 +29,15 @@ export class AdminManagementController {
     @Roles(AdminRole.HEAD)
     getAdminUsers(
         @Query() getAdminsDto: GetAdminsDto
-    ): Promise<any> {
+    ):Promise<{
+        result: Admin[],
+        totalRecords: number,
+        currentPage: number,
+        totalPages: number,
+        limitNumber: number,
+        offsetNumber: number
+
+    }> {
         return this.adminManagementService.getAdmins(getAdminsDto);
     }
 

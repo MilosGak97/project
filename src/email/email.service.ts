@@ -7,7 +7,9 @@ export class EmailService {
     sgMail.setApiKey(process.env.SENDGRID_API_KEY); // Ensure your SENDGRID_API_KEY is set in the environment variables
   }
 
-  async authEmail(to: string, verifyUrl: string, password: string) { 
+  async authEmail(to: string, verifyUrl: string, password: string):Promise<{
+    message:string
+  }> { 
     const htmlContent = `
     <!DOCTYPE html>
     <html lang="en">
@@ -89,7 +91,9 @@ export class EmailService {
 
     try {
         await sgMail.send(msg);
-        console.log('Email sent successfully');
+        return {
+            message: "Email has been sent succesfully."
+        }
       } catch (error) {
         console.error('Error sending email:', error.response.body); // Log the full error response
         throw new HttpException(

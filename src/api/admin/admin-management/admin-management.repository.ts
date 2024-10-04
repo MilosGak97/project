@@ -23,12 +23,50 @@ export class AdminManagementRepository extends Repository<Admin> {
         super(Admin, dataSource.createEntityManager());
     }
 
+    /* ----------- PRIVATE METHOD ----------------*/
 
-    
-    async getAdmins(getAdminsDto:GetAdminsDto):Promise<any>{
+    // private method that will generate random string (password)
+    private async generateRandomPassword(length: number = 8):Promise<string> {
+        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        let password = '';
+        for (let i = 0; i < length; i++) {
+            const randomIndex = Math.floor(Math.random() * characters.length);
+            password += characters[randomIndex];
+        }
+        return password;
+    }
+
+
+    // private method that will call function for veryfing email 
+    private async verifyEmail(userId: string,email: string, randomPassword?:string ):Promise<{
+        message:string
+    }>{
+        const jwtPayload = { userId: userId, expireIn: '3600' };
+        const jwtToken = await this.jwtService.sign(jwtPayload)
+        const verifyUrl = `${process.env.BASE_URL}admin/auth/email?jwtToken=${encodeURIComponent(jwtToken)}`;
+        return await this.emailService.authEmail(email, verifyUrl, randomPassword || '' );
+    }
+
+
+
+    /* ---------- PUBLIC METHOD ------------- */
+
+    // method to get all admin data
+    async getAdmins(getAdminsDto:GetAdminsDto):Promise<{
+        result: Admin[],
+        totalRecords: number,
+        currentPage: number,
+        totalPages: number,
+        limitNumber: number,
+        offsetNumber: number
+
+    }>{
         const { searchQuery, role, status, email_verified , initial_password, limit, offset} = getAdminsDto
 
         const query = this.createQueryBuilder('adminUser')
+
+        const limitNumber = Number(limit)
+        const offsetNumber = Number(offset)
 
         if(searchQuery){
             query.andWhere(
@@ -54,41 +92,26 @@ export class AdminManagementRepository extends Repository<Admin> {
             query.andWhere('(adminUser.email_verified = :email_verified)', {email_verified})
         }
 
-        query.take(limit)
-        query.skip(offset)
+        query.take(limitNumber)
+        query.skip(offsetNumber)
 
         const result = await query.getMany();
         const totalRecords = await query.getCount()
-        const currentPage = Math.ceil(offset/limit) + 1
-        const totalPages = Math.ceil(totalRecords / limit);
+        const currentPage = Math.ceil(offset/limitNumber) + 1
+        const totalPages = Math.ceil(totalRecords / limitNumber);
 
         return {
             result,
             totalRecords,
             currentPage,
             totalPages, 
-            limit, 
-            offset
+            limitNumber, 
+            offsetNumber
         }
     } 
 
-    private generateRandomPassword(length: number = 8): string {
-        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-        let password = '';
-        for (let i = 0; i < length; i++) {
-            const randomIndex = Math.floor(Math.random() * characters.length);
-            password += characters[randomIndex];
-        }
-        return password;
-    }
 
-    private async verifyEmail(userId: string,email: string, randomPassword?:string ){
-        const jwtPayload = { userId: userId, expireIn: '3600' };
-        const jwtToken = await this.jwtService.sign(jwtPayload)
-        const verifyUrl = `${process.env.BASE_URL}admin/auth/email?jwtToken=${encodeURIComponent(jwtToken)}`;
-        await this.emailService.authEmail(email, verifyUrl, randomPassword || '' );
 
-    }
     
     async createAdmin(createAdminDto: CreateAdminDto): Promise<any> {
         //this.logger.log('Creating admin user...'); // Log the start of the process
@@ -138,7 +161,7 @@ export class AdminManagementRepository extends Repository<Admin> {
 
             try {
             // Generate random password
-            const randomPassword = this.generateRandomPassword();
+            const randomPassword = await this.generateRandomPassword();
             const hashedPassword = await bcrypt.hash(randomPassword, 10);
 
             const newAdminUser = new Admin();
