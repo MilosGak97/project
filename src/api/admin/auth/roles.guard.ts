@@ -1,14 +1,20 @@
-import { Injectable, CanActivate, ExecutionContext, ForbiddenException, Redirect, UnauthorizedException } from '@nestjs/common';
+import { Injectable, CanActivate, ExecutionContext, ForbiddenException, UnauthorizedException } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { Admin } from '../../../entities/admin.entity'; 
+import { Admin } from '../../../entities/admin.entity';
 import { AdminRole } from '../../../enums/admin-role.enum';
+
 @Injectable()
 export class RolesGuard implements CanActivate {
     constructor(private reflector: Reflector) {}
 
     canActivate(context: ExecutionContext): boolean {
-        const roles = this.reflector.get<AdminRole[]>('roles', context.getHandler());
-        if (!roles) {
+        // Get the required roles from metadata (can be set on controller or method)
+        const roles = this.reflector.getAllAndOverride<AdminRole[]>('roles', [
+            context.getHandler(),
+            context.getClass(),
+        ]);
+
+        if (!roles || roles.length === 0) {
             return true; // No roles specified, allow access by default
         }
 
@@ -16,18 +22,21 @@ export class RolesGuard implements CanActivate {
         const user: Admin = request.user; // Get the user from request
 
         if (!user) {
-            throw new ForbiddenException('User not authenticated');
+            throw new UnauthorizedException('User not authenticated');
         }
 
-        if (!roles.includes(user.role)) {
+        // Check if the user has at least one of the required roles
+        const hasRole = roles.some((role) => user.role === role);
+
+        if (!hasRole) {
             throw new ForbiddenException('You do not have access to this resource');
         }
 
-        if(user.initial_password){
-            throw new UnauthorizedException('Initial password is true')
+        // Check if the user still has the initial password set
+        if (user.initial_password) {
+            throw new UnauthorizedException('Initial password is true. Please change your password.');
         }
 
-        return true; // User has the necessary role
+        return true; // User has one of the necessary roles
     }
 }
-

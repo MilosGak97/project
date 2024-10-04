@@ -17,6 +17,7 @@ export class AuthRepository extends Repository<Admin>{
         private readonly jwtService: JwtService,
     ){super( Admin, dataSource.createEntityManager())}
 
+// new method
     async verifyEmail(token: string): Promise<{
         refreshToken: string,
         accessToken: string
@@ -49,6 +50,7 @@ export class AuthRepository extends Repository<Admin>{
     }
     
 
+// new method
     async signIn(signInAdminDto: SignInDto): Promise<{
         refreshToken:string,
         accessToken: string
@@ -84,7 +86,8 @@ export class AuthRepository extends Repository<Admin>{
                     throw new UnauthorizedException('Please check your login credentials');
                 }
         }
-        
+       
+// new method 
     async logout(token: string ):Promise<boolean>{
 
         try {
@@ -105,11 +108,9 @@ export class AuthRepository extends Repository<Admin>{
             return false
         }
     }
- 
-       
-    
 
 
+// new method
     async passwordReset(passwordResetDto: PasswordResetDto, admin: Admin ):Promise<{
         message: string
     }>{
@@ -149,6 +150,7 @@ export class AuthRepository extends Repository<Admin>{
          }
     }
 
+// new method
     async whoAmI(token):Promise<Admin>{
 
         try{
@@ -176,6 +178,7 @@ export class AuthRepository extends Repository<Admin>{
     }
     }
 
+// new method
     async refreshAccessToken(refreshToken:string):Promise<{
         newAccessToken: string
     }>{

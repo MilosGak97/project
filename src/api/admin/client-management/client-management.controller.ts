@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Query } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ListAllCompaniesDto } from './dto/list-all-companies.dto';
 import { ClientManagementService } from './client-management.service';
@@ -7,15 +7,22 @@ import { ListAllUsersDto } from './dto/list-all-users.dto';
 import { Company } from 'src/entities/company.entity';
 import { User } from 'src/entities/user.entity';
 import { UpdateUserDto } from './dto/updateUser.dto';
+import { AuthGuard } from '@nestjs/passport';
+import { RolesGuard } from '../auth/roles.guard';
+import { Roles } from '../auth/roles.decorator';
+import { AdminRole } from 'src/enums/admin-role.enum';
+import { Admin } from 'typeorm';
 
 @ApiTags('Client Management')
 @Controller('admin/client-management')
+@UseGuards(AuthGuard(), RolesGuard)
+@Roles(AdminRole.HEAD, AdminRole.SUPPORT)
 export class ClientManagementController {
     constructor(private readonly clientManagementService: ClientManagementService) { }
 
 // GET - endpoint to list all companies    
     @Get('companies')
-    @ApiOperation({ summary: 'List all companies and filter with query' })
+    @ApiOperation({ summary: 'List all companies and filter with query' }) 
     async listAllCompanies(@Query() listAllCompaniesDto: ListAllCompaniesDto): Promise<{
         result: Company[],
         totalRecords: number,
@@ -29,14 +36,14 @@ export class ClientManagementController {
 
 // GET - endpoint to show single company data
     @Get('companies/:id')
-    @ApiOperation({ summary: "Show data of single company" })
+    @ApiOperation({ summary: "Show data of single company" }) 
     async showCompanyData(@Param('id') id: string): Promise<{ companyData: Company }> {
         return this.clientManagementService.companyData(id)
     }
 
 // PATCH - endpoint to update single company data    
     @Patch('companies/:id')
-    @ApiOperation({ summary: "Update single company data" })
+    @ApiOperation({ summary: "Update single company data" }) 
     async updateCompanyData(@Param('id') id: string,
         @Body() updateCompanyDataDto: UpdateCompanyDataDto
     ):Promise<{
@@ -74,7 +81,10 @@ export class ClientManagementController {
 // GET - endpoint to show single user data    
     @Get('companies/:companyId/users/:id')
     @ApiOperation({summary: "Show user data including company information"})
-    async showUserData(@Param('companyId') companyId:string, @Param('id') userId:string){
+    async showUserData(@Param('companyId') companyId:string, @Param('id') userId:string):Promise<{
+        userData: User,
+        companyData: Company
+    }>{
         return this.clientManagementService.showUserData(companyId, userId)
     }
 
@@ -99,7 +109,9 @@ export class ClientManagementController {
     async userDelete(
         @Param('companyId') companyId:string,
         @Param('id') userId:string
-){
+):Promise<{
+    message:string
+}>{
         return this.clientManagementService.deleteUser(companyId,userId)
     }
 
