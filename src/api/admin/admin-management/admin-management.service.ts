@@ -3,7 +3,7 @@ import { AdminManagementRepository } from './admin-management.repository';
 import { CreateAdminDto } from './dto/create-admin.dto'; 
 import { GetAdminsDto } from './dto/get-admins.dto';  
 import { UpdateAdminDto } from './dto/update-admin.dto';
-import { Admin } from 'src/entities/admin.entity';
+import { Admin } from '../entities/admin.entity';
 
 @Injectable()
 export class AdminManagementService { 

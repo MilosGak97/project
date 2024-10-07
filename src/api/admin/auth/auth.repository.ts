@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable, Logger, NotFoundException, UnauthorizedException } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
-import { Admin } from "src/entities/admin.entity";
-import { AdminStatus } from "src/enums/admin-status.enum";
+import { Admin } from '../entities/admin.entity';
+import { AdminStatus } from "src/api/admin/enums/admin-status.enum";
 import { DataSource, Repository } from "typeorm";
 import { SignInDto } from "./dto/sign-in-admin.dto";
 import * as bcrypt from 'bcrypt' 

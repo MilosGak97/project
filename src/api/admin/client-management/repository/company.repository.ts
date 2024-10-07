@@ -1,9 +1,9 @@
-import { Company } from "src/entities/company.entity";
+import { Company } from "src/api/common/entities/company.entity";
 import { DataSource, Repository } from "typeorm";
-import { ListAllCompaniesDto } from "./dto/list-all-companies.dto";
+import { ListAllCompaniesDto } from "../dto/list-all-companies.dto";
 import { ConflictException, Injectable, NotFoundException } from "@nestjs/common";
-import { UpdateCompanyDataDto } from "./dto/update-company-data.dto";
-import { CompanyStatus } from "src/enums/company-status.enum";
+import { UpdateCompanyDataDto } from "../dto/update-company-data.dto";
+import { CompanyStatus } from "src/api/common/enums/company-status.enum";
 
 @Injectable()
 export class CompanyRepository extends Repository<Company> {
@@ -11,6 +11,7 @@ export class CompanyRepository extends Repository<Company> {
         super(Company, dataSource.createEntityManager())
     }
 
+// method to list all companies    
     async listAllCompanies(listAllCompaniesDto: ListAllCompaniesDto): Promise<{
         result: Company[],
         totalRecords: number,
@@ -48,8 +49,10 @@ export class CompanyRepository extends Repository<Company> {
         }
     }
 
-
-    async companyData(id: string): Promise<{ companyData: Company }> {
+// method to list single company data
+    async companyData(id: string): Promise<{ 
+        companyData: Company 
+    }> {
         const companyData = await this.findOne({ where: { id } })
         if (!companyData) {
             throw new NotFoundException('Company with this ID is not found.')
@@ -58,6 +61,7 @@ export class CompanyRepository extends Repository<Company> {
         return { companyData };
     }
 
+// method to update single company data
     async updateCompanyData(id: string, updateCompanyDataDto: UpdateCompanyDataDto):Promise<{
         message:string
     }> {
@@ -117,6 +121,7 @@ export class CompanyRepository extends Repository<Company> {
 
     }
 
+// method to delete single company    
     async deleteCompany(id: string): Promise<{
         message: string
     }> {

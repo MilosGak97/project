@@ -1,12 +1,12 @@
 import { Body, Controller, Post, Get, Query, UseGuards, Patch, Param, Delete } from '@nestjs/common'; 
 import { CreateAdminDto } from './dto/create-admin.dto';
-import { Admin } from '../../../entities/admin.entity';
+import { Admin } from '../entities/admin.entity';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { GetAdminsDto } from './dto/get-admins.dto'; 
 import { AuthGuard } from '@nestjs/passport';
 import { RolesGuard } from '../auth/roles.guard';
 import { Roles } from '../auth/roles.decorator';
-import { AdminRole } from '../../../enums/admin-role.enum';
+import { AdminRole } from '../enums/admin-role.enum';
 import { AdminManagementService } from './admin-management.service';  
 import { UpdateAdminDto } from './dto/update-admin.dto';
 

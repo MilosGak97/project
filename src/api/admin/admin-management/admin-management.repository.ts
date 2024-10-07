@@ -1,11 +1,12 @@
-import { Admin } from "../../../entities/admin.entity";
+
+import { Admin } from '../entities/admin.entity';
 import { DataSource, Repository } from "typeorm";
 import { CreateAdminDto } from './dto/create-admin.dto';
 import { Injectable , HttpException, HttpStatus, NotFoundException, Logger, ConflictException} from "@nestjs/common";
 import { GetAdminsDto } from "./dto/get-admins.dto"; 
 import * as bcrypt from 'bcrypt' 
-import { AdminRole } from "../../../enums/admin-role.enum";
-import { AdminStatus } from "../../../enums/admin-status.enum";
+import { AdminRole } from "../enums/admin-role.enum";
+import { AdminStatus } from "../enums/admin-status.enum";
 import { EmailService } from "src/email/email.service";  
 import { JwtService } from "@nestjs/jwt";
 import * as dotenv from 'dotenv';

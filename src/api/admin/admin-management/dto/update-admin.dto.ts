@@ -1,7 +1,7 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { IsEmail, IsEnum, IsOptional, IsPhoneNumber, IsString } from "class-validator";
-import { AdminRole } from "src/enums/admin-role.enum";
-import { AdminStatus } from "src/enums/admin-status.enum";
+import { AdminRole } from "src/api/admin/enums/admin-role.enum";
+import { AdminStatus } from "src/api/admin/enums/admin-status.enum";
 
 export class UpdateAdminDto{
     @ApiProperty({required:false})

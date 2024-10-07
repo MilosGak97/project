@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { CompanyRepository } from './company.repository';
-import { UserRepository } from './users.repository';
+import { CompanyRepository } from './repository/company.repository';
+import { UserRepository } from './repository/users.repository';
 import { ListAllCompaniesDto } from './dto/list-all-companies.dto';
 import { UpdateCompanyDataDto } from './dto/update-company-data.dto';
 import { ListAllUsersDto } from './dto/list-all-users.dto';
-import { Company } from 'src/entities/company.entity';
-import { User } from 'src/entities/user.entity';
+import { Company } from 'src/api/common/entities/company.entity';
+import { User } from 'src/api/common/entities/user.entity';
 import { UpdateUserDto } from './dto/updateUser.dto';
 
 @Injectable()

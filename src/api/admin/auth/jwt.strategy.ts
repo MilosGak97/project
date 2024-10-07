@@ -2,7 +2,7 @@ import { Injectable, Logger, UnauthorizedException } from "@nestjs/common";
 import { PassportStrategy } from "@nestjs/passport";
 import { Strategy } from "passport-jwt"; 
 import { JwtPayload } from "./dto/jwt-payload.interface";
-import { Admin } from "../../../entities/admin.entity";
+import { Admin } from "../entities/admin.entity";
 import { AuthRepository } from "./auth.repository";
 
 @Injectable()

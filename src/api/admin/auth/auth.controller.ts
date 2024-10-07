@@ -5,7 +5,7 @@ import { SignInDto } from './dto/sign-in-admin.dto';
 import { Request, Response } from 'express'; 
 import { PasswordResetDto } from './dto/password-reset.dto';
 import { GetAdmin } from './get-admin.decorator';
-import { Admin } from 'src/entities/admin.entity';
+import { Admin } from '../entities/admin.entity';
 import { AuthGuard } from '@nestjs/passport';
 
 @ApiTags('Auth')
@@ -78,7 +78,6 @@ export class AuthController {
     }
 
 
-
 // new endpoint    
     @Delete()
     @ApiOperation({summary: "Logout user and delete refresh and access token"})
@@ -99,7 +98,6 @@ export class AuthController {
             message: "User is logged out."
         };
     }
-
 
 
 // new end point    

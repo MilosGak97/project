@@ -2,8 +2,8 @@ import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, Up
 import { Company } from "./company.entity";
 import { ApiProperty } from "@nestjs/swagger";
 import { IsBoolean, IsDate, IsEmail, IsEnum, IsNotEmpty, IsOptional, IsPhoneNumber, IsString, IsStrongPassword } from "class-validator"; 
-import { UserRole } from "src/enums/user-role.enum";
-import { UserStatus } from "src/enums/user-status.enum";
+import { UserRole } from "src/api/common/enums/user-role.enum";
+import { UserStatus } from "src/api/common/enums/user-status.enum";
 
 @Entity('users')
 export class User{

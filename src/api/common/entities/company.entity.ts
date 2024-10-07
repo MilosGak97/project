@@ -1,9 +1,10 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { IsEmail, IsEnum, IsJSON, IsNotEmpty, IsOptional, IsPhoneNumber, IsString } from "class-validator"; 
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, ManyToMany, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { User } from "./user.entity"; 
-import { Subscription } from "./subscription.entity";
-import { CompanyStatus } from "src/enums/company-status.enum";
+//import { Subscription } from "../../data/property-listings/entities/subscription.entity";
+import { CompanyStatus } from "src/api/common/enums/company-status.enum"; 
+import { Market } from "src/api/data/entities/market.entity";
 
 @Entity('companies')
 export class Company{
@@ -61,11 +62,12 @@ export class Company{
     @Column()
     status: CompanyStatus
 
+/*
     @ApiProperty({required:false})
     @IsOptional()
-    @OneToMany(() => Subscription, (subscription) => subscription.company)
+    @OneToMany(() => Subscription, (subscription) => subscription.company) // Company (1) ---- Subscription (M)
     subscriptions?: Subscription[]
-
+*/
     @ApiProperty({required: false})
     @IsOptional()
     @OneToMany(() => User, (user) => user.company)

@@ -4,13 +4,13 @@ import { ListAllCompaniesDto } from './dto/list-all-companies.dto';
 import { ClientManagementService } from './client-management.service';
 import { UpdateCompanyDataDto } from './dto/update-company-data.dto';
 import { ListAllUsersDto } from './dto/list-all-users.dto';
-import { Company } from 'src/entities/company.entity';
-import { User } from 'src/entities/user.entity';
+import { Company } from 'src/api/common/entities/company.entity';
+import { User } from 'src/api/common/entities/user.entity';
 import { UpdateUserDto } from './dto/updateUser.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { RolesGuard } from '../auth/roles.guard';
 import { Roles } from '../auth/roles.decorator';
-import { AdminRole } from 'src/enums/admin-role.enum';
+import { AdminRole } from 'src/api/admin/enums/admin-role.enum';
 import { Admin } from 'typeorm';
 
 @ApiTags('Client Management')
@@ -117,6 +117,7 @@ export class ClientManagementController {
 
 // POST - endpoint to reset password for single user    
     @Post('companies/:companyId/users/:id/password')
+    @ApiOperation({summary: "Reset client password"})
     async resetPassword(@Param('companyId') companyId:string, @Param('id') userId:string):Promise<{
         message:string
     }>{

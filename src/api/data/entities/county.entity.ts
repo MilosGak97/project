@@ -1,8 +1,6 @@
-import { APP_FILTER } from "@nestjs/core";
 import { ApiProperty } from "@nestjs/swagger";
-import { IsBoolean, IsEnum, IsJSON, IsNotEmpty, IsOptional, IsString } from "class-validator";
-import { States } from "src/enums/states.enum";
-import { json } from "stream/consumers";
+import {  IsEnum, IsNotEmpty, IsOptional, IsString } from "class-validator";
+import { States } from "src/api/common/enums/states.enum";
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Market } from "./market.entity";
 
@@ -24,26 +22,26 @@ export class County{
     @Column({nullable:false})
     state: States
 
-    @ApiProperty({required:true})
-    @IsBoolean()
-    @IsNotEmpty()
-    @Column({nullable:false})
-    belong_to_market: boolean
-
     @ApiProperty({required:false})
-    @IsJSON()
-    @IsOptional()  
-    @Column({ type: 'json', nullable: true })
-    market_size: JSON
+    @IsString()
+    @IsOptional()
+    @Column()
+    zillow_url_new?: string
 
     @ApiProperty({required:false})
     @IsString()
     @IsOptional()
     @Column()
-    zillow_url: string
+    zillow_url_sold?: string
+
+    @ApiProperty({required: false})
+    @IsString()
+    @IsOptional()
+    @Column({type: 'json'})
+    zipcodes?: string[];
 
     @ApiProperty({required:false})
     @IsOptional()
-    @ManyToOne(()=> Market, (market) => market.county)
-    market: Market
+    @ManyToOne(()=> Market, (market) => market.counties)
+    market?: Market
 }

@@ -6,6 +6,8 @@ import { AdminModule } from './api/admin/admin.module';
 import { ClientModule } from './api/client/client.module';
 import { ConfigModule } from '@nestjs/config';   
 import { MongooseModule } from '@nestjs/mongoose';
+import { DataModule } from './api/data/data.module'; 
+import { ScrapperModule } from './api/admin/scrapper/scrapper.module';
 
 
 @Module({
@@ -30,6 +32,8 @@ import { MongooseModule } from '@nestjs/mongoose';
     EmailModule,
     AdminModule,
     ClientModule,
+    DataModule,
+    ScrapperModule,
   ],
   controllers: [HealthController]
 })
