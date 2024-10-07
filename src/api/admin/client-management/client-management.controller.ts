@@ -3,15 +3,15 @@ import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ListAllCompaniesDto } from './dto/list-all-companies.dto';
 import { ClientManagementService } from './client-management.service';
 import { UpdateCompanyDataDto } from './dto/update-company-data.dto';
-import { ListAllUsersDto } from './dto/list-all-users.dto';
-import { Company } from 'src/api/common/entities/company.entity';
-import { User } from 'src/api/common/entities/user.entity';
+import { ListAllUsersDto } from './dto/list-all-users.dto'; 
+import { User } from 'src/api/entities/user.entity';
 import { UpdateUserDto } from './dto/updateUser.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { RolesGuard } from '../auth/roles.guard';
 import { Roles } from '../auth/roles.decorator';
-import { AdminRole } from 'src/api/admin/enums/admin-role.enum';
-import { Admin } from 'typeorm';
+import { AdminRole } from 'src/api/enums/admin-role.enum';
+import { Company } from 'src/api/entities/company.entity';
+
 
 @ApiTags('Client Management')
 @Controller('admin/client-management')

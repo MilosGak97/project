@@ -1,9 +1,9 @@
-import { Company } from "src/api/common/entities/company.entity";
+import { Company } from "src/api/entities/company.entity";
 import { DataSource, Repository } from "typeorm";
 import { ListAllCompaniesDto } from "../dto/list-all-companies.dto";
 import { ConflictException, Injectable, NotFoundException } from "@nestjs/common";
 import { UpdateCompanyDataDto } from "../dto/update-company-data.dto";
-import { CompanyStatus } from "src/api/common/enums/company-status.enum";
+import { CompanyStatus } from "src/api/enums/company-status.enum";
 
 @Injectable()
 export class CompanyRepository extends Repository<Company> {

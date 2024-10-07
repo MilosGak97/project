@@ -1,7 +1,7 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { IsEmail, IsEnum, IsObject, IsOptional, IsPhoneNumber, IsString } from "class-validator";
-import { UserRole } from "src/api/common/enums/user-role.enum";
-import { UserStatus } from "src/api/common/enums/user-status.enum";
+import { UserRole } from "src/api/enums/user-role.enum";
+import { UserStatus } from "src/api/enums/user-status.enum";
 
 export class UpdateUserDto{
     @ApiProperty({required:false})

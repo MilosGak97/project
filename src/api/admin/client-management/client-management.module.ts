@@ -4,12 +4,12 @@ import { ClientManagementService } from './client-management.service';
 import { CompanyRepository } from './repository/company.repository';
 import { UserRepository } from './repository/users.repository';  
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { User } from 'src/api/common/entities/user.entity';
-import { Company } from 'src/api/common/entities/company.entity';
+import { User } from 'src/api/entities/user.entity'; 
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport'; 
 //import { Subscription } from 'src/api/data/property-listings/entities/subscription.entity';
 import { EmailService } from 'src/email/email.service';
+import { Company } from 'src/api/entities/company.entity';
 
 @Module({
   imports:

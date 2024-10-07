@@ -1,0 +1,86 @@
+import { ConflictException, Injectable, NotFoundException } from "@nestjs/common"
+import { County } from "../entities/county.entity"
+import { DataSource, Repository } from "typeorm"
+import { MarketRepository } from "./market.repository"
+import { CreateCountyDto } from "../admin/market-management/dto/create-county.dto"
+import { ListCountiesDto } from "../admin/market-management/dto/list-counties.dto"
+import { CountyStatus } from "../enums/county-status.enum"
+
+@Injectable()
+export class CountyRepository extends Repository<County>{
+    constructor(
+         private readonly dataSource: DataSource,
+         private readonly marketRepository: MarketRepository,
+    ){
+        super(County, dataSource.createEntityManager())
+    }
+
+    
+// new method
+async createCounty(marketId:string, createCountyDto: CreateCountyDto):Promise<{
+    message: string
+}>{
+    const market = await this.marketRepository.findOne({where: {id: marketId}})
+    if(!market){
+        throw new NotFoundException("Market with provided ID does not exist.")
+    }
+    const {name, zillow_url_new, zillow_url_sold, state, zipcodes } = createCountyDto
+
+    if(!name){
+        throw new ConflictException("Name field is empty, but mandatory.")
+    }
+    if(!state){
+        throw new ConflictException("State field is empty, but mandatory.")
+    }
+    const county = new County()
+    county.name = name
+    county.state = state
+    county.status = CountyStatus.ACTIVE
+    
+    if(zillow_url_new){
+        county.zillow_url_new = zillow_url_new
+    }
+
+    if(zillow_url_sold){
+        county.zillow_url_sold = zillow_url_sold
+    }
+    
+    if(zipcodes){
+        county.zipcodes= zipcodes
+    }
+
+    county.market = market
+
+    await this.save(county)
+
+    return {message: "County is successfully created."}
+}
+// new method
+async updateCounty(){
+
+}
+// new method
+async deleteCounty(marketId:string, countyId: string){
+    const county = await this.findOne({where: {market: {id: marketId}, id: countyId}})
+    if(!county){
+        throw new NotFoundException("Couldnt find county based on Market ID and County ID.")
+    }
+    county.status = CountyStatus.DELETED
+    await this.save(county)
+    return {
+        message:"County is successfully deleted."
+    }
+}
+// new method
+async listCounties(marketId: string, listCountiesDto: ListCountiesDto):Promise<{
+    counties: County[]
+}>{
+     
+    const counties = await this.find({where: {market: {id: marketId}}})
+    if(!counties){
+        throw new NotFoundException("There is no counties withing provided Market ID.")
+    }
+    return {counties}
+
+}
+}

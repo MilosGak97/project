@@ -1,8 +1,8 @@
 import { Injectable, Res } from '@nestjs/common'; 
-import { AuthRepository } from './auth.repository';
-import { SignInDto } from './dto/sign-in-admin.dto'; 
-import { Admin } from '../entities/admin.entity';
-import { PasswordResetDto } from './dto/password-reset.dto';
+import { AuthRepository } from './repository/auth.repository';
+import { SignInDto } from './dto/sign-in-admin.dto';  
+import { PasswordResetDto } from './dto/password-reset.dto'; 
+import { Admin } from 'src/api/entities/admin.entity';
 
 @Injectable()
 export class AuthService {

@@ -4,9 +4,9 @@ import { AuthService } from './auth.service';
 import { SignInDto } from './dto/sign-in-admin.dto'; 
 import { Request, Response } from 'express'; 
 import { PasswordResetDto } from './dto/password-reset.dto';
-import { GetAdmin } from './get-admin.decorator';
-import { Admin } from '../entities/admin.entity';
+import { GetAdmin } from './get-admin.decorator'; 
 import { AuthGuard } from '@nestjs/passport';
+import { Admin } from 'src/api/entities/admin.entity';
 
 @ApiTags('Auth')
 @Controller('admin/auth')

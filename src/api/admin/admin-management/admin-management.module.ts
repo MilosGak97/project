@@ -1,12 +1,12 @@
 import { Module } from '@nestjs/common';
 import { AdminManagementController } from './admin-management.controller';
 import { AdminManagementService } from './admin-management.service';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { Admin } from '../entities/admin.entity';
-import { AdminManagementRepository } from './admin-management.repository';
+import { TypeOrmModule } from '@nestjs/typeorm'; 
+import { AdminManagementRepository } from './repository/admin-management.repository';
 import { PassportModule } from '@nestjs/passport'; 
 import { EmailService } from 'src/email/email.service'; 
 import { JwtModule } from '@nestjs/jwt';
+import { Admin } from 'src/api/entities/admin.entity';
 
 @Module({
   imports:[

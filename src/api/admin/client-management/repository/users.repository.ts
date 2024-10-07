@@ -1,9 +1,9 @@
 import { ConflictException, Injectable, NotFoundException } from "@nestjs/common"; 
-import { User } from "src/api/common/entities/user.entity";
-import { UserStatus } from "src/api/common/enums/user-status.enum";
+import { User } from "src/api/entities/user.entity";
+import { UserStatus } from "src/api/enums/user-status.enum";
 import { DataSource, Repository } from "typeorm";
 import { ListAllUsersDto } from "../dto/list-all-users.dto";
-import { Company } from "src/api/common/entities/company.entity"; 
+import { Company } from "src/api/entities/company.entity";
 import { UpdateUserDto } from "../dto/updateUser.dto";
 import { EmailService } from "src/email/email.service";
 import { JwtService } from "@nestjs/jwt"; 

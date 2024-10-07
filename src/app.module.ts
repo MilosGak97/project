@@ -6,8 +6,8 @@ import { AdminModule } from './api/admin/admin.module';
 import { ClientModule } from './api/client/client.module';
 import { ConfigModule } from '@nestjs/config';   
 import { MongooseModule } from '@nestjs/mongoose';
-import { DataModule } from './api/data/data.module'; 
-import { ScrapperModule } from './api/admin/scrapper/scrapper.module';
+import { DataModule } from './api/admin/data/data.module'; 
+import { ScrapperModule } from './api/admin/zillow-scrapper/zillow-scrapper.module';
 
 
 @Module({

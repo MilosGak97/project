@@ -1,9 +1,9 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { Type } from "class-transformer";
 import { IsBoolean, IsEnum, IsNotEmpty, IsOptional, IsString } from "class-validator";
-import { CompanyStatus } from "src/api/common/enums/company-status.enum";
-import { UserRole } from "src/api/common/enums/user-role.enum";
-import { UserStatus } from "src/api/common/enums/user-status.enum";
+import { CompanyStatus } from "src/api/enums/company-status.enum";
+import { UserRole } from "src/api/enums/user-role.enum";
+import { UserStatus } from "src/api/enums/user-status.enum";
 
 export class ListAllUsersDto{
     @ApiProperty({required: false})

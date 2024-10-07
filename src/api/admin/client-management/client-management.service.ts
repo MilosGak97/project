@@ -3,10 +3,10 @@ import { CompanyRepository } from './repository/company.repository';
 import { UserRepository } from './repository/users.repository';
 import { ListAllCompaniesDto } from './dto/list-all-companies.dto';
 import { UpdateCompanyDataDto } from './dto/update-company-data.dto';
-import { ListAllUsersDto } from './dto/list-all-users.dto';
-import { Company } from 'src/api/common/entities/company.entity';
-import { User } from 'src/api/common/entities/user.entity';
+import { ListAllUsersDto } from './dto/list-all-users.dto'; 
+import { User } from 'src/api/entities/user.entity';
 import { UpdateUserDto } from './dto/updateUser.dto';
+import { Company } from 'src/api/entities/company.entity';
 
 @Injectable()
 export class ClientManagementService {
