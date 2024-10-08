@@ -66,4 +66,10 @@ export class MarketManagementService {
         return this.countyRepository.listCounties(marketId, listCountiesDto)
     }
 // new method
+    async deleteCounty(marketId:string, countyId:string):Promise<{
+        message: string
+    }>{
+        return await this.countyRepository.deleteCounty(marketId, countyId)
+    }
+
 }

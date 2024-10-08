@@ -5,6 +5,7 @@ import { MarketRepository } from "./market.repository"
 import { CreateCountyDto } from "../admin/market-management/dto/create-county.dto"
 import { ListCountiesDto } from "../admin/market-management/dto/list-counties.dto"
 import { CountyStatus } from "../enums/county-status.enum"
+import { UpdateCountyDto } from "../admin/market-management/dto/update-county.dto"
 
 @Injectable()
 export class CountyRepository extends Repository<County>{
@@ -56,11 +57,22 @@ async createCounty(marketId:string, createCountyDto: CreateCountyDto):Promise<{
     return {message: "County is successfully created."}
 }
 // new method
-async updateCounty(){
-
+async updateCounty(marketId:string, countyId: string, updateCountyDto:UpdateCountyDto){
+    const market = await this.findOne({where: {id:marketId}})
+    if(!market){
+        throw new NotFoundException("Market with this ID does not exist.")
+    }
+    const county = await this.findOne({where: {id: countyId}})
+    if(!county){
+        throw new NotFoundException("County with this ID does not exist.")
+    }
+    const {name, status, state, zillow_url_new, zillow_url_sold, zipcodes} = updateCountyDto
+ 
 }
 // new method
-async deleteCounty(marketId:string, countyId: string){
+async deleteCounty(marketId:string, countyId: string):Promise<{
+    message:string
+}>{
     const county = await this.findOne({where: {market: {id: marketId}, id: countyId}})
     if(!county){
         throw new NotFoundException("Couldnt find county based on Market ID and County ID.")

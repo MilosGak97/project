@@ -78,6 +78,11 @@ export class MarketManagementController {
         return await this.marketManagementService.listCounties(marketId, listCountiesDto)
     }
 // new endpoint
+    @Delete('markets/:marketId/counties/:countyId')
+    @ApiOperation({summary: "Delete county "})
+    async deleteCounty(@Param('marketId') marketId:string, @Param('countyId') countyId: string){
+        return await this.marketManagementService.deleteCounty(marketId, countyId)
+    }
 // new endpoint
 // new endpoint
 // new endpoint
