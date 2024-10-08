@@ -84,7 +84,7 @@ return {
         if(!market){
             throw new NotFoundException("There is no market with that ID.")
         }
-
+        market.daily_scrapping = false
         market.status = MarketStatus.DELETED
         await this.save(market)
         return {
@@ -133,12 +133,19 @@ return {
 
 // new method
     async marketsDailyActive():Promise<Market[]>{
-        const market = await this.find({where: {daily_scrapping: true}, relations: ['counties']})
+        //const market = await this.find({where: {daily_scrapping: true, status: MarketStatus.ACTIVE}, relations: ['counties']})
 
-        if(!market){
+        const market2 = await this.createQueryBuilder('market')
+        .leftJoinAndSelect('market.counties', 'counties')
+        .andWhere('(market.daily_scrapping = :daily_scrapping)', {daily_scrapping: true})
+        .andWhere('(market.status = :marketStatus)', { marketStatus: MarketStatus.ACTIVE})
+        .andWhere('(counties.id IS NOT NULL)')
+        .getMany()
+
+        if(market2.length === 0){
             throw new NotFoundException('We couldnt find any market that has daily scrapping active')
         }
-        return market
+        return market2
     }
 
 }

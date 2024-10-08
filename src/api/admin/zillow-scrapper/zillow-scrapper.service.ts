@@ -12,6 +12,9 @@ import { CreateCountyDto } from './dto/create-county.dto';
 import { ListCountiesDto } from './dto/list-counties.dto';
 import { County } from 'src/api/entities/county.entity';
 import { UpdateCountyDto } from './dto/update-county.dto';
+import { ListSnapshotsDto } from './dto/list-snapshots.dto';
+import { ZillowScrapperSnapshot } from 'src/api/entities/zillow-scrapper-snapshot.entity';
+import { ListMarketSnapshotsDto } from './dto/list-market-snapshots.dto';
 
 @Injectable()
 export class ZillowScrapperService {
@@ -46,16 +49,27 @@ export class ZillowScrapperService {
   async sendPostRequest() {
 
     const markets = await this.marketRepository.marketsDailyActive()
- 
+    
+    if(markets.length > 0){
+
       for(const market of markets){
 
         const data =  market.counties.map(county => ({ url: county.zillow_url_new })).filter(item => item.url)
-        const snapshot_id = await this.triggerScrape(data)
+
+        if(data.length > 0){
+
+          const snapshot_id = await this.triggerScrape(data)
   
-        console.log("Snapshot ID:" + snapshot_id)
-        console.log("Market ID:" + market.id)
-        return await this.zillowScrapperSnapshotRepository.logSnapshot(snapshot_id, market.id)
+          console.log("Snapshot ID:" + snapshot_id)
+          console.log("Market ID:" + market.id)
+          await this.zillowScrapperSnapshotRepository.logSnapshot(snapshot_id, market.id)
+        }else{
+          console.log("Didnt found any urls in this market, ID:" + market.id)
+        }
       }
+    }else{
+      console.log("No active markets found")
+    }
        
   }
 
@@ -130,4 +144,28 @@ async updateCounty( marketId:string, countyId:string, updateCountyDto: UpdateCou
   return await this.countyRepository.updateCounty(marketId, countyId, updateCountyDto)
 }
 
+
+async listSnapshots(listSnapshotsDto: ListSnapshotsDto):Promise<{
+  result: ZillowScrapperSnapshot[],
+  totalRecords: number,
+  totalPages: number,
+  currentPage: number,
+  limit: number,
+  offset: number
+}>{
+  return this.zillowScrapperSnapshotRepository.listSnapshots(listSnapshotsDto)
+}
+
+
+async listMarketSnapshots(marketId: string,  listMarketSnapshotsDto: ListMarketSnapshotsDto):Promise<{
+        
+  result: ZillowScrapperSnapshot[],
+  totalRecords: number,
+  totalPage: number,
+  currentPage: number,
+  limit: number,
+  offset: number
+}>{
+  return await this.zillowScrapperSnapshotRepository.listMarketSnapshots(marketId, listMarketSnapshotsDto)
+}
 }

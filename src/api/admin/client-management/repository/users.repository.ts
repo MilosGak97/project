@@ -96,8 +96,7 @@ export class UserRepository extends Repository<User>{
         query.skip(numOffset)
         query.take(numLimit)
 
-        const result = await query.getMany()
-        const totalRecords = await query.getCount()
+        const [result, totalRecords ] = await query.getManyAndCount() 
         const totalPages = Math.ceil(totalRecords/numLimit)
         const currentPage = Math.ceil(numOffset/numLimit) + 1
         return {

@@ -9,6 +9,9 @@ import { CreateCountyDto } from './dto/create-county.dto';
 import { ListCountiesDto } from './dto/list-counties.dto';
 import { County } from 'src/api/entities/county.entity';
 import { UpdateCountyDto } from './dto/update-county.dto';
+import { ListSnapshotsDto } from './dto/list-snapshots.dto';
+import { ListMarketSnapshotsDto } from './dto/list-market-snapshots.dto';
+import { ZillowScrapperSnapshot } from 'src/api/entities/zillow-scrapper-snapshot.entity';
 
 @ApiTags('Zillow Scrapper')
 @Controller('admin/scrapper')
@@ -17,7 +20,7 @@ export class ZillowScrapperController {
         private readonly scrapperService: ZillowScrapperService, 
     ){}
 
-    @Post('triggerScrapper')
+    @Post('trigger-scrapper')
     @ApiOperation({summary: "Trigger scrapper and get snapshot id"})
     async executeScrapperTask():Promise<any>{
         return this.scrapperService.sendPostRequest()
@@ -107,5 +110,25 @@ async updateCounty(@Param('id') marketId: string, @Param('countyId') countyId: s
   }>{
     return await this.scrapperService.updateCounty(marketId, countyId, updateCountyDto)
 }
- 
+
+
+@Get('snapshots')
+@ApiOperation({summary: "List Snapshots logs"})
+async listSnapshots(@Query() listSnapshotsDto: ListSnapshotsDto){
+    return await this.scrapperService.listSnapshots(listSnapshotsDto)
+}
+
+@Get('markets/:id/snapshots')
+@ApiOperation({summary: "List snapshots per market id"})
+async listMarketSnapshot(@Param('id') marketId:string, @Query() listMarketSnapshotDto: ListMarketSnapshotsDto):Promise<{
+        
+    result: ZillowScrapperSnapshot[],
+    totalRecords: number,
+    totalPage: number,
+    currentPage: number,
+    limit: number,
+    offset: number
+}>{
+    return await this.scrapperService.listMarketSnapshots(marketId, listMarketSnapshotDto)
+}
 }

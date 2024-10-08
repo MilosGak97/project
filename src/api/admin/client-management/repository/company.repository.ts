@@ -34,8 +34,7 @@ export class CompanyRepository extends Repository<Company> {
         }
         query.take(limit)
         query.skip(offset)
-        const totalRecords = await query.getCount()
-        const result = await query.getMany()
+        const [result, totalRecords] = await query.getManyAndCount() 
         const totalPages = Math.ceil(totalRecords / numLimit)
         const currentPage = Math.ceil(numOffset / numLimit) + 1
 

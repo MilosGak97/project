@@ -96,8 +96,7 @@ export class AdminManagementRepository extends Repository<Admin> {
         query.take(limitNumber)
         query.skip(offsetNumber)
 
-        const result = await query.getMany();
-        const totalRecords = await query.getCount()
+        const [result, totalRecords ] = await query.getManyAndCount() 
         const currentPage = Math.ceil(offset/limitNumber) + 1
         const totalPages = Math.ceil(totalRecords / limitNumber);
 
