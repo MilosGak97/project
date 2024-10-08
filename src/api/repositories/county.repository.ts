@@ -2,10 +2,10 @@ import { ConflictException, Injectable, NotFoundException } from "@nestjs/common
 import { County } from "../entities/county.entity"
 import { DataSource, Repository } from "typeorm"
 import { MarketRepository } from "./market.repository"
-import { CreateCountyDto } from "../admin/market-management/dto/create-county.dto"
-import { ListCountiesDto } from "../admin/market-management/dto/list-counties.dto"
+import { CreateCountyDto } from "../admin/zillow-scrapper/dto/create-county.dto"
+import { ListCountiesDto } from "../admin/zillow-scrapper/dto/list-counties.dto"
 import { CountyStatus } from "../enums/county-status.enum"
-import { UpdateCountyDto } from "../admin/market-management/dto/update-county.dto"
+import { UpdateCountyDto } from "../admin/zillow-scrapper/dto/update-county.dto"
 
 @Injectable()
 export class CountyRepository extends Repository<County>{
@@ -57,17 +57,39 @@ async createCounty(marketId:string, createCountyDto: CreateCountyDto):Promise<{
     return {message: "County is successfully created."}
 }
 // new method
-async updateCounty(marketId:string, countyId: string, updateCountyDto:UpdateCountyDto){
-    const market = await this.findOne({where: {id:marketId}})
-    if(!market){
-        throw new NotFoundException("Market with this ID does not exist.")
-    }
-    const county = await this.findOne({where: {id: countyId}})
+async updateCounty(marketId:string, countyId: string, updateCountyDto:UpdateCountyDto):Promise<{
+    message:string
+}>{
+    
+    const county = await this.findOne({where: {id: countyId, market: {id: marketId}}})
     if(!county){
         throw new NotFoundException("County with this ID does not exist.")
     }
     const {name, status, state, zillow_url_new, zillow_url_sold, zipcodes} = updateCountyDto
- 
+    if(name){
+        county.name = name
+    }
+    if(status){
+        county.status = status
+    }
+    if(state){
+        county.state = state
+    }
+    if(zillow_url_new){
+        county.zillow_url_new = zillow_url_new
+    }
+    if(zillow_url_sold){
+        county.zillow_url_sold = zillow_url_sold
+    }
+    if(zipcodes){
+        county.zipcodes = zipcodes
+    }
+
+    await this.save(county)
+    return {
+        message: "County is successfully updated."
+    }
+
 }
 // new method
 async deleteCounty(marketId:string, countyId: string):Promise<{
@@ -94,5 +116,13 @@ async listCounties(marketId: string, listCountiesDto: ListCountiesDto):Promise<{
     }
     return {counties}
 
+}
+
+async getCounty(marketId: string, countyId:string ):Promise<County>{
+    const county = await this.findOne({where: { id: countyId, market: {id: marketId}}})
+    if(!county){
+        throw new NotFoundException("Could not find County with provided ID and Market ID")
+    }
+    return county
 }
 }

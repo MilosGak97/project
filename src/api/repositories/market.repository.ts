@@ -1,11 +1,10 @@
 import { DataSource, Repository } from "typeorm";
 import { Market } from "../entities/market.entity";
 import { Injectable, NotFoundException } from "@nestjs/common"; 
-import { CreateMarketDto } from "../admin/market-management/dto/create-market.dto";
-import { ListMarketsDto } from "../admin/market-management/dto/list-markets.dto";
+import { CreateMarketDto } from "../admin/zillow-scrapper/dto/create-market.dto";
+import { ListMarketsDto } from "../admin/zillow-scrapper/dto/list-markets.dto";
 import { MarketStatus } from "../enums/market-status";
-import { UpdateMarketDto } from "../admin/market-management/dto/update-market.dto";
-import { stat } from "fs";
+import { UpdateMarketDto } from "../admin/zillow-scrapper/dto/update-market.dto";
 
 @Injectable()
 export class MarketRepository extends Repository<Market>{
@@ -107,9 +106,9 @@ return {
             market.name = name
         }
 
-        if(daily_scrapping){
+        if(daily_scrapping !== undefined){
             market.daily_scrapping = daily_scrapping
-        }
+        } 
 
         if(status){
             market.status = status
@@ -123,7 +122,13 @@ return {
 
 
 // new method
-
+    async getMarket(marketId:string):Promise<Market>{
+        const market = await this.findOne({where: {id:marketId}, relations: ['snapshots']})
+        if(!market){
+            throw new NotFoundException("There is no market with that ID.")
+        }
+        return market
+    }
 // new method
 
 // new method

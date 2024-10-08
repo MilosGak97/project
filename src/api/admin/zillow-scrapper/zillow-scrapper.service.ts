@@ -4,6 +4,14 @@ import { HttpService } from '@nestjs/axios';
 import { ZillowScrapperSnapshotRepository } from './repository/zillow-scrapper-snapshot.repository';
 import { MarketRepository } from 'src/api/repositories/market.repository'; 
 import { CountyRepository } from 'src/api/repositories/county.repository'; 
+import { CreateMarketDto } from './dto/create-market.dto';
+import { ListMarketsDto } from './dto/list-markets.dto';
+import { Market } from 'src/api/entities/market.entity';
+import { UpdateMarketDto } from './dto/update-market.dto';
+import { CreateCountyDto } from './dto/create-county.dto';
+import { ListCountiesDto } from './dto/list-counties.dto';
+import { County } from 'src/api/entities/county.entity';
+import { UpdateCountyDto } from './dto/update-county.dto';
 
 @Injectable()
 export class ZillowScrapperService {
@@ -50,4 +58,76 @@ export class ZillowScrapperService {
       }
        
   }
+
+  
+// new method
+async createMarket(createMarketDto:CreateMarketDto):Promise<{
+  message:string
+}>{
+  return this.marketRepository.createMarket(createMarketDto)
+}
+
+// new method
+async listMarkets(listMarketsDto: ListMarketsDto):Promise<{
+  
+  limit: number,
+  offset: number,
+  totalRecords: number,
+  totalPages: number ,
+  currentPage: number,
+  result:Market[]
+  
+}>{
+  return this.marketRepository.listMarkets(listMarketsDto)
+}
+
+
+// new method
+async getMarket(marketId:string):Promise<Market>{
+  return await this.marketRepository.getMarket(marketId)
+}
+
+// new method
+async deleteMarket(marketId:string):Promise<{
+  message: string
+}>{
+  return await this.marketRepository.deleteMarket(marketId)
+}
+
+// new method
+async updateMarket(marketId:string, updateMarketDto: UpdateMarketDto):Promise<{
+  message:string
+}>{
+  return this.marketRepository.updateMarket(marketId,updateMarketDto)
+}
+
+// new method
+async createCounty(marketId:string, createCountyDto: CreateCountyDto):Promise<{
+  message:string
+}>{
+  return this.countyRepository.createCounty(marketId,createCountyDto)
+}
+// new method
+async listCounties(marketId:string, listCountiesDto: ListCountiesDto):Promise<{
+  counties: County[]
+}>{
+  return this.countyRepository.listCounties(marketId, listCountiesDto)
+}
+// new method
+async deleteCounty(marketId:string, countyId:string):Promise<{
+  message: string
+}>{
+  return await this.countyRepository.deleteCounty(marketId, countyId)
+}
+
+async getCounty( marketId:string, countyId:string):Promise<County>{
+  return await this.countyRepository.getCounty(marketId, countyId)
+}
+
+async updateCounty( marketId:string, countyId:string, updateCountyDto: UpdateCountyDto):Promise<{
+  message:string
+}>{
+  return await this.countyRepository.updateCounty(marketId, countyId, updateCountyDto)
+}
+
 }
