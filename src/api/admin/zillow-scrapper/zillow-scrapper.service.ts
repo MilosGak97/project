@@ -16,9 +16,7 @@ import { ListSnapshotsDto } from './dto/list-snapshots.dto';
 import { ZillowScrapperSnapshot } from 'src/api/entities/zillow-scrapper-snapshot.entity';
 import { ListMarketSnapshotsDto } from './dto/list-market-snapshots.dto';
 import { Cron, CronExpression } from '@nestjs/schedule';
-import { AxiosResponse } from 'axios'; 
 import * as zlib from 'zlib'
-import { Readable } from 'typeorm/platform/PlatformTools';
 
 @Injectable()
 export class ZillowScrapperService {
@@ -275,23 +273,29 @@ async listMarketSnapshots(marketId: string,  listMarketSnapshotsDto: ListMarketS
   return await this.zillowScrapperSnapshotRepository.listMarketSnapshots(marketId, listMarketSnapshotsDto)
 }
 
-async handleNotification(payload):Promise<{
-  message: string
-}> {
+async handleNotification(payload){
   if(!payload.snapshot_id){
     throw new NotFoundException("Snapshot ID is not found.")
   }
-  const snapshot = await this.zillowScrapperSnapshotRepository.findOne({where: {brightdata_id: payload.snapshot_id}})
+  const snapshot = await this.zillowScrapperSnapshotRepository.findOne({where: {brightdata_id: payload.snapshot_id}, relations: ['market']})
   snapshot.status = payload.status
-
   await this.zillowScrapperSnapshotRepository.save(snapshot)
-  console.log("Snapshot status successfully updated")
+  const marketId = snapshot.market.id
+  console.log(marketId)
 
-  return {
-    message: "Snapshot status successfully updated"
+  if(snapshot.status === "ready"){
+    
+    return await this.fetchSnapshot(marketId, snapshot.brightdata_id)
+
   }
-}
+  if(snapshot.status === "failed"){
+    return await this.runScrapperMarket(marketId)
+  }
+   
 
+  return console.log("Status is not ready or failed...")
+}
+/*
 async discoveryWebhook(payload) {
   console.log('Received payload:', payload);  // Log the payload for debugging
   let decompressedData;
@@ -325,5 +329,6 @@ async discoveryWebhook(payload) {
       throw new Error('Parsed data is not an array');
   }
 }
+  */
 
 }

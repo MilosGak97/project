@@ -155,14 +155,14 @@ async handleNotification(@Req() req: Request):Promise<{
     const payload = req.body;
     return this.scrapperService.handleNotification(payload)
   }
-
+/*
 @Post('webhook-discovery')
 @ApiOperation({summary: "Webhook to receive collecting data"})
 async discoveryWebhook(@Req() req: Request){
     const payload = req.body
     return this.scrapperService.discoveryWebhook(payload)
 }
-
+*/
 
 
 }
