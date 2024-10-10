@@ -7,7 +7,8 @@ import { ClientModule } from './api/client/client.module';
 import { ConfigModule } from '@nestjs/config';   
 import { MongooseModule } from '@nestjs/mongoose';
 import { DataModule } from './api/admin/data/data.module'; 
-import { ScrapperModule } from './api/admin/zillow-scrapper/zillow-scrapper.module';
+import { ZillowScrapperModule } from './api/admin/zillow-scrapper/zillow-scrapper.module';
+
 
 
 @Module({
@@ -33,7 +34,7 @@ import { ScrapperModule } from './api/admin/zillow-scrapper/zillow-scrapper.modu
     AdminModule,
     ClientModule,
     DataModule,
-    ScrapperModule,
+    ZillowScrapperModule,
   ],
   controllers: [HealthController]
 })

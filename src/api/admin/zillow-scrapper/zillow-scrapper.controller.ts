@@ -19,13 +19,13 @@ export class ZillowScrapperController {
     constructor(
         private readonly scrapperService: ZillowScrapperService, 
     ){}
-
+/*
     @Post('trigger-scrapper')
     @ApiOperation({summary: "Trigger scrapper and get snapshot id"})
     async executeScrapperTask():Promise<any>{
         return this.scrapperService.sendPostRequest()
     }
- 
+ */
 // new endpoint
 @Post('markets')
 @ApiOperation({summary: "Create market"})
@@ -130,5 +130,11 @@ async listMarketSnapshot(@Param('id') marketId:string, @Query() listMarketSnapsh
     offset: number
 }>{
     return await this.scrapperService.listMarketSnapshots(marketId, listMarketSnapshotDto)
+}
+
+@Post('markets/:id/snapshots/:snapshotId')
+@ApiOperation({summary: "Retrieve snapshot data manually"})
+async fetchSnapshot(@Param('id') marketId: string, @Param('snapshotId') snapshotId: string){
+    return await this.scrapperService.fetchSnapshot(marketId, snapshotId)
 }
 }

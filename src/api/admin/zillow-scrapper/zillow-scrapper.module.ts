@@ -9,6 +9,7 @@ import { County } from 'src/api/entities/county.entity';
 import { Market } from 'src/api/entities/market.entity';
 import { MarketRepository } from 'src/api/repositories/market.repository';
 import { CountyRepository } from 'src/api/repositories/county.repository'; 
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { CountyRepository } from 'src/api/repositories/county.repository';
       ]
     ),
     HttpModule, 
+    ScheduleModule.forRoot(),
   ],
   controllers: 
   [
@@ -34,4 +36,4 @@ import { CountyRepository } from 'src/api/repositories/county.repository';
     
   ]
 })
-export class ScrapperModule {}
+export class ZillowScrapperModule {}

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import {  firstValueFrom } from 'rxjs';
 import { HttpService } from '@nestjs/axios';
 import { ZillowScrapperSnapshotRepository } from './repository/zillow-scrapper-snapshot.repository';
@@ -15,6 +15,9 @@ import { UpdateCountyDto } from './dto/update-county.dto';
 import { ListSnapshotsDto } from './dto/list-snapshots.dto';
 import { ZillowScrapperSnapshot } from 'src/api/entities/zillow-scrapper-snapshot.entity';
 import { ListMarketSnapshotsDto } from './dto/list-market-snapshots.dto';
+import { Cron, CronExpression } from '@nestjs/schedule';
+import { AxiosResponse } from 'axios'; 
+import * as zlib from 'zlib'
 
 @Injectable()
 export class ZillowScrapperService {
@@ -25,7 +28,7 @@ export class ZillowScrapperService {
     private readonly countyRepository: CountyRepository
   ) { }
 
-
+// new method - reusable trigger scrape
   async triggerScrape(data):Promise<any> {
     const url = 'https://api.brightdata.com/datasets/v3/trigger?dataset_id=gd_lfqkr8wm13ixtbd8f5&include_errors=true&type=discover_new&discover_by=url';
 
@@ -45,8 +48,8 @@ export class ZillowScrapperService {
         throw new Error(`Error sending POST request: ${error.message}`);
       }
     }
-     
-  async sendPostRequest() {
+  // new method - cron request   
+  async sendCronRequest() {
 
     const markets = await this.marketRepository.marketsDailyActive()
     
@@ -73,6 +76,38 @@ export class ZillowScrapperService {
        
   }
 
+
+  async fetchSnapshot(marketId: string, snapshotId: string): Promise<any> {
+
+    const snapshot = await this.zillowScrapperSnapshotRepository.findOne({where: { brightdata_id: snapshotId, market: {id:marketId}}})
+    if(!snapshot){
+      throw new NotFoundException("Snapshot with this ID and Market ID does not exist.")
+    }
+    const url = `https://api.brightdata.com/datasets/v3/snapshot/${snapshotId}?compress=true&format=json`; 
+    const headers = {
+      Authorization: 'Bearer 07c11f1f-c052-45a9-b0fd-e385e5420129',
+    };
+
+    try {
+      const response: AxiosResponse<Buffer> = await firstValueFrom(
+        this.httpService.get(url, { headers , responseType: 'arraybuffer' })
+      );
+
+      const decompressedData = zlib.gunzipSync(Buffer.from(response.data))
+
+      const jsonData = JSON.parse(decompressedData.toString())
+      return jsonData; 
+    } catch (error) {
+      console.error('Error fetching snapshot:', error);
+      throw new Error('Failed to fetch snapshot data'); // Handle errors as needed
+    }
+  }
+
+  @Cron(CronExpression.EVERY_DAY_AT_11AM) // change this to 6AM after testing
+    async cronHandler(){
+      console.log('Triggering daily sendPostRequest...');
+      await this.sendCronRequest()
+    }
   
 // new method
 async createMarket(createMarketDto:CreateMarketDto):Promise<{
