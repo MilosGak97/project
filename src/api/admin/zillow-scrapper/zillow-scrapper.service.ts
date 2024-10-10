@@ -113,75 +113,78 @@ export class ZillowScrapperService {
 
   // --------------- PUBLIC ROUTES - ENDPOINTS
 
-  // new method
-  async handleNotification(payload):Promise<{
-    message:string
-  }> {
+  async handleNotification(payload): Promise<{ message: string }> {
+    // Check if snapshot_id is provided
     if (!payload.snapshot_id) {
-      throw new NotFoundException("Snapshot ID is not found.")
+      throw new NotFoundException("Snapshot ID is not found.");
     }
-    const snapshot = await this.zillowScrapperSnapshotRepository.findOne({ where: { brightdata_id: payload.snapshot_id }, relations: ['market'] })
-    snapshot.status = payload.status
-    await this.zillowScrapperSnapshotRepository.save(snapshot)
-    const marketId = snapshot.market.id
-    console.log("Market ID: " + marketId)
-
-    console.log("Snapshot Status: " + snapshot.status)
-    console.log("Snapshot Brightdata ID: "+ snapshot.brightdata_id)
+  
+    // Fetch the snapshot from the database with the associated market
+    const snapshot = await this.zillowScrapperSnapshotRepository.findOne({
+      where: { brightdata_id: payload.snapshot_id },
+      relations: ['market'],
+    });
+  
+    // Update the snapshot status
+    snapshot.status = payload.status;
+    await this.zillowScrapperSnapshotRepository.save(snapshot);
+  
+    const marketId = snapshot.market.id;
+    console.log(`Market ID: ${marketId}`);
+    console.log(`Snapshot Status: ${snapshot.status}`);
+    console.log(`Snapshot Brightdata ID: ${snapshot.brightdata_id}`);
+  
+    // Proceed if the status is "ready"
     if (snapshot.status === "ready") {
-
-      
-    const url = `https://api.brightdata.com/datasets/v3/snapshot/${snapshot.brightdata_id}?compress=true&format=json`;
-    const headers = {
-      Authorization: `Bearer 07c11f1f-c052-45a9-b0fd-e385e5420129`,
-    };
-
-
-    const response = await firstValueFrom(
-      this.httpService.request({
-        url,
-        method: 'GET',
-        headers,
-        responseType: 'stream',
-        timeout: 10000,
-      })
-    );
-
-    const decompressedData = await this.decompressData(response.data);
-
-    const jsonData = JSON.parse(decompressedData.toString());
-
-    // Check if jsonData is an array
-    if (Array.isArray(jsonData)) {
-      jsonData.forEach((item, index) => {
-
-
-        const zpid = item.zpid;
-        const state = item.state;
-        const city = item.address.city;
-
-        // HERE GOES THE LOGIC TO IMPORT IT INTO MONGODB
-
-        console.log('City: ' + city)
-        console.log('State: ' + state)
-        console.log(`ZPID: ${zpid}`);
-      });
-      return {
-        message: "Sucessfully done job"
+      const url = `https://api.brightdata.com/datasets/v3/snapshot/${snapshot.brightdata_id}?compress=true&format=json`;
+      const headers = {
+        Authorization: `Bearer 07c11f1f-c052-45a9-b0fd-e385e5420129`,
+      };
+  
+      try {
+        // Fetch the snapshot data from BrightData API
+        const response = await firstValueFrom(
+          this.httpService.request({
+            url,
+            method: 'GET',
+            headers,
+            responseType: 'stream',
+            timeout: 10000,
+          })
+        );
+  
+        // Decompress the data
+        const decompressedData = await this.decompressData(response.data);
+        const jsonData = JSON.parse(decompressedData.toString());
+  
+        // Ensure the data is an array
+        if (Array.isArray(jsonData)) {
+          // Process each item in the array
+          jsonData.forEach((item) => {
+            const { zpid, state, address: { city } } = item;
+  
+            // Placeholder for MongoDB import logic
+            console.log(`City: ${city}`);
+            console.log(`State: ${state}`);
+            console.log(`ZPID: ${zpid}`);
+          });
+  
+          return { message: "Successfully processed the job" };
+        } else {
+          console.error("jsonData is not an array");
+          return { message: "Error encountered: jsonData is not an array" };
+        }
+      } catch (error) {
+        console.error("Error fetching or processing data:", error);
+        return { message: "Error encountered while fetching data" };
       }
-    } else {
-      console.error("jsonData is not an array");
-      return {message: "Error encountered"}
     }
-     
-
-    }
-
-    console.log("Status is not ready ...")
-    return {
-      message: "Status is not ready ... "
-    }
+  
+    // Log if status is not ready
+    console.log("Status is not ready...");
+    return { message: "Status is not ready" };
   }
+  
 
   // new method
   async createMarket(createMarketDto: CreateMarketDto): Promise<{

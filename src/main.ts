@@ -6,11 +6,17 @@ import * as dotenv from 'dotenv';
 import { AdminModule } from './api/admin/admin.module';
 import { ClientModule } from './api/client/client.module'; 
 import * as cookieParser from 'cookie-parser';
+import * as bodyParser from 'body-parser';
+
 
 async function bootstrap() {
   dotenv.config(); 
   const app = await NestFactory.create(AppModule);
-  
+   
+  // Increase the request body limit to 100MB
+  app.use(bodyParser.json({ limit: '100mb' }));
+  app.use(bodyParser.urlencoded({ limit: '100mb', extended: true }));
+
   // Use cookie-parser
   app.use(cookieParser());
 
