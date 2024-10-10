@@ -147,18 +147,15 @@ async fetchSnapshot(@Param('id') marketId: string, @Param('snapshotId') snapshot
 }
 
 @Post('notification')
-@ApiOperation({ summary:  "Receive notification from post"})
+@ApiOperation({ summary: "Receive notification from post"})
 
-async handleNotification(@Req() req: Request) {
+async handleNotification(@Req() req: Request):Promise<{
+    message:string
+}> {
     const payload = req.body;
-    console.log('Received notification:', payload);
-  
-    // Process the payload here (e.g., save to DB, trigger jobs, etc.)
-    
-    return {
-        message: "Succesfully received notification"
-    }
+    return this.scrapperService.handleNotification(payload)
   }
+
 
 
 

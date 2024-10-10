@@ -29,31 +29,33 @@ export class ZillowScrapperService {
   ) { }
 // new method - reusable trigger scrape
 async triggerScrape(data): Promise<any> {
-  const url = 'https://api.brightdata.com/datasets/v3/trigger';
-  const dataset_id = 'gd_lfqkr8wm13ixtbd8f5';
-  const endpoint = 'https://uniqueproject-229b37d9b8ca.herokuapp.com/api/admin/scrapper/notification';
-  const notify = 'https://uniqueproject-229b37d9b8ca.herokuapp.com/api/admin/scrapper/notification';
-  const type = 'discover_new';
-  const discover_by = 'url';
+  const url = 'https://api.brightdata.com/datasets/v3/trigger?dataset_id=gd_lfqkr8wm13ixtbd8f5&notify=https://uniqueproject-229b37d9b8ca.herokuapp.com/api/admin/scrapper/notification&type=discover_new&discover_by=url';
+  //const dataset_id = 'gd_lfqkr8wm13ixtbd8f5';
+  //const endpoint = 'https://uniqueproject-229b37d9b8ca.herokuapp.com/api/admin/scrapper/notification';
+  //const notify = 'https://uniqueproject-229b37d9b8ca.herokuapp.com/api/admin/scrapper/notification';
+  //const type = 'discover_new';
+  //const discover_by = 'url';
 
   const headers = {
     Authorization: `Bearer 07c11f1f-c052-45a9-b0fd-e385e5420129`, // Fetch token from environment
     'Content-Type': 'application/json',
   };
 
+  /*
   const payload = {
     dataset_id,
     endpoint,
     notify,
     type,
-    discover_by,
-    include_errors: true, // This matches the behavior of the curl command
+    discover_by, 
     url: data, // The `data` here is expected to be an array of URLs in the format [{ url: "https://..." }]
   };
+  */
+
 
   try {
     // Make POST request using the httpService (make sure to inject httpService in your class)
-    const response = await firstValueFrom(this.httpService.post(url, payload, { headers }));
+    const response = await firstValueFrom(this.httpService.post(url, data, { headers }));
 
     console.log(response.data);
 
@@ -288,7 +290,20 @@ async listMarketSnapshots(marketId: string,  listMarketSnapshotsDto: ListMarketS
   return await this.zillowScrapperSnapshotRepository.listMarketSnapshots(marketId, listMarketSnapshotsDto)
 }
 
-async handleNotification() {
-//
+async handleNotification(payload):Promise<{
+  message: string
+}> {
+  if(!payload.snapshot_id){
+    throw new NotFoundException("Snapshot ID is not found.")
+  }
+  const snapshot = await this.zillowScrapperSnapshotRepository.findOne({where: {brightdata_id: payload.snapshot_id}})
+  snapshot.status = payload.status
+
+  await this.zillowScrapperSnapshotRepository.save(snapshot)
+  return {
+    message: "Snapshot status successfully updated"
+  }
+
+
 }
 }
