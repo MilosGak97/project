@@ -31,28 +31,12 @@ export class ZillowScrapperService {
 // new method - reusable trigger scrape
 async triggerScrape(data): Promise<any> {
   const url = 'https://api.brightdata.com/datasets/v3/trigger?dataset_id=gd_lfqkr8wm13ixtbd8f5&notify=https://uniqueproject-229b37d9b8ca.herokuapp.com/api/admin/scrapper/notification&type=discover_new&discover_by=url';
-  //const dataset_id = 'gd_lfqkr8wm13ixtbd8f5';
-  //const endpoint = 'https://uniqueproject-229b37d9b8ca.herokuapp.com/api/admin/scrapper/notification';
-  //const notify = 'https://uniqueproject-229b37d9b8ca.herokuapp.com/api/admin/scrapper/notification';
-  //const type = 'discover_new';
-  //const discover_by = 'url';
-
+  
   const headers = {
     Authorization: `Bearer 07c11f1f-c052-45a9-b0fd-e385e5420129`, // Fetch token from environment
     'Content-Type': 'application/json',
   };
-
-  /*
-  const payload = {
-    dataset_id,
-    endpoint,
-    notify,
-    type,
-    discover_by, 
-    url: data, // The `data` here is expected to be an array of URLs in the format [{ url: "https://..." }]
-  };
-  */
-
+ 
 
   try {
     // Make POST request using the httpService (make sure to inject httpService in your class)
@@ -308,40 +292,38 @@ async handleNotification(payload):Promise<{
   }
 }
 
+async discoveryWebhook(payload) {
+  console.log('Received payload:', payload);  // Log the payload for debugging
+  let decompressedData;
 
-async discoveryWebhook(payload){    
-  console.log('Received payload:', payload);
+  if (typeof payload === 'string') {
+      decompressedData = payload;
+  } else if (Buffer.isBuffer(payload)) {
+      const readableStream = Readable.from(payload);
+      decompressedData = await this.decompressData(readableStream);
+  } else if (typeof payload === 'object' && payload !== null) {
+      // Handle case where payload is an object or array
+      decompressedData = JSON.stringify(payload); // or process it accordingly
+  } else {
+      throw new Error('Invalid payload format');
+  }
 
-    let decompressedData;
+  const jsonData = JSON.parse(decompressedData.toString());
 
-    // Check if payload is a string
-    if (typeof payload === 'string') {
-        decompressedData = payload;
-    } else if (Buffer.isBuffer(payload)) {
-        // Convert Buffer to ReadableStream
-        const readableStream = Readable.from(payload);
-        decompressedData = await this.decompressData(readableStream);
-    } else {
-        throw new Error('Invalid payload format');
-    }
-
-    const jsonData = JSON.parse(decompressedData.toString());
-
-    // Check if jsonData is an array
-    if (Array.isArray(jsonData)) {
-        jsonData.forEach((item, index) => {
-          
-             
+  // Check if jsonData is an array
+  if (Array.isArray(jsonData)) {
+      jsonData.forEach((item) => {
           const zpid = item.zpid; 
           const state = item.state;
           const city = item.address.city;
           
-          // HERE GOES THE LOGIC TO IMPORT IT INTO MONGODB
-          
-          console.log('City: ' + city)
-          console.log('State: ' + state)
+          console.log('City: ' + city);
+          console.log('State: ' + state);
           console.log(`ZPID: ${zpid}`); 
-        });
-      }
-    }
+      });
+  } else {
+      throw new Error('Parsed data is not an array');
+  }
+}
+
 }
