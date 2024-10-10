@@ -18,6 +18,7 @@ import { ListMarketSnapshotsDto } from './dto/list-market-snapshots.dto';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { AxiosResponse } from 'axios'; 
 import * as zlib from 'zlib'
+import { Readable } from 'typeorm/platform/PlatformTools';
 
 @Injectable()
 export class ZillowScrapperService {
@@ -308,8 +309,19 @@ async handleNotification(payload):Promise<{
 }
 
 
-async discoveryWebhook(payload){
-   const decompressedData = await this.decompressData(payload);
+async discoveryWebhook(payload){    
+    let decompressedData;
+
+    // Check if payload is a string
+    if (typeof payload === 'string') {
+        decompressedData = payload;
+    } else if (Buffer.isBuffer(payload)) {
+        // Convert Buffer to ReadableStream
+        const readableStream = Readable.from(payload);
+        decompressedData = await this.decompressData(readableStream);
+    } else {
+        throw new Error('Invalid payload format');
+    }
 
     const jsonData = JSON.parse(decompressedData.toString());
 
