@@ -27,7 +27,6 @@ export class ZillowScrapperService {
     private readonly marketRepository: MarketRepository,
     private readonly countyRepository: CountyRepository
   ) { }
-
 // new method - reusable trigger scrape
 async triggerScrape(data): Promise<any> {
   const url = 'https://api.brightdata.com/datasets/v3/trigger';
@@ -38,7 +37,7 @@ async triggerScrape(data): Promise<any> {
   const discover_by = 'url';
 
   const headers = {
-    Authorization: `Bearer ${process.env.BRIGHTDATA_API_TOKEN}`,
+    Authorization: `Bearer ${process.env.BRIGHTDATA_API_TOKEN}`, // Fetch token from environment
     'Content-Type': 'application/json',
   };
 
@@ -53,15 +52,22 @@ async triggerScrape(data): Promise<any> {
   };
 
   try {
+    // Make POST request using the httpService (make sure to inject httpService in your class)
     const response = await firstValueFrom(this.httpService.post(url, payload, { headers }));
+
     console.log(response.data);
-    
+
+    // Check if snapshot_id is present in the response and return it
     if (response.data.snapshot_id) {
-      console.log("response.data.snapshot_id: " + response.data.snapshot_id);
+      console.log("Snapshot ID: " + response.data.snapshot_id);
+      return response.data.snapshot_id;
+    } else {
+      // Handle case where snapshot_id is not returned
+      throw new Error('Snapshot ID not found in the response.');
     }
-    
-    return response.data.snapshot_id; // Return the snapshot ID from the response
   } catch (error) {
+    // Handle errors properly, and return or log for debugging
+    console.error('Error sending POST request:', error.response?.data || error.message);
     throw new Error(`Error sending POST request: ${error.message}`);
   }
 }
