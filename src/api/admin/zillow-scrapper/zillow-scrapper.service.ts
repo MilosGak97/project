@@ -48,7 +48,7 @@ export class ZillowScrapperService {
         throw new Error(`Error sending POST request: ${error.message}`);
       }
     }
-  // new method - cron request   
+// new method - cron request   
   async sendCronRequest() {
 
     const markets = await this.marketRepository.marketsDailyActive()
@@ -75,35 +75,95 @@ export class ZillowScrapperService {
     }
        
   }
+ 
+// new method
+async fetchSnapshot(marketId: string, snapshotId: string): Promise<any> {
+  const snapshot = await this.zillowScrapperSnapshotRepository.findOne({
+    where: { brightdata_id: snapshotId, market: { id: marketId } },
+  });
 
-
-  async fetchSnapshot(marketId: string, snapshotId: string): Promise<any> {
-
-    const snapshot = await this.zillowScrapperSnapshotRepository.findOne({where: { brightdata_id: snapshotId, market: {id:marketId}}})
-    if(!snapshot){
-      throw new NotFoundException("Snapshot with this ID and Market ID does not exist.")
-    }
-    const url = `https://api.brightdata.com/datasets/v3/snapshot/${snapshotId}?compress=true&format=json`; 
-    const headers = {
-      Authorization: 'Bearer 07c11f1f-c052-45a9-b0fd-e385e5420129',
-    };
-
-    try {
-      const response: AxiosResponse<Buffer> = await firstValueFrom(
-        this.httpService.get(url, { headers , responseType: 'arraybuffer' })
-      );
-
-      const decompressedData = zlib.gunzipSync(Buffer.from(response.data))
-
-      const jsonData = JSON.parse(decompressedData.toString())
-      return jsonData; 
-    } catch (error) {
-      console.error('Error fetching snapshot:', error);
-      throw new Error('Failed to fetch snapshot data'); // Handle errors as needed
-    }
+  if (!snapshot) {
+    throw new NotFoundException("Snapshot with this ID and Market ID does not exist.");
   }
 
-  @Cron(CronExpression.EVERY_DAY_AT_NOON) // change this to 6AM after testing
+  const url = `https://api.brightdata.com/datasets/v3/snapshot/${snapshotId}?compress=true&format=json`;
+  const headers = {
+    Authorization: `Bearer 07c11f1f-c052-45a9-b0fd-e385e5420129`,
+  };
+
+  
+    const response = await firstValueFrom(
+      this.httpService.request({
+        url,
+        method: 'GET',
+        headers,
+        responseType: 'stream',
+        timeout: 10000,
+      })
+    );
+
+    const decompressedData = await this.decompressData(response.data);
+
+    const jsonData = JSON.parse(decompressedData.toString());
+
+    // Check if jsonData is an array
+    if (Array.isArray(jsonData)) {
+        jsonData.forEach((item, index) => {
+          
+             
+          const zpid = item.zpid; 
+          const state = item.state;
+          const city = item.address.city;
+          
+          // HERE GOES THE LOGIC TO IMPORT IT INTO MONGODB
+          
+          console.log('City: ' + city)
+          console.log('State: ' + state)
+          console.log(`ZPID: ${zpid}`); 
+        });
+    } else {
+        console.error("jsonData is not an array");
+    }
+    
+
+    return {
+      message: "Sucessfully done job"
+    }; 
+}
+
+// new method
+private async decompressData(stream: NodeJS.ReadableStream): Promise<string> {
+  const chunks: Buffer[] = [];
+  const gunzip = zlib.createGunzip();
+  return new Promise((resolve, reject) => {
+    stream.pipe(gunzip)
+      .on('data', (chunk) => chunks.push(chunk))
+      .on('end', () => resolve(Buffer.concat(chunks).toString()))
+      .on('error', reject);
+  });
+}
+
+// new method
+async runScrapperMarket(marketId: string){
+  const market = await this.marketRepository.findOne({where: {id:marketId}, relations: ['counties']})
+  if(!market){
+    throw new NotFoundException("Market with provided ID does not exist.")
+  }
+  const counties = market.counties
+  console.log(counties)
+  if(counties.length === 0){
+    throw new NotFoundException("No counties found for this market")
+  }
+
+  const data = counties.map( county => ({url: county.zillow_url_new })).filter(item => item.url)
+  const snapshotId =await this.triggerScrape(data)
+
+  return await this.zillowScrapperSnapshotRepository.logSnapshot(snapshotId, marketId)
+
+}
+
+// CRON METHOD
+@Cron(CronExpression.EVERY_DAY_AT_6AM) // change this to 6AM after testing
     async cronHandler(){
       console.log('Triggering daily sendPostRequest...');
       await this.sendCronRequest()
@@ -202,5 +262,9 @@ async listMarketSnapshots(marketId: string,  listMarketSnapshotsDto: ListMarketS
   offset: number
 }>{
   return await this.zillowScrapperSnapshotRepository.listMarketSnapshots(marketId, listMarketSnapshotsDto)
+}
+
+async handleNotification() {
+//
 }
 }

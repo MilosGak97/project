@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Query } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Query, Req, Res } from '@nestjs/common';
 import { ZillowScrapperService } from './zillow-scrapper.service'; 
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Market } from 'src/api/entities/market.entity'; 
@@ -132,9 +132,36 @@ async listMarketSnapshot(@Param('id') marketId:string, @Query() listMarketSnapsh
     return await this.scrapperService.listMarketSnapshots(marketId, listMarketSnapshotDto)
 }
 
+@Post('markets/:id/snapshots')
+@ApiOperation({summary: "Run manually scrapper for this market (24hrs)"})
+async runScrapperMarket(@Param('id') marketId: string){
+    return this.scrapperService.runScrapperMarket(marketId)
+}
+
+
+
 @Post('markets/:id/snapshots/:snapshotId')
-@ApiOperation({summary: "Retrieve snapshot data manually"})
+@ApiOperation({summary: "Re-run snapshot import function manually"})
 async fetchSnapshot(@Param('id') marketId: string, @Param('snapshotId') snapshotId: string){
     return await this.scrapperService.fetchSnapshot(marketId, snapshotId)
 }
+
+@Post('notification')
+@ApiOperation({ summary:  "Receive notification from post"})
+
+async handleNotification(@Req() req: Request) {
+    const payload = req.body;
+    console.log('Received notification:', payload);
+  
+    // Process the payload here (e.g., save to DB, trigger jobs, etc.)
+    
+    return {
+        message: "Succesfully received notification"
+    }
+  }
+
+
+
+
+
 }
