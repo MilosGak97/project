@@ -103,7 +103,7 @@ export class ZillowScrapperService {
     }
   }
 
-  @Cron(CronExpression.EVERY_DAY_AT_11AM) // change this to 6AM after testing
+  @Cron(CronExpression.EVERY_DAY_AT_NOON) // change this to 6AM after testing
     async cronHandler(){
       console.log('Triggering daily sendPostRequest...');
       await this.sendCronRequest()
