@@ -44,7 +44,7 @@ export class ZillowScrapperService {
   private async triggerScrape(data): Promise<{
     snapshot_id: string
   }> {
-    const url = 'https://api.brightdata.com/datasets/v3/trigger?dataset_id=gd_lfqkr8wm13ixtbd8f5&endpoint=https://uniqueproject-229b37d9b8ca.herokuapp.com/api/admin/scrapper/webhook-discovery&notify=https://uniqueproject-229b37d9b8ca.herokuapp.com/api/admin/scrapper/notification&format=json&type=discover_new&discover_by=url';
+    const url = 'https://api.brightdata.com/datasets/v3/trigger?dataset_id=gd_lfqkr8wm13ixtbd8f5&notify=https://uniqueproject-229b37d9b8ca.herokuapp.com/api/admin/scrapper/notification&format=json&type=discover_new&discover_by=url';
 
     const headers = {
       Authorization: `Bearer 07c11f1f-c052-45a9-b0fd-e385e5420129`, // Fetch token from environment
@@ -55,8 +55,6 @@ export class ZillowScrapperService {
     try {
       // Make POST request using the httpService (make sure to inject httpService in your class)
       const response = await firstValueFrom(this.httpService.post(url, data, { headers }));
-
-      console.log(response.data);
 
       // Check if snapshot_id is present in the response and return it
       const snapshot_id = response.data.snapshot_id
@@ -267,8 +265,7 @@ export class ZillowScrapperService {
     if (!market) {
       throw new NotFoundException("Market with provided ID does not exist.")
     }
-    const counties = market.counties
-    console.log(counties)
+    const counties = market.counties 
     if (counties.length === 0) {
       throw new NotFoundException("No counties found for this market")
     }
