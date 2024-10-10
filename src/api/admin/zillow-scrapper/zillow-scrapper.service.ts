@@ -310,6 +310,8 @@ async handleNotification(payload):Promise<{
 
 
 async discoveryWebhook(payload){    
+  console.log('Received payload:', payload);
+
     let decompressedData;
 
     // Check if payload is a string
