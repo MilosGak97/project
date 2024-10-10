@@ -29,25 +29,35 @@ export class ZillowScrapperService {
   ) { }
 
 // new method - reusable trigger scrape
-  async triggerScrape(data):Promise<any> {
-    const url = 'https://api.brightdata.com/datasets/v3/trigger?dataset_id=gd_lfqkr8wm13ixtbd8f5&include_errors=true&type=discover_new&discover_by=url';
-
-    const headers = {
-      Authorization: `Bearer ${process.env.BRIGHTDATA_API_TOKEN}`,
-      'Content-Type': 'application/json',
-    };
- 
-      try {
-        const response = await firstValueFrom(this.httpService.post(url, data, { headers }));
-        console.log(response.data)
-        if(response.data.snapshot_id){
-          console.log("response.data.snapshot_id: "+ response.data.snapshot_id)
-        }
-        return response.data.snapshot_id; // Return the data from the response
-      } catch (error) {
-        throw new Error(`Error sending POST request: ${error.message}`);
-      }
+async triggerScrape(data): Promise<any> {
+  const url = 'https://api.brightdata.com/datasets/v3/trigger?dataset_id=gd_lfqkr8wm13ixtbd8f5&include_errors=true&type=discover_new&discover_by=url';
+  
+  const headers = {
+    Authorization: `Bearer ${process.env.BRIGHTDATA_API_TOKEN}`,
+    'Content-Type': 'application/json',
+  };
+  
+  const payload = [
+    {
+      url: data.url,  // The URL you want to scrape, coming from the `data` argument
+      notify: 'https://uniqueproject-229b37d9b8ca.herokuapp.com/api/admin/scrapper/notification',  // Your webhook URL
     }
+  ];
+
+  try {
+    const response = await firstValueFrom(this.httpService.post(url, payload, { headers }));
+    console.log(response.data);
+
+    if (response.data.snapshot_id) {
+      console.log("response.data.snapshot_id: " + response.data.snapshot_id);
+    }
+
+    return response.data.snapshot_id;  // Return the snapshot_id from the response
+  } catch (error) {
+    throw new Error(`Error sending POST request: ${error.message}`);
+  }
+}
+
 // new method - cron request   
   async sendCronRequest() {
 
