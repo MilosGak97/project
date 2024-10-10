@@ -147,7 +147,7 @@ async fetchSnapshot(@Param('id') marketId: string, @Param('snapshotId') snapshot
 }
 
 @Post('notification')
-@ApiOperation({ summary: "Receive notification from post"})
+@ApiOperation({ summary: "Webhook: Receive notification from post"})
 
 async handleNotification(@Req() req: Request):Promise<{
     message:string
@@ -156,8 +156,12 @@ async handleNotification(@Req() req: Request):Promise<{
     return this.scrapperService.handleNotification(payload)
   }
 
-
-
+@Post('webhook-discovery')
+@ApiOperation({summary: "Webhook to receive collecting data"})
+async discoveryWebhook(@Req() req: Request){
+    const payload = req.body
+    return this.scrapperService.discoveryWebhook(payload)
+}
 
 
 

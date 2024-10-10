@@ -300,10 +300,15 @@ async handleNotification(payload):Promise<{
   snapshot.status = payload.status
 
   await this.zillowScrapperSnapshotRepository.save(snapshot)
+  console.log("Snapshot status successfully updated")
+
   return {
     message: "Snapshot status successfully updated"
   }
+}
 
 
+async discoveryWebhook(payload){
+   console.log(payload)
 }
 }
