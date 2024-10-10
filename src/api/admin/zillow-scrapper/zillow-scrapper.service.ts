@@ -30,7 +30,7 @@ export class ZillowScrapperService {
   ) { }
 // new method - reusable trigger scrape
 async triggerScrape(data): Promise<any> {
-  const url = 'https://api.brightdata.com/datasets/v3/trigger?dataset_id=gd_lfqkr8wm13ixtbd8f5&notify=https://uniqueproject-229b37d9b8ca.herokuapp.com/api/admin/scrapper/notification&type=discover_new&discover_by=url';
+  const url = 'https://api.brightdata.com/datasets/v3/trigger?dataset_id=gd_lfqkr8wm13ixtbd8f5&endpoint=https://uniqueproject-229b37d9b8ca.herokuapp.com/api/admin/scrapper/webhook-discovery&notify=https://uniqueproject-229b37d9b8ca.herokuapp.com/api/admin/scrapper/notification&format=json&type=discover_new&discover_by=url';
   
   const headers = {
     Authorization: `Bearer 07c11f1f-c052-45a9-b0fd-e385e5420129`, // Fetch token from environment
