@@ -41,7 +41,9 @@ export class ZillowScrapperService {
   }
 
   // new method - reusable trigger scrape
-  private async triggerScrape(data): Promise<any> {
+  private async triggerScrape(data): Promise<{
+    snapshot_id: string
+  }> {
     const url = 'https://api.brightdata.com/datasets/v3/trigger?dataset_id=gd_lfqkr8wm13ixtbd8f5&endpoint=https://uniqueproject-229b37d9b8ca.herokuapp.com/api/admin/scrapper/webhook-discovery&notify=https://uniqueproject-229b37d9b8ca.herokuapp.com/api/admin/scrapper/notification&format=json&type=discover_new&discover_by=url';
 
     const headers = {
@@ -57,9 +59,11 @@ export class ZillowScrapperService {
       console.log(response.data);
 
       // Check if snapshot_id is present in the response and return it
-      if (response.data.snapshot_id) {
+      const snapshot_id = response.data.snapshot_id
+      if (snapshot_id) {
         console.log("Snapshot ID: " + response.data.snapshot_id);
-        return response.data.snapshot_id;
+        
+        return snapshot_id;
       } else {
         // Handle case where snapshot_id is not returned
         throw new Error('Snapshot ID not found in the response.');
@@ -110,7 +114,9 @@ export class ZillowScrapperService {
   // --------------- PUBLIC ROUTES - ENDPOINTS
 
   // new method
-  async handleNotification(payload) {
+  async handleNotification(payload):Promise<{
+    message:string
+  }> {
     if (!payload.snapshot_id) {
       throw new NotFoundException("Snapshot ID is not found.")
     }
@@ -124,11 +130,17 @@ export class ZillowScrapperService {
     console.log("Snapshot Brightdata ID: "+ snapshot.brightdata_id)
     if (snapshot.status === "ready") {
 
-      return await this.fetchSnapshot(marketId, snapshot.brightdata_id)
+      await this.fetchSnapshot(marketId, snapshot.brightdata_id)
+      return {
+        message: "Job is done, great!"
+      }
 
     }
 
-    return console.log("Status is not ready ...")
+    console.log("Status is not ready ...")
+    return {
+      message: "Status is not ready ... "
+    }
   }
 
   // new method
@@ -230,7 +242,9 @@ export class ZillowScrapperService {
   }
 
   // new method
-  async runScrapperMarket(marketId: string) {
+  async runScrapperMarket(marketId: string):Promise<{
+    message:string
+  }> {
     const market = await this.marketRepository.findOne({ where: { id: marketId }, relations: ['counties'] })
     if (!market) {
       throw new NotFoundException("Market with provided ID does not exist.")
@@ -249,7 +263,9 @@ export class ZillowScrapperService {
   }
 
   // new method
-  async fetchSnapshot(marketId: string, snapshotId: string): Promise<any> {
+  async fetchSnapshot(marketId: string, snapshotId: string): Promise<{
+    message:string
+  }> {
     const snapshot = await this.zillowScrapperSnapshotRepository.findOne({
       where: { brightdata_id: snapshotId, market: { id: marketId } },
     });
@@ -293,14 +309,15 @@ export class ZillowScrapperService {
         console.log('State: ' + state)
         console.log(`ZPID: ${zpid}`);
       });
+      return {
+        message: "Sucessfully done job"
+      }
     } else {
       console.error("jsonData is not an array");
+      return {message: "Error encountered"}
     }
 
 
-    return {
-      message: "Sucessfully done job"
-    };
   }
 
 
