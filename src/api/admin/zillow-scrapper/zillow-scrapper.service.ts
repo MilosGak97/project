@@ -40,8 +40,6 @@ export class ZillowScrapperService {
     });
   }
 
-
-  
   // new method - reusable trigger scrape
   private async triggerScrape(data): Promise<any> {
     const url = 'https://api.brightdata.com/datasets/v3/trigger?dataset_id=gd_lfqkr8wm13ixtbd8f5&endpoint=https://uniqueproject-229b37d9b8ca.herokuapp.com/api/admin/scrapper/webhook-discovery&notify=https://uniqueproject-229b37d9b8ca.herokuapp.com/api/admin/scrapper/notification&format=json&type=discover_new&discover_by=url';
@@ -109,9 +107,6 @@ export class ZillowScrapperService {
   }
 
 
-
-
-
   // --------------- PUBLIC ROUTES - ENDPOINTS
 
   // new method
@@ -123,19 +118,17 @@ export class ZillowScrapperService {
     snapshot.status = payload.status
     await this.zillowScrapperSnapshotRepository.save(snapshot)
     const marketId = snapshot.market.id
-    console.log(marketId)
+    console.log("Market ID: " + marketId)
 
+    console.log("Snapshot Status: " + snapshot.status)
+    console.log("Snapshot Brightdata ID: "+ snapshot.brightdata_id)
     if (snapshot.status === "ready") {
 
       return await this.fetchSnapshot(marketId, snapshot.brightdata_id)
 
     }
-    if (snapshot.status === "failed") {
-      return await this.runScrapperMarket(marketId)
-    }
 
-
-    return console.log("Status is not ready or failed...")
+    return console.log("Status is not ready ...")
   }
 
   // new method
@@ -159,12 +152,10 @@ export class ZillowScrapperService {
     return this.marketRepository.listMarkets(listMarketsDto)
   }
 
-
   // new method
   async getMarket(marketId: string): Promise<Market> {
     return await this.marketRepository.getMarket(marketId)
   }
-
 
   // new method
   async deleteMarket(marketId: string): Promise<{
@@ -173,14 +164,12 @@ export class ZillowScrapperService {
     return await this.marketRepository.deleteMarket(marketId)
   }
 
-
   // new method
   async updateMarket(marketId: string, updateMarketDto: UpdateMarketDto): Promise<{
     message: string
   }> {
     return this.marketRepository.updateMarket(marketId, updateMarketDto)
   }
-
 
   // new method
   async createCounty(marketId: string, createCountyDto: CreateCountyDto): Promise<{
@@ -203,7 +192,6 @@ export class ZillowScrapperService {
     return await this.countyRepository.deleteCounty(marketId, countyId)
   }
 
-
   // new method
   async getCounty(marketId: string, countyId: string): Promise<County> {
     return await this.countyRepository.getCounty(marketId, countyId)
@@ -215,7 +203,6 @@ export class ZillowScrapperService {
   }> {
     return await this.countyRepository.updateCounty(marketId, countyId, updateCountyDto)
   }
-
 
   // new method
   async listSnapshots(listSnapshotsDto: ListSnapshotsDto): Promise<{
@@ -229,7 +216,6 @@ export class ZillowScrapperService {
     return this.zillowScrapperSnapshotRepository.listSnapshots(listSnapshotsDto)
   }
 
-
   // new method
   async listMarketSnapshots(marketId: string, listMarketSnapshotsDto: ListMarketSnapshotsDto): Promise<{
 
@@ -242,7 +228,6 @@ export class ZillowScrapperService {
   }> {
     return await this.zillowScrapperSnapshotRepository.listMarketSnapshots(marketId, listMarketSnapshotsDto)
   }
-
 
   // new method
   async runScrapperMarket(marketId: string) {
@@ -262,7 +247,6 @@ export class ZillowScrapperService {
     return await this.zillowScrapperSnapshotRepository.logSnapshot(snapshotId, marketId)
 
   }
-
 
   // new method
   async fetchSnapshot(marketId: string, snapshotId: string): Promise<any> {
