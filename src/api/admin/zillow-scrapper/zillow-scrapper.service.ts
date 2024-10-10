@@ -130,10 +130,50 @@ export class ZillowScrapperService {
     console.log("Snapshot Brightdata ID: "+ snapshot.brightdata_id)
     if (snapshot.status === "ready") {
 
-      await this.fetchSnapshot(marketId, snapshot.brightdata_id)
+      
+    const url = `https://api.brightdata.com/datasets/v3/snapshot/${snapshot.brightdata_id}?compress=true&format=json`;
+    const headers = {
+      Authorization: `Bearer 07c11f1f-c052-45a9-b0fd-e385e5420129`,
+    };
+
+
+    const response = await firstValueFrom(
+      this.httpService.request({
+        url,
+        method: 'GET',
+        headers,
+        responseType: 'stream',
+        timeout: 10000,
+      })
+    );
+
+    const decompressedData = await this.decompressData(response.data);
+
+    const jsonData = JSON.parse(decompressedData.toString());
+
+    // Check if jsonData is an array
+    if (Array.isArray(jsonData)) {
+      jsonData.forEach((item, index) => {
+
+
+        const zpid = item.zpid;
+        const state = item.state;
+        const city = item.address.city;
+
+        // HERE GOES THE LOGIC TO IMPORT IT INTO MONGODB
+
+        console.log('City: ' + city)
+        console.log('State: ' + state)
+        console.log(`ZPID: ${zpid}`);
+      });
       return {
-        message: "Job is done, great!"
+        message: "Sucessfully done job"
       }
+    } else {
+      console.error("jsonData is not an array");
+      return {message: "Error encountered"}
+    }
+     
 
     }
 
