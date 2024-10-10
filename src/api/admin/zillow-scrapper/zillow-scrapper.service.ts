@@ -309,6 +309,25 @@ async handleNotification(payload):Promise<{
 
 
 async discoveryWebhook(payload){
-   console.log(payload)
-}
+   const decompressedData = await this.decompressData(payload);
+
+    const jsonData = JSON.parse(decompressedData.toString());
+
+    // Check if jsonData is an array
+    if (Array.isArray(jsonData)) {
+        jsonData.forEach((item, index) => {
+          
+             
+          const zpid = item.zpid; 
+          const state = item.state;
+          const city = item.address.city;
+          
+          // HERE GOES THE LOGIC TO IMPORT IT INTO MONGODB
+          
+          console.log('City: ' + city)
+          console.log('State: ' + state)
+          console.log(`ZPID: ${zpid}`); 
+        });
+      }
+    }
 }
