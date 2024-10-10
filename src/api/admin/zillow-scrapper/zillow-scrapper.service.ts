@@ -37,7 +37,7 @@ async triggerScrape(data): Promise<any> {
   const discover_by = 'url';
 
   const headers = {
-    Authorization: `Bearer ${process.env.BRIGHTDATA_API_TOKEN}`, // Fetch token from environment
+    Authorization: `Bearer 07c11f1f-c052-45a9-b0fd-e385e5420129`, // Fetch token from environment
     'Content-Type': 'application/json',
   };
 
