@@ -48,7 +48,7 @@ async triggerScrape(data): Promise<any> {
     type,
     discover_by,
     include_errors: true, // This matches the behavior of the curl command
-    urls: data, // The `data` here is expected to be an array of URLs in the format [{ url: "https://..." }]
+    url: data, // The `data` here is expected to be an array of URLs in the format [{ url: "https://..." }]
   };
 
   try {
