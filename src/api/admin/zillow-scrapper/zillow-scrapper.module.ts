@@ -11,6 +11,7 @@ import { MarketRepository } from 'src/api/repositories/market.repository';
 import { CountyRepository } from 'src/api/repositories/county.repository'; 
 import { ScheduleModule } from '@nestjs/schedule';
 import { PropertyListingRepository } from './repository/property-listing.repository';
+import { PropertyListing } from 'src/api/entities/property-listing.entity';
 
 @Module({
   imports: [
@@ -18,7 +19,8 @@ import { PropertyListingRepository } from './repository/property-listing.reposit
       [
         ZillowScrapperSnapshot,
         County,
-        Market
+        Market,
+        PropertyListing,
       ]
     ),
     HttpModule, 
