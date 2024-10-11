@@ -1,11 +1,123 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Type } from "class-transformer";
+import { IsOptional } from "class-validator";
+import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity('property-listings')
 export class PropertyListing{
     @ApiProperty()
     @PrimaryGeneratedColumn('uuid')
     id:string
+
+
+    @IsOptional()
+    @Type(() => String)
+    @Column()
+    zpid: string // zpid
+    
+    @IsOptional()
+    @Type(() => String)
+    @Column()
+    homeStatus: string // homeStatus
+
+    @IsOptional()
+    @Type(() => String)
+    @Column()
+    streetAddress: string // address.streetAddress
+
+    @IsOptional()
+    @Type(() => String)
+    @Column()
+    city: string // address.city
+    
+    @IsOptional()
+    @Type(() => String)
+    @Column()
+    zipcode: string // address.zipcode
+    
+    @IsOptional()
+    @Type(() => String)
+    @Column()
+    state: string // address.state
+    
+    @IsOptional()
+    @Type(() => Number)
+    @Column()
+    bedrooms: number // bedrooms
+    
+    @IsOptional()
+    @Type(() => Number)
+    @Column()
+    bathrooms: number // bathrooms
+    
+    @IsOptional()
+    @Type(() => Number)
+    @Column()
+    price: number // price
+
+
+    @IsOptional()
+    @Type(() => String)
+    @Column()
+    longitude: string // longitude
+
+    
+    @IsOptional()
+    @Type(() => String)
+    @Column()
+    latitude: string // latitude
+ 
+    @IsOptional()
+    @Type(() => Number)
+    @Column()
+    livingArea: number // livingArea
+
+
+
+    @IsOptional()
+    @Type(() => String)
+    @Column()
+    livingAreaUnitsShort: string // livingAreaUnitsShort
+  
+ 
+    @IsOptional()
+    @Type(() => String)
+    @Column()
+    homeType: string // homeType
+ 
+    @IsOptional()
+    @Type(() => String)
+    @Column()
+    parcelId: string // parcelId
+ 
+    @IsOptional()
+    @Type(() => String)
+    @Column()
+    hdpTypeDimension: string // hdpTypeDimension
+
+
+    @IsOptional()
+    @Type(() => Number)
+    @Column()
+    photoCount: number // photoCount
+    
+    @Column()
+    @IsOptional() 
+    photos: any[] // photos
+    
+    @IsOptional()
+    @Type(() => String)
+    @Column()
+    county: string // county
+
+
+    @IsOptional()
+    @Type(() => Object) // or use specific interface/type if you know the structure
+    @Column()
+    additionalInfo: object; // Holds JSON data
+
+
+
 }
 
 /* 

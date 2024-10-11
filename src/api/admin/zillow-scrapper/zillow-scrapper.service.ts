@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { firstValueFrom } from 'rxjs';
+import { delay, firstValueFrom } from 'rxjs';
 import { HttpService } from '@nestjs/axios';
 import { ZillowScrapperSnapshotRepository } from './repository/zillow-scrapper-snapshot.repository';
 import { MarketRepository } from 'src/api/repositories/market.repository';
@@ -17,6 +17,8 @@ import { ZillowScrapperSnapshot } from 'src/api/entities/zillow-scrapper-snapsho
 import { ListMarketSnapshotsDto } from './dto/list-market-snapshots.dto';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import * as zlib from 'zlib'
+import { PropertyListingRepository } from './repository/property-listing.repository';
+import { CreatePropertyListingDto } from './dto/create-property-listing.dto';
 
 @Injectable()
 export class ZillowScrapperService {
@@ -24,7 +26,8 @@ export class ZillowScrapperService {
     private readonly zillowScrapperSnapshotRepository: ZillowScrapperSnapshotRepository,
     private readonly httpService: HttpService,
     private readonly marketRepository: MarketRepository,
-    private readonly countyRepository: CountyRepository
+    private readonly countyRepository: CountyRepository,
+    private readonly propertyListingRepository: PropertyListingRepository
   ) { }
 
   // -------------- PRIVATE FUNCTIONs -------------------  
@@ -60,7 +63,7 @@ export class ZillowScrapperService {
       const snapshot_id = response.data.snapshot_id
       if (snapshot_id) {
         console.log("Snapshot ID: " + response.data.snapshot_id);
-        
+
         return snapshot_id;
       } else {
         // Handle case where snapshot_id is not returned
@@ -70,6 +73,140 @@ export class ZillowScrapperService {
       // Handle errors properly, and return or log for debugging
       console.error('Error sending POST request:', error.response?.data || error.message);
       throw new Error(`Error sending POST request: ${error.message}`);
+    }
+  }
+
+
+  private async pullData(snapshot_id) {
+    // Fetch the snapshot data from BrightData API snapshot_id
+    const url = `https://api.brightdata.com/datasets/v3/snapshot/${snapshot_id}?compress=true&format=json`;
+    const headers = { Authorization: `Bearer 07c11f1f-c052-45a9-b0fd-e385e5420129` }; // here is bearer
+
+    try {
+      const response = await firstValueFrom(
+        this.httpService.request({ url, method: 'GET', headers, responseType: 'stream', timeout: 10000 })
+      );
+      const decompressedData = await this.decompressData(response.data);
+      const jsonData = JSON.parse(decompressedData.toString());
+
+      if (Array.isArray(jsonData)) {
+        jsonData.forEach((item) => {
+          const valuesArray = [];
+          // Existing code for extracting values
+          const zpid = item.zpid || null;  // Use null or a default value
+          const home_status = item.homeStatus || null;
+          const streetAddress = item.address?.streetAddress || null;
+          const city = item.address?.city || null;
+          const zipcode = item.address?.zipcode || null;
+          const state = item.address?.state || null;
+
+          // Access bedrooms and bathrooms from the nested structure
+          const bedrooms = item.interior?.bedrooms_and_bathrooms?.bedrooms || null;
+          const bathrooms = item.interior?.bedrooms_and_bathrooms?.bathrooms || null;
+
+          const price = item.price || null;
+          const longitude = item.longitude || null;
+          const latitude = item.latitude || null;
+          const livingArea = item.livingArea || null;
+          const livingAreaUnitsShort = item.livingAreaUnitsShort || null;
+          const homeType = item.homeType || null;
+          const parcelId = item.parcelId || null;
+          const hdpTypeDimension = item.hdpTypeDimension || null;
+          const photoCount = item.photoCount || null;
+
+          // Initialize an array for photo URLs with width of 576
+          const photos = [];
+
+          // Extract photos with width of 576
+          if (item.photos && Array.isArray(item.photos)) {
+            item.photos.forEach(photo => {
+              // Check if mixedSources exists and has jpeg array
+              const jpegImages = photo.mixedSources?.jpeg;
+
+              // Filter jpeg images for those with width of 576
+              if (jpegImages) {
+                jpegImages.forEach(image => {
+                  if (image.width === 576) {
+                    photos.push(image.url); // Push the URL to photos array
+                  }
+                });
+              }
+            });
+          }
+          const county = item.livingArea || null;
+
+
+            // Create the JSON object for specific values
+            const additionalInfo = {
+              yearBuilt: item.yearBuilt || null,
+              listingDataSource: item.listingDataSource || null,
+              hasBadGeocode: item.hasBadGeocode || null,
+              lotSize: item.lotSize || null,
+              lotAreaValue: item.lotAreaValue || null,
+              lotAreaUnits: item.lotAreaUnits || null,
+              livingAreaValue: item.livingAreaValue || null,
+              ssid: item.ssid || null,
+              hdpUrl: item.hdpUrl || null,
+              livingAreaUnits: item.livingAreaUnits || null,
+              isNonOwnerOccupied: item.isNonOwnerOccupied || null,
+              daysOnZillow: item.daysOnZillow || null,
+              brokerageName: item.brokerageName || null,
+              propertyTypeDimension: item.propertyTypeDimension || null,
+              timeZone: item.timeZone || null,
+              url: item.url || null,
+              countyFIPS: item.countyFIPS || null,
+              countyID: item.countyID || null,
+              listingTypeDimension: item.listingTypeDimension || null,
+              postingContact: item.postingContact || null,
+              isOffMarket: item.isOffMarket || null,
+              overview: item.overview || {},
+              is_listed_by_management_company: item.is_listed_by_management_company || null,
+              mls_id: item.mls_id || null,
+              timestamp: item.timestamp || null,
+              input: item.input || {},
+              listing_provided_by: {
+                name: item.listing_provided_by?.name || null,
+                email: item.listing_provided_by?.email || null,
+                company: item.listing_provided_by?.company || null,
+                phone_number: item.listing_provided_by?.phone_number || null
+              }
+            };
+
+
+
+          const propertyListingDto = new CreatePropertyListingDto();
+          propertyListingDto.zpid = zpid;
+          propertyListingDto.home_status = home_status;
+          propertyListingDto.streetAddress = streetAddress;
+          propertyListingDto.city = city;
+          propertyListingDto.zipcode = zipcode;
+          propertyListingDto.state = state;
+          propertyListingDto.bedrooms = bedrooms;
+          propertyListingDto.bathrooms = bathrooms;
+          propertyListingDto.price = price;
+          propertyListingDto.longitude = longitude;
+          propertyListingDto.latitude = latitude;
+          propertyListingDto.livingArea = livingArea;
+          propertyListingDto.livingAreaUnitsShort = livingAreaUnitsShort;
+          propertyListingDto.homeType = homeType;
+          propertyListingDto.parcelId = parcelId;
+          propertyListingDto.hdpTypeDimension = hdpTypeDimension;
+          propertyListingDto.photoCount = photoCount;
+          propertyListingDto.photos = photos; // Directly assign the photos array
+          propertyListingDto.county = county;
+          propertyListingDto.additionalInfo = additionalInfo;
+
+
+          console.log(`City: ${item.address.city}, State: ${item.state}, ZPID: ${item.zpid}`);
+        });
+        return { message: "Successfully processed the job" };
+      } else {
+        console.error("jsonData is not an array");
+        return { message: "Error: jsonData is not an array" };
+      }
+    } catch (error) {
+      console.error("Error fetching or processing data:", error);
+      return { message: "Error fetching data" };
     }
   }
 
@@ -114,50 +251,32 @@ export class ZillowScrapperService {
     if (!payload.snapshot_id) {
       throw new NotFoundException("Snapshot ID is not found.");
     }
-  
+
     // Fetch snapshot and relations
     const snapshot = await this.zillowScrapperSnapshotRepository.findOne({
       where: { brightdata_id: payload.snapshot_id },
       relations: ['market'],
     });
-  
+
+
+    // Wait for 5 seconds
+    await delay(5000); // 5000 milliseconds = 5 seconds
+
     // Only save and proceed if status is 'ready'
     if (payload.status === "ready") {
       snapshot.status = payload.status;
       await this.zillowScrapperSnapshotRepository.save(snapshot);
       console.log(`Processing snapshot with BrightData ID: ${snapshot.brightdata_id}`);
-  
-      // Fetch the snapshot data from BrightData API
-      const url = `https://api.brightdata.com/datasets/v3/snapshot/${snapshot.brightdata_id}?compress=true&format=json`;
-      const headers = { Authorization: `Bearer 07c11f1f-c052-45a9-b0fd-e385e5420129` };
-  
-      try {
-        const response = await firstValueFrom(
-          this.httpService.request({ url, method: 'GET', headers, responseType: 'stream', timeout: 10000 })
-        );
-        const decompressedData = await this.decompressData(response.data);
-        const jsonData = JSON.parse(decompressedData.toString());
-  
-        if (Array.isArray(jsonData)) {
-          jsonData.forEach((item) => {
-            console.log(`City: ${item.address.city}, State: ${item.state}, ZPID: ${item.zpid}`);
-          });
-          return { message: "Successfully processed the job" };
-        } else {
-          console.error("jsonData is not an array");
-          return { message: "Error: jsonData is not an array" };
-        }
-      } catch (error) {
-        console.error("Error fetching or processing data:", error);
-        return { message: "Error fetching data" };
-      }
+
+      return await this.pullData(snapshot.brightdata_id)
+
     }
-  
+
     // Log if the status is not 'ready'
     console.log("Status is not ready...");
     return { message: "Status is not ready" };
   }
-  
+
 
   // new method
   async createMarket(createMarketDto: CreateMarketDto): Promise<{
@@ -258,14 +377,14 @@ export class ZillowScrapperService {
   }
 
   // new method
-  async runScrapperMarket(marketId: string):Promise<{
-    message:string
+  async runScrapperMarket(marketId: string): Promise<{
+    message: string
   }> {
     const market = await this.marketRepository.findOne({ where: { id: marketId }, relations: ['counties'] })
     if (!market) {
       throw new NotFoundException("Market with provided ID does not exist.")
     }
-    const counties = market.counties 
+    const counties = market.counties
     if (counties.length === 0) {
       throw new NotFoundException("No counties found for this market")
     }
@@ -279,7 +398,7 @@ export class ZillowScrapperService {
 
   // new method
   async fetchSnapshot(marketId: string, snapshotId: string): Promise<{
-    message:string
+    message: string
   }> {
     const snapshot = await this.zillowScrapperSnapshotRepository.findOne({
       where: { brightdata_id: snapshotId, market: { id: marketId } },
@@ -289,49 +408,7 @@ export class ZillowScrapperService {
       throw new NotFoundException("Snapshot with this ID and Market ID does not exist.");
     }
 
-    const url = `https://api.brightdata.com/datasets/v3/snapshot/${snapshotId}?compress=true&format=json`;
-    const headers = {
-      Authorization: `Bearer 07c11f1f-c052-45a9-b0fd-e385e5420129`,
-    };
-
-
-    const response = await firstValueFrom(
-      this.httpService.request({
-        url,
-        method: 'GET',
-        headers,
-        responseType: 'stream',
-        timeout: 10000,
-      })
-    );
-
-    const decompressedData = await this.decompressData(response.data);
-
-    const jsonData = JSON.parse(decompressedData.toString());
-
-    // Check if jsonData is an array
-    if (Array.isArray(jsonData)) {
-      jsonData.forEach((item, index) => {
-
-
-        const zpid = item.zpid;
-        const state = item.state;
-        const city = item.address.city;
-
-        // HERE GOES THE LOGIC TO IMPORT IT INTO MONGODB
-
-        console.log('City: ' + city)
-        console.log('State: ' + state)
-        console.log(`ZPID: ${zpid}`);
-      });
-      return {
-        message: "Sucessfully done job"
-      }
-    } else {
-      console.error("jsonData is not an array");
-      return {message: "Error encountered"}
-    }
-
+    return await this.pullData(snapshot.brightdata_id)
 
   }
 

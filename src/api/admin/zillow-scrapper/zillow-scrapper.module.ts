@@ -10,6 +10,7 @@ import { Market } from 'src/api/entities/market.entity';
 import { MarketRepository } from 'src/api/repositories/market.repository';
 import { CountyRepository } from 'src/api/repositories/county.repository'; 
 import { ScheduleModule } from '@nestjs/schedule';
+import { PropertyListingRepository } from './repository/property-listing.repository';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { ScheduleModule } from '@nestjs/schedule';
     ZillowScrapperSnapshotRepository, 
     MarketRepository,
     CountyRepository,
+    PropertyListingRepository,
     
   ]
 })
