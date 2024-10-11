@@ -196,6 +196,7 @@ export class ZillowScrapperService {
           propertyListingDto.county = county;
           propertyListingDto.additionalInfo = additionalInfo;
 
+         this.propertyListingRepository.createProperty(propertyListingDto)
 
           console.log(`City: ${item.address.city}, State: ${item.state}, ZPID: ${item.zpid}`);
         });
