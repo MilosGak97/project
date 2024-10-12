@@ -101,8 +101,8 @@ export class PropertyListing{
     @Column()
     photoCount: number // photoCount
     
-    @Column()
     @IsOptional() 
+    @Column('json')
     photos: any[] // photos
     
     @IsOptional()
