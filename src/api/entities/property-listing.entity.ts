@@ -1,7 +1,8 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { Type } from "class-transformer";
-import { IsOptional } from "class-validator";
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { IsOptional, IsString } from "class-validator";
+import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { ZillowScrapperSnapshot } from "./zillow-scrapper-snapshot.entity";
 
 @Entity('property-listings')
 export class PropertyListing{
@@ -115,9 +116,24 @@ export class PropertyListing{
     @Column({ type: 'json', nullable:true }) // or 'json' if you prefer
     additionalInfo?: any
 
+    @IsOptional()
+    @IsString()
+    @Column({nullable:true})
+    snapshotId: string
 
+    
+    @ManyToOne(()=> ZillowScrapperSnapshot, (snapshot) => snapshot.id)
+    snapshot: ZillowScrapperSnapshot
 
-
+    // Automatically handles 'created at' timestamp
+    @ApiProperty()
+    @CreateDateColumn()
+    created_at: Date;
+    
+    // Automatically handles 'updated at' timestamp, updated whenever entity is modified
+    @ApiProperty()
+    @UpdateDateColumn()
+    updated_at: Date;
 }
 
 /* 

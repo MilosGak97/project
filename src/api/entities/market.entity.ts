@@ -1,6 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { IsBoolean, IsEnum, IsNotEmpty, IsOptional, IsString } from "class-validator";
-import { Column, Entity, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";  
+import { Column, CreateDateColumn, Entity, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";  
 import { County } from "./county.entity";
 import { ZillowScrapperSnapshot } from "./zillow-scrapper-snapshot.entity";
 import { MarketStatus } from "../enums/market-status";
@@ -41,5 +41,13 @@ export class Market{
     @OneToMany(() => ZillowScrapperSnapshot, (snapshot) => snapshot.market) // county 1 --- m snapshots
     snapshots?: ZillowScrapperSnapshot[]
 
-
+    // Automatically handles 'created at' timestamp
+    @ApiProperty()
+    @CreateDateColumn()
+    created_at: Date;
+    
+    // Automatically handles 'updated at' timestamp, updated whenever entity is modified
+    @ApiProperty()
+    @UpdateDateColumn()
+    updated_at: Date;
 }

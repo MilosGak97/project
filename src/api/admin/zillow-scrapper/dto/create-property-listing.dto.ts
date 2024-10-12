@@ -1,5 +1,5 @@
 import { Type } from "class-transformer";
-import { IsOptional } from "class-validator";
+import { IsOptional, IsString } from "class-validator";
 
 export class CreatePropertyListingDto{
     @IsOptional()
@@ -86,6 +86,10 @@ export class CreatePropertyListingDto{
     @IsOptional()
     @Type(() => Object) // or use specific interface/type if you know the structure
     additionalInfo: object; // Holds JSON data
+
+    @IsOptional()
+    @IsString()
+    snapshotId: string
 
 /*
  

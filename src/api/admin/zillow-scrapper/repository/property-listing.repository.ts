@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { ConflictException, Injectable } from "@nestjs/common";
 import { PropertyListing } from "src/api/entities/property-listing.entity";
 import { DataSource, Repository } from "typeorm";
 import { CreatePropertyListingDto } from "../dto/create-property-listing.dto";
@@ -36,6 +36,12 @@ export class PropertyListingRepository extends Repository<PropertyListing>{
             additionalInfo // If you want to use additionalInfo
         } = createPropertyListingDto;
     
+
+        const zpidExist = await this.findOne({where: { zpid}})
+        if(zpidExist){
+            throw new ConflictException("User with this ZPID already exist")
+        }
+
         // Create a new instance of PropertyListing (make sure this matches your entity)
         const property = new PropertyListing();
         property.zpid = zpid;

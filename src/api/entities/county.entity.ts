@@ -1,7 +1,7 @@
 import { ApiProperty } from "@nestjs/swagger";
 import {  IsEnum, IsNotEmpty, IsOptional, IsString } from "class-validator";
 import { States } from "src/api/enums/states.enum";
-import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { Market } from "./market.entity";
 import { ZillowScrapperSnapshot } from "src/api/entities/zillow-scrapper-snapshot.entity";
 import { CountyStatus } from "../enums/county-status.enum";
@@ -54,5 +54,13 @@ export class County{
     @ManyToOne(() => Market, (market) => market.counties)
     market: Market // This should automatically map to the correct foreign key
     
-
+    // Automatically handles 'created at' timestamp
+    @ApiProperty()
+    @CreateDateColumn()
+    created_at: Date;
+    
+    // Automatically handles 'updated at' timestamp, updated whenever entity is modified
+    @ApiProperty()
+    @UpdateDateColumn()
+    updated_at: Date;
 }

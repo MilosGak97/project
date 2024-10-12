@@ -71,12 +71,17 @@ export class User{
     @Column()
     refreshToken: string
 
+    // Automatically handles 'created at' timestamp
+    @ApiProperty()
     @CreateDateColumn()
-    created_at: Date
-
+    created_at: Date;
+    
+    // Automatically handles 'updated at' timestamp, updated whenever entity is modified
+    @ApiProperty()
     @UpdateDateColumn()
-    updated_at: Date
+    updated_at: Date;
 
+    @ApiProperty()
     @ManyToOne(() => Company, (company) => company.users)
     company: Company
 }
