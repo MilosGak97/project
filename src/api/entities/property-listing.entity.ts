@@ -12,107 +12,107 @@ export class PropertyListing{
 
     @IsOptional()
     @Type(() => String)
-    @Column()
+    @Column({nullable:true})
     zpid?: string // zpid
     
     @IsOptional()
     @Type(() => String)
-    @Column()
+    @Column({nullable:true})
     homeStatus?: string // homeStatus
 
     @IsOptional()
     @Type(() => String)
-    @Column()
+    @Column({nullable:true})
     streetAddress?: string // address.streetAddress
 
     @IsOptional()
     @Type(() => String)
-    @Column()
+    @Column({nullable:true})
     city?: string // address.city
     
     @IsOptional()
     @Type(() => String)
-    @Column()
+    @Column({nullable:true})
     zipcode?: string // address.zipcode
     
     @IsOptional()
     @Type(() => String)
-    @Column()
+    @Column({nullable:true})
     state?: string // address.state
     
     @IsOptional()
     @Type(() => Number) 
-    @Column({ type: 'integer' })
+    @Column({ type: 'integer' , nullable:true})
     bedrooms?: number;
     
     @IsOptional()
     @Type(() => Number)
-    @Column({ type: 'integer' })
+    @Column({ type: 'integer' , nullable:true})
     bathrooms?: number // bathrooms
     
     @IsOptional()
     @Type(() => Number)
-    @Column({ type: 'integer' })
+    @Column({ type: 'integer', nullable:true })
     price?: number // price
 
 
     @IsOptional()
     @Type(() => String)
-    @Column()
+    @Column({nullable:true})
     longitude?: string // longitude
 
     
     @IsOptional()
     @Type(() => String)
-    @Column()
+    @Column({nullable:true})
     latitude?: string // latitude
  
     @IsOptional()
     @Type(() => Number)
-    @Column()
+    @Column({nullable:true})
     livingArea?: number // livingArea
 
 
 
     @IsOptional()
     @Type(() => String)
-    @Column()
+    @Column({nullable:true})
     livingAreaUnitsShort?: string // livingAreaUnitsShort
   
  
     @IsOptional()
     @Type(() => String)
-    @Column()
+    @Column({nullable:true})
     homeType?: string // homeType
  
     @IsOptional()
     @Type(() => String)
-    @Column()
+    @Column({nullable:true})
     parcelId?: string // parcelId
  
     @IsOptional()
     @Type(() => String)
-    @Column()
+    @Column({nullable:true})
     hdpTypeDimension?: string // hdpTypeDimension
 
 
     @IsOptional()
     @Type(() => Number)
-    @Column()
+    @Column({nullable:true})
     photoCount?: number // photoCount
     
     @IsOptional() 
-    @Column('json')
+    @Column({type: 'json',nullable:true})
     photos?: any[] // photos
     
     @IsOptional()
     @Type(() => String)
-    @Column()
+    @Column({nullable:true})
     county?: string // county
 
 
     @IsOptional()
-    @Column({ type: 'json' }) // or 'json' if you prefer
+    @Column({ type: 'json', nullable:true }) // or 'json' if you prefer
     additionalInfo?: any
 
 
