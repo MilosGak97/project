@@ -112,9 +112,9 @@ export class PropertyListing{
 
 
     @IsOptional()
-    @Type(() => Object) // or use specific interface/type if you know the structure
-    @Column()
-    additionalInfo: object; // Holds JSON data
+    @Column({ type: 'json', nullable: true }) // or 'json' if you prefer
+    additionalInfo: any
+
 
 
 
