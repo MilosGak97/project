@@ -13,107 +13,107 @@ export class PropertyListing{
     @IsOptional()
     @Type(() => String)
     @Column()
-    zpid: string // zpid
+    zpid?: string // zpid
     
     @IsOptional()
     @Type(() => String)
     @Column()
-    homeStatus: string // homeStatus
+    homeStatus?: string // homeStatus
 
     @IsOptional()
     @Type(() => String)
     @Column()
-    streetAddress: string // address.streetAddress
+    streetAddress?: string // address.streetAddress
 
     @IsOptional()
     @Type(() => String)
     @Column()
-    city: string // address.city
+    city?: string // address.city
     
     @IsOptional()
     @Type(() => String)
     @Column()
-    zipcode: string // address.zipcode
+    zipcode?: string // address.zipcode
     
     @IsOptional()
     @Type(() => String)
     @Column()
-    state: string // address.state
+    state?: string // address.state
+    
+    @IsOptional()
+    @Type(() => Number) 
+    @Column({ type: 'integer', nullable: true })
+    bedrooms?: number;
     
     @IsOptional()
     @Type(() => Number)
-    @Column()
-    bedrooms: number // bedrooms
+    @Column({ type: 'integer', nullable: true })
+    bathrooms?: number // bathrooms
     
     @IsOptional()
     @Type(() => Number)
-    @Column()
-    bathrooms: number // bathrooms
-    
-    @IsOptional()
-    @Type(() => Number)
-    @Column()
-    price: number // price
+    @Column({ type: 'integer', nullable: true })
+    price?: number // price
 
 
     @IsOptional()
     @Type(() => String)
     @Column()
-    longitude: string // longitude
+    longitude?: string // longitude
 
     
     @IsOptional()
     @Type(() => String)
     @Column()
-    latitude: string // latitude
+    latitude?: string // latitude
  
     @IsOptional()
     @Type(() => Number)
     @Column()
-    livingArea: number // livingArea
+    livingArea?: number // livingArea
 
 
 
     @IsOptional()
     @Type(() => String)
     @Column()
-    livingAreaUnitsShort: string // livingAreaUnitsShort
+    livingAreaUnitsShort?: string // livingAreaUnitsShort
   
  
     @IsOptional()
     @Type(() => String)
     @Column()
-    homeType: string // homeType
+    homeType?: string // homeType
  
     @IsOptional()
     @Type(() => String)
     @Column()
-    parcelId: string // parcelId
+    parcelId?: string // parcelId
  
     @IsOptional()
     @Type(() => String)
     @Column()
-    hdpTypeDimension: string // hdpTypeDimension
+    hdpTypeDimension?: string // hdpTypeDimension
 
 
     @IsOptional()
     @Type(() => Number)
     @Column()
-    photoCount: number // photoCount
+    photoCount?: number // photoCount
     
     @IsOptional() 
     @Column('json')
-    photos: any[] // photos
+    photos?: any[] // photos
     
     @IsOptional()
     @Type(() => String)
     @Column()
-    county: string // county
+    county?: string // county
 
 
     @IsOptional()
     @Column({ type: 'json', nullable: true }) // or 'json' if you prefer
-    additionalInfo: any
+    additionalInfo?: any
 
 
 
