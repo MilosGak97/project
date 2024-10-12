@@ -42,17 +42,17 @@ export class PropertyListing{
     
     @IsOptional()
     @Type(() => Number) 
-    @Column({ type: 'integer', nullable: true })
+    @Column({ type: 'integer' })
     bedrooms?: number;
     
     @IsOptional()
     @Type(() => Number)
-    @Column({ type: 'integer', nullable: true })
+    @Column({ type: 'integer' })
     bathrooms?: number // bathrooms
     
     @IsOptional()
     @Type(() => Number)
-    @Column({ type: 'integer', nullable: true })
+    @Column({ type: 'integer' })
     price?: number // price
 
 
@@ -112,7 +112,7 @@ export class PropertyListing{
 
 
     @IsOptional()
-    @Column({ type: 'json', nullable: true }) // or 'json' if you prefer
+    @Column({ type: 'json' }) // or 'json' if you prefer
     additionalInfo?: any
 
 
