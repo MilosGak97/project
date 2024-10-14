@@ -28,7 +28,7 @@ export class ZillowScrapperController {
         message: string
     }> {
         const payload = req.body;
-        console.log("PAYLOAD: " + payload)
+        console.log("PAYLOAD: ", JSON.stringify(payload, null, 2)); // Pretty-print with 2 spaces indentation
         return this.scrapperService.handleNotification(payload)
     }
 
