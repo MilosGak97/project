@@ -42,15 +42,17 @@ export class ZillowScrapperSnapshot {
     duplicatesCount: number
 
     @ApiProperty({required:false})
+    @IsOptional()
     @IsNumber()
     @Type(() => Number)
-    @Column()
+    @Column({nullable:true})
     count: number
 
     @ApiProperty({required:false})
+    @IsOptional()
     @IsNumber()
     @Type(() => Number)
-    @Column()
+    @Column({nullable:true})
     errors: number
 
     @ApiProperty({required:false})
