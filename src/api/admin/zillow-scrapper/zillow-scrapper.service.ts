@@ -291,8 +291,13 @@ export class ZillowScrapperService {
     // Only save and proceed if status is 'ready'
     if (payload.status === "ready") {
       snapshot.status = payload.status;
+      
+      console.log("PAYLOAD RECORDS: "+ payload.records)
       snapshot.count = payload.records
+
+      console.log("PAYLOAD ERRORS: " + payload.errors)
       snapshot.errors = payload.errors
+      
       await this.zillowScrapperSnapshotRepository.save(snapshot);
       console.log(`Processing snapshot with BrightData ID: ${snapshot.brightdata_id}`);
 
