@@ -19,6 +19,7 @@ import { Cron, CronExpression } from '@nestjs/schedule';
 import * as zlib from 'zlib'
 import { PropertyListingRepository } from './repository/property-listing.repository';
 import { CreatePropertyListingDto } from './dto/create-property-listing.dto';
+import { url } from 'inspector';
 
 @Injectable()
 export class ZillowScrapperService {
@@ -79,8 +80,7 @@ export class ZillowScrapperService {
   private async pullData(snapshot_id) {
     // Fetch the snapshot data from BrightData API snapshot_id
     const url = `https://api.brightdata.com/datasets/v3/snapshot/${snapshot_id}?compress=true&format=json`;
-    const headers = {  Authorization: `Bearer ${process.env.BRIGHTDATA_API_TOKEN}`  
-  }; 
+    const headers = {  Authorization: `Bearer ${process.env.BRIGHTDATA_API_TOKEN}` }; 
 
     try {
       const response = await firstValueFrom(
@@ -236,6 +236,21 @@ export class ZillowScrapperService {
     }
   }
 
+
+  private async monitorStatus(snapshot_id){
+    const url = `https://api.brightdata.com/datasets/v3/progress/${snapshot_id}`
+
+    const headers = { Authorization : `Bearer ${process.env.BRIGHDATA_API_TOKEN} `} 
+
+    try{
+      const response = await firstValueFrom(this.httpService.get(url, {headers}))
+      return response.data
+    }catch(error){
+      console.log(error)
+    }
+
+
+  }
   // --------------- CRON FUNCTIONS ----------------------
   @Cron(CronExpression.EVERY_DAY_AT_6AM) // change this to 6AM after testing
   async cronHandler() {
@@ -278,6 +293,9 @@ export class ZillowScrapperService {
       throw new NotFoundException("Snapshot ID is not found.");
     }
 
+
+
+
     // Fetch snapshot and relations
     const snapshot = await this.zillowScrapperSnapshotRepository.findOne({
       where: { brightdata_id: payload.snapshot_id },
@@ -292,12 +310,14 @@ export class ZillowScrapperService {
     if (payload.status === "ready") {
       snapshot.status = payload.status;
       
-      console.log("PAYLOAD RECORDS: "+ payload.records)
-      snapshot.count = payload.records
+      const moreInfo = await this.monitorStatus(payload.snapshot_id)
 
-      console.log("PAYLOAD ERRORS: " + payload.errors)
-      snapshot.errors = payload.errors
-      
+      console.log("PAYLOAD RECORDS: "+ moreInfo.records)
+      snapshot.count = moreInfo.records
+
+      console.log("PAYLOAD ERRORS: " + moreInfo.errors)
+      snapshot.errors = moreInfo.errors
+
       await this.zillowScrapperSnapshotRepository.save(snapshot);
       console.log(`Processing snapshot with BrightData ID: ${snapshot.brightdata_id}`);
 
