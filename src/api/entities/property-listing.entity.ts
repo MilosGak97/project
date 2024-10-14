@@ -3,6 +3,7 @@ import { Type } from "class-transformer";
 import { IsOptional, IsString } from "class-validator";
 import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { ZillowScrapperSnapshot } from "./zillow-scrapper-snapshot.entity";
+import { Market } from "./market.entity";
 
 @Entity('property-listings')
 export class PropertyListing{
@@ -11,63 +12,75 @@ export class PropertyListing{
     id:string
 
 
+    @ApiProperty({required:false})
     @IsOptional()
     @Type(() => String)
     @Column({nullable:true})
     zpid?: string // zpid
     
+    @ApiProperty({required:false})
     @IsOptional()
     @Type(() => String)
     @Column({nullable:true})
     homeStatus?: string // homeStatus
 
+    @ApiProperty({required:false})
     @IsOptional()
     @Type(() => String)
     @Column({nullable:true})
     streetAddress?: string // address.streetAddress
 
+    @ApiProperty({required:false})
     @IsOptional()
     @Type(() => String)
     @Column({nullable:true})
     city?: string // address.city
     
+    @ApiProperty({required:false})
     @IsOptional()
     @Type(() => String)
     @Column({nullable:true})
     zipcode?: string // address.zipcode
     
+    @ApiProperty({required:false})
     @IsOptional()
     @Type(() => String)
     @Column({nullable:true})
     state?: string // address.state
     
+    @ApiProperty({required:false})
     @IsOptional()
     @Type(() => Number) 
     @Column({ type: 'integer' , nullable:true})
     bedrooms?: number;
     
+    @ApiProperty({required:false})
     @IsOptional()
     @Type(() => Number)
     @Column({ type: 'integer' , nullable:true})
     bathrooms?: number // bathrooms
     
+    @ApiProperty({required:false})
     @IsOptional()
     @Type(() => Number)
     @Column({ type: 'integer', nullable:true })
     price?: number // price
 
 
+    @ApiProperty({required:false})
     @IsOptional()
     @Type(() => String)
     @Column({nullable:true})
     longitude?: string // longitude
 
     
+    @ApiProperty({required:false})
     @IsOptional()
     @Type(() => String)
     @Column({nullable:true})
     latitude?: string // latitude
  
+    @ApiProperty({required:false})
     @IsOptional()
     @Type(() => Number)
     @Column({nullable:true})
@@ -75,62 +88,71 @@ export class PropertyListing{
 
 
 
+    @ApiProperty({required:false})
     @IsOptional()
     @Type(() => String)
     @Column({nullable:true})
     livingAreaUnitsShort?: string // livingAreaUnitsShort
   
  
+    @ApiProperty({required:false})
     @IsOptional()
     @Type(() => String)
     @Column({nullable:true})
     homeType?: string // homeType
  
+    @ApiProperty({required:false})
     @IsOptional()
     @Type(() => String)
     @Column({nullable:true})
     parcelId?: string // parcelId
  
+    @ApiProperty({required:false})
     @IsOptional()
     @Type(() => String)
     @Column({nullable:true})
     hdpTypeDimension?: string // hdpTypeDimension
 
 
+    @ApiProperty({required:false})
     @IsOptional()
     @Type(() => Number)
     @Column({nullable:true})
     photoCount?: number // photoCount
     
+    @ApiProperty({required:false})
     @IsOptional() 
     @Column({type: 'json',nullable:true})
     photos?: any[] // photos
     
+    @ApiProperty({required:false})
     @IsOptional()
     @Type(() => String)
     @Column({nullable:true})
     county?: string // county
 
-
+    @ApiProperty({required:false})
     @IsOptional()
     @Column({ type: 'json', nullable:true }) // or 'json' if you prefer
     additionalInfo?: any
-
-    @IsOptional()
-    @IsString()
-    @Column({nullable:true})
-    snapshotId: string
-
-    
+ 
+    @ApiProperty({required:false})
     @ManyToOne(()=> ZillowScrapperSnapshot, (snapshot) => snapshot.id)
     snapshot: ZillowScrapperSnapshot
 
-    // Automatically handles 'created at' timestamp
+    @ApiProperty({required:false})
+    @ManyToOne(()=> Market, (market) => market.id)
+    market: Market
+
+
+    @ApiProperty({required:false})
+    @Column({nullable:true})
+    filtered_status: string
+ 
     @ApiProperty()
     @CreateDateColumn()
     created_at: Date;
-    
-    // Automatically handles 'updated at' timestamp, updated whenever entity is modified
+     
     @ApiProperty()
     @UpdateDateColumn()
     updated_at: Date;

@@ -28,6 +28,7 @@ export class ZillowScrapperController {
         message: string
     }> {
         const payload = req.body;
+        console.log("PAYLOAD: " + payload)
         return this.scrapperService.handleNotification(payload)
     }
 

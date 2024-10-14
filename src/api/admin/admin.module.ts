@@ -3,6 +3,8 @@ import { AdminManagementModule } from './admin-management/admin-management.modul
 import { AuthModule } from './auth/auth.module'; 
 import { ClientManagementModule } from './client-management/client-management.module'; 
 import { ZillowScrapperModule } from './zillow-scrapper/zillow-scrapper.module';
+import { DataModule } from './data/data.module';
+import { FilteringFeatureModule } from './filtering-feature/filtering-feature.module';
 
 @Module({
     imports: [ 
@@ -10,6 +12,7 @@ import { ZillowScrapperModule } from './zillow-scrapper/zillow-scrapper.module';
         AuthModule, 
         ClientManagementModule,
         ZillowScrapperModule, 
+        DataModule, FilteringFeatureModule
     ],
     controllers: [],  
     providers: [],  

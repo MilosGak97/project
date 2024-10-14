@@ -2,6 +2,8 @@ import { ConflictException, Injectable } from "@nestjs/common";
 import { PropertyListing } from "src/api/entities/property-listing.entity";
 import { DataSource, Repository } from "typeorm";
 import { CreatePropertyListingDto } from "../dto/create-property-listing.dto";
+import { ListForFilteringDto } from "../../filtering-feature/dto/list-for-filtering.dto";
+import { Market } from "src/api/entities/market.entity";
 
 @Injectable()
 export class PropertyListingRepository extends Repository<PropertyListing>{
@@ -33,7 +35,9 @@ export class PropertyListingRepository extends Repository<PropertyListing>{
             photoCount,
             photos,
             county,
-            additionalInfo // If you want to use additionalInfo
+            additionalInfo,
+            market,
+            snapshot
         } = createPropertyListingDto;
     
 
@@ -63,6 +67,9 @@ export class PropertyListingRepository extends Repository<PropertyListing>{
         property.photoCount = photoCount; // Assuming property entity has photoCount property
         property.photos = photos; // Assuming property entity has photos property
         property.county = county; // Assuming property entity has county property
+        property.market = market;
+        property.filtered_status= null; 
+        property.snapshot = snapshot
     
         // If you want to store additionalInfo, ensure your entity supports it
         if (additionalInfo) {
@@ -75,5 +82,8 @@ export class PropertyListingRepository extends Repository<PropertyListing>{
         return { message: "Property created successfully", property };
     }
     
-
+    async unfilteredMarket(market: Market ):Promise<number>{
+        const count = await this.count({where: {market}})
+        return count
+    }
 }

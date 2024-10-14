@@ -50,7 +50,7 @@ export class ZillowScrapperService {
     const url = 'https://api.brightdata.com/datasets/v3/trigger?dataset_id=gd_lfqkr8wm13ixtbd8f5&notify=https://uniqueproject-229b37d9b8ca.herokuapp.com/api/admin/scrapper/notification&format=json&type=discover_new&discover_by=url';
 
     const headers = {
-      Authorization: `Bearer 07c11f1f-c052-45a9-b0fd-e385e5420129`, // Fetch token from environment
+      Authorization: `Bearer ${process.env.BRIGHTDATA_API_TOKEN}`,
       'Content-Type': 'application/json',
     };
 
@@ -76,11 +76,11 @@ export class ZillowScrapperService {
     }
   }
 
-
   private async pullData(snapshot_id) {
     // Fetch the snapshot data from BrightData API snapshot_id
     const url = `https://api.brightdata.com/datasets/v3/snapshot/${snapshot_id}?compress=true&format=json`;
-    const headers = { Authorization: `Bearer 07c11f1f-c052-45a9-b0fd-e385e5420129` }; // here is bearer
+    const headers = {  Authorization: `Bearer ${process.env.BRIGHTDATA_API_TOKEN}`  
+  }; 
 
     try {
       const response = await firstValueFrom(
@@ -88,33 +88,36 @@ export class ZillowScrapperService {
       );
       const decompressedData = await this.decompressData(response.data);
       const jsonData = JSON.parse(decompressedData.toString());
+      const snapshot = await this.zillowScrapperSnapshotRepository.findOne({where: {brightdata_id: snapshot_id}, relations:['market']})
+      
+
 
       if (Array.isArray(jsonData)) {
         for (const item of jsonData) {
-  
-          const zpid = item.zpid || null;  
+
+          const zpid = item.zpid || null;
           const homeStatus = item.homeStatus || null;
           const streetAddress = item.address?.streetAddress || null;
           const city = item.address?.city || null;
           const zipcode = item.address?.zipcode || null;
           const state = item.address?.state || null;
- 
+
           const bedrooms = item.interior?.bedrooms_and_bathrooms?.bedrooms ? parseInt(item.interior.bedrooms_and_bathrooms.bedrooms, 10) : null;
           const bathrooms = item.interior?.bedrooms_and_bathrooms?.bathrooms ? parseInt(item.interior.bedrooms_and_bathrooms.bathrooms, 10) : null;
 
-          const price = item.price ? parseFloat(item.price) : null;   
+          const price = item.price ? parseFloat(item.price) : null;
           const longitude = item.longitude || null;
           const latitude = item.latitude || null;
-          const livingArea = item.livingArea ? parseFloat(item.livingArea) : null;  
+          const livingArea = item.livingArea ? parseFloat(item.livingArea) : null;
           const livingAreaUnitsShort = item.livingAreaUnitsShort || null;
           const homeType = item.homeType || null;
           const parcelId = item.parcelId || null;
           const hdpTypeDimension = item.hdpTypeDimension || null;
-          const photoCount = item.photoCount ? parseInt(item.photoCount, 10) : null;   
+          const photoCount = item.photoCount ? parseInt(item.photoCount, 10) : null;
 
- 
+
           const photos = [];
- 
+
           if (item.photos && Array.isArray(item.photos)) {
             item.photos.forEach(photo => {
               // Check if mixedSources exists and has jpeg array
@@ -132,7 +135,7 @@ export class ZillowScrapperService {
           }
           const county = item.livingArea || null;
 
- 
+
           const additionalInfo = {
             yearBuilt: item.yearBuilt || null,
             listingDataSource: item.listingDataSource || null,
@@ -186,16 +189,21 @@ export class ZillowScrapperService {
           propertyListingDto.parcelId = parcelId;
           propertyListingDto.hdpTypeDimension = hdpTypeDimension;
           propertyListingDto.photoCount = photoCount;
-          propertyListingDto.photos = photos; 
+          propertyListingDto.photos = photos;
           propertyListingDto.county = county;
           propertyListingDto.additionalInfo = additionalInfo;
-          propertyListingDto.snapshotId = snapshot_id;
+          propertyListingDto.snapshot = snapshot
+          propertyListingDto.market = snapshot.market
 
 
           const zpidExist = await this.propertyListingRepository.findOne({ where: { zpid }, relations: ['snapshot'] });
           if (zpidExist) {
+
+
+
+
             const snapshot = await this.zillowScrapperSnapshotRepository.findOne({ where: { brightdata_id: snapshot_id }, relations: ['duplicatesProperties'] })
-           
+
             // Initialize duplicatesProperties if not already done
             if (!snapshot.duplicatesProperties) {
               snapshot.duplicatesProperties = [];
@@ -214,9 +222,7 @@ export class ZillowScrapperService {
             continue;
           }
 
-          this.propertyListingRepository.createProperty(propertyListingDto)
-
-          console.log(`City: ${item.address.city}, State: ${item.state}, ZPID: ${item.zpid}`);
+          await this.propertyListingRepository.createProperty(propertyListingDto)
         };
         return { message: "Successfully processed the job" };
       } else {
