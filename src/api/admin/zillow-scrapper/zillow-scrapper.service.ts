@@ -239,8 +239,8 @@ export class ZillowScrapperService {
 
   private async monitorStatus(snapshot_id){
     const url = `https://api.brightdata.com/datasets/v3/progress/${snapshot_id}`
-
-    const headers = { Authorization : `Bearer ${process.env.BRIGHDATA_API_TOKEN} `} 
+ 
+    const headers = { Authorization : `Bearer ${process.env.BRIGHTDATA_API_TOKEN} `} 
 
     try{
       const response = await firstValueFrom(this.httpService.get(url, {headers}))
