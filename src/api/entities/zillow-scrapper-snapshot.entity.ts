@@ -41,10 +41,24 @@ export class ZillowScrapperSnapshot {
     @Column({nullable:true})
     duplicatesCount: number
 
+    @ApiProperty({required:false})
+    @IsNumber()
+    @Type(() => Number)
+    @Column()
+    count: number
+
+    @ApiProperty({required:false})
+    @IsNumber()
+    @Type(() => Number)
+    @Column()
+    errors: number
 
     @ApiProperty({required:false})
     @OneToMany(() => PropertyListing, (property) => property.snapshot)
     properties: PropertyListing[] 
+
+
+
 
     @ApiProperty({required:false})
     @CreateDateColumn()

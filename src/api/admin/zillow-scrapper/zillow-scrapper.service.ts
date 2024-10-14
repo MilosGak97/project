@@ -217,6 +217,7 @@ export class ZillowScrapperService {
             }
             snapshot.duplicatesProperties.push(zpidExist); // Add to the duplicatesProperties array
             snapshot.duplicatesCount = snapshot.duplicatesCount + 1
+            snapshot.count = snapshot.count - 1 
             await this.zillowScrapperSnapshotRepository.save(snapshot)
             console.log("This zpid already exist: " + zpid)
             continue;
@@ -290,6 +291,8 @@ export class ZillowScrapperService {
     // Only save and proceed if status is 'ready'
     if (payload.status === "ready") {
       snapshot.status = payload.status;
+      snapshot.count = payload.records
+      snapshot.errors = payload.errors
       await this.zillowScrapperSnapshotRepository.save(snapshot);
       console.log(`Processing snapshot with BrightData ID: ${snapshot.brightdata_id}`);
 
