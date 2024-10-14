@@ -100,7 +100,9 @@ export class ZillowScrapperController {
     // new endpoint
     @Delete('markets/:marketId/counties/:countyId')
     @ApiOperation({ summary: "Delete county " })
-    async deleteCounty(@Param('marketId') marketId: string, @Param('countyId') countyId: string) {
+    async deleteCounty(@Param('marketId') marketId: string, @Param('countyId') countyId: string):Promise<{
+        message:string
+    }> {
         return await this.scrapperService.deleteCounty(marketId, countyId)
     }
 
@@ -141,15 +143,19 @@ export class ZillowScrapperController {
 
     @Post('markets/:id/snapshots')
     @ApiOperation({ summary: "Run manually scrapper for this market (24hrs)" })
-    async runScrapperMarket(@Param('id') marketId: string) {
-        return this.scrapperService.runScrapperMarket(marketId)
+    async runScrapperMarket(@Param('id') marketId: string):Promise<{
+        message:string
+    }> {
+        return await this.scrapperService.runScrapperMarket(marketId)
     }
 
 
 
     @Post('markets/:id/snapshots/:snapshotId')
     @ApiOperation({ summary: "Re-run snapshot import function manually" })
-    async fetchSnapshot(@Param('id') marketId: string, @Param('snapshotId') snapshotId: string) {
+    async fetchSnapshot(@Param('id') marketId: string, @Param('snapshotId') snapshotId: string):Promise<{
+        message:string
+    }> {
         return await this.scrapperService.fetchSnapshot(marketId, snapshotId)
     }
 

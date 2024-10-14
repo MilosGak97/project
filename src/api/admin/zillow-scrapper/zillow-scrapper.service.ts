@@ -313,10 +313,10 @@ export class ZillowScrapperService {
       const moreInfo = await this.monitorStatus(payload.snapshot_id)
 
       console.log("PAYLOAD RECORDS: "+ moreInfo.records)
-      snapshot.count = moreInfo.records
+      snapshot.count = Number(moreInfo.records)
 
       console.log("PAYLOAD ERRORS: " + moreInfo.errors)
-      snapshot.errors = moreInfo.errors
+      snapshot.errors = Number(moreInfo.errors)
 
       await this.zillowScrapperSnapshotRepository.save(snapshot);
       console.log(`Processing snapshot with BrightData ID: ${snapshot.brightdata_id}`);
