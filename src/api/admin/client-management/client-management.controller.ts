@@ -13,8 +13,8 @@ import { AdminRole } from 'src/api/enums/admin-role.enum';
 import { Company } from 'src/api/entities/company.entity';
 
 
-@ApiTags('Client Management')
-@Controller('admin/client-management')
+@ApiTags('Companies')
+@Controller('admin')
 @UseGuards(AuthGuard(), RolesGuard)
 @Roles(AdminRole.HEAD, AdminRole.SUPPORT)
 export class ClientManagementController {

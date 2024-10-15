@@ -1,7 +1,8 @@
 import { Module } from '@nestjs/common'; 
-import { PropertyListingsModule } from './property-listings/property-listings.module';
+import { PropertiesModule } from './properties/properties.module'; 
 
 @Module({ 
-  imports: [PropertyListingsModule]
+  controllers: [],
+  imports: [PropertiesModule]
 })
 export class DataModule {}

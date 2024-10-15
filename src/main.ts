@@ -7,6 +7,7 @@ import { AdminModule } from './api/admin/admin.module';
 import { ClientModule } from './api/client/client.module'; 
 import * as cookieParser from 'cookie-parser';
 import * as bodyParser from 'body-parser';
+import { DataModule } from './api/admin/data/data.module';
 
 
 async function bootstrap() {
@@ -38,12 +39,17 @@ async function bootstrap() {
     .build(); 
 
   const optionAdmin:SwaggerDocumentOptions = {
-      include: [AdminModule],
+      include: [
+        AdminModule, 
+        DataModule
+      ],
       deepScanRoutes: true
   }
 
   const adminDocument = SwaggerModule.createDocument(app, adminConfig, optionAdmin); // No include option here
   SwaggerModule.setup('api/admin', app, adminDocument); // Admin Swagger UI
+
+
 
   // Swagger setup for Client API
   const clientConfig = new DocumentBuilder()

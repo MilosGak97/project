@@ -12,8 +12,8 @@ import { Admin } from 'src/api/entities/admin.entity';
 
 
 
-@ApiTags('Admin Management') 
-@Controller('admin/admin-management') 
+@ApiTags('Admins') 
+@Controller('admin') 
 @UseGuards(AuthGuard(), RolesGuard) 
 @Roles(AdminRole.HEAD)
 export class AdminManagementController {

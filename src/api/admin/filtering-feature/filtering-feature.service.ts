@@ -1,12 +1,14 @@
 import { Injectable, NotFoundException, Query } from '@nestjs/common';
-import { PropertyListingRepository } from '../zillow-scrapper/repository/property-listing.repository'; 
+import { PropertyListingRepository } from '../../repositories/postgres/property-listing.repository'; 
 import { FilteredStatus } from 'src/api/enums/filtered-status.enum';
-import { FilteringRepository } from './repositories/filtering.repository'; 
+import { FilteringRepository } from '../../repositories/mongodb/filtering.repository'; 
 import { Admin } from 'src/api/entities/admin.entity';
 import { Filtering } from 'src/api/schemas/filtering-logs.schema';
 import { MarketRepository } from 'src/api/repositories/market.repository';
-import { ListMarketsDto } from '../zillow-scrapper/dto/list-markets.dto';
-import { Market } from 'src/api/entities/market.entity';
+import { ListMarketsDto } from '../zillow-scrapper/dto/list-markets.dto'; 
+import { FilterMarketDto } from './dto/filter-market.dto';
+import { PropertyListing } from 'src/api/entities/property-listing.entity';
+import { ListLogsDto } from './dto/list-logs.dto';
 
 @Injectable()
 export class FilteringFeatureService {
@@ -17,12 +19,13 @@ export class FilteringFeatureService {
 
     ){}
 
+    //new method
     async listMarkets():Promise<{
       response: any[]}>{
       const listMarketsDto = new ListMarketsDto()
       listMarketsDto.limit = 9999
       listMarketsDto.offset = 0
-      
+
       const markets = await this.marketRepository.listMarkets(listMarketsDto)
       let response = []
       if(!markets){
@@ -41,13 +44,27 @@ export class FilteringFeatureService {
 
     }
 
-    async createFilteringLog(propertyId:string, admin:Admin, action:FilteredStatus){
+    //new method
+    async filterMarket(marketId:string, filterMarketDto: FilterMarketDto):Promise<{
+      properties: PropertyListing[],
+      propertiesCount: number,
+      limit: number,
+      offset: number,
+      totalPages: number,
+      currentPage: number
+  }>{
+      return await this.propertyListingRepository.filterMarket(marketId,filterMarketDto)
+    }
 
+
+    //new method
+    async createFilteringLog(propertyId:string, admin:Admin, action:FilteredStatus){
       return this.filteringRepository.createFilteringLog(propertyId,admin,action)
     }
 
 
-    async listAll():Promise<Filtering[]>{
-      return this.listAll()
+    //new method
+    async listLogs(listLogsDto: ListLogsDto):Promise<Filtering[]>{
+      return this.filteringRepository.listLogs(listLogsDto)
     }
 }

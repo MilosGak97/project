@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { CompanyRepository } from './repository/company.repository';
-import { UserRepository } from './repository/users.repository';
+import { CompanyRepository } from '../../repositories/postgres/company.repository';
+import { UserRepository } from '../../repositories/postgres/users.repository';
 import { ListAllCompaniesDto } from './dto/list-all-companies.dto';
 import { UpdateCompanyDataDto } from './dto/update-company-data.dto';
 import { ListAllUsersDto } from './dto/list-all-users.dto'; 

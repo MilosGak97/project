@@ -1,9 +1,10 @@
 import { ConflictException, Injectable } from "@nestjs/common";
 import { PropertyListing } from "src/api/entities/property-listing.entity";
-import { DataSource, Repository } from "typeorm";
-import { CreatePropertyListingDto } from "../dto/create-property-listing.dto";
-import { ListForFilteringDto } from "../../filtering-feature/dto/list-for-filtering.dto";
+import { DataSource, IsNull, Repository } from "typeorm";
+import { CreatePropertyListingDto } from "../../admin/zillow-scrapper/dto/create-property-listing.dto";
+import { ListForFilteringDto } from "../../admin/filtering-feature/dto/list-for-filtering.dto";
 import { Market } from "src/api/entities/market.entity";
+import { FilterMarketDto } from "../../admin/filtering-feature/dto/filter-market.dto";
 
 @Injectable()
 export class PropertyListingRepository extends Repository<PropertyListing>{
@@ -12,6 +13,36 @@ export class PropertyListingRepository extends Repository<PropertyListing>{
     ){
         super(PropertyListing, dataSource.createEntityManager())
     }
+
+    async filterMarket(marketId: string, filterMarketDto: FilterMarketDto):Promise<{
+        properties: PropertyListing[],
+        propertiesCount: number,
+        limit: number,
+        offset: number,
+        totalPages: number,
+        currentPage: number
+    }>{
+        const { limit, offset } = filterMarketDto
+        const [properties, propertiesCount] = await this.findAndCount({
+            where: {market: {id: marketId}, filtered_status: IsNull()},
+            take: limit,
+            skip: offset,
+            select: ['id', 'photos', 'zpid', 'photoCount']
+        })
+        
+        const totalPages = Math.ceil(propertiesCount/limit) 
+        const currentPage = Math.floor(offset / limit) + 1
+
+        return {
+            properties,
+            propertiesCount,
+            limit,
+            offset,
+            totalPages,
+            currentPage
+        }
+
+    }        
 
     async createProperty(createPropertyListingDto: CreatePropertyListingDto) {
         // Destructure properties from the DTO
@@ -83,7 +114,8 @@ export class PropertyListingRepository extends Repository<PropertyListing>{
     }
     
     async unfilteredMarket(market: Market ):Promise<number>{
-        const count = await this.count({where: {market}})
+       const count = await this.count({where: {market: {id: market.id}, filtered_status: IsNull()}})
+ 
         return count
     }
 }

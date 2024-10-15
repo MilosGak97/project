@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 import { ClientManagementController } from './client-management.controller';
 import { ClientManagementService } from './client-management.service';
-import { CompanyRepository } from './repository/company.repository';
-import { UserRepository } from './repository/users.repository';  
+import { CompanyRepository } from '../../repositories/postgres/company.repository';
+import { UserRepository } from '../../repositories/postgres/users.repository';  
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from 'src/api/entities/user.entity'; 
 import { JwtModule } from '@nestjs/jwt';

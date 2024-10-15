@@ -1,5 +1,5 @@
 import { Injectable, Inject } from '@nestjs/common';  
-import { AdminManagementRepository } from './repository/admin-management.repository';
+import { AdminManagementRepository } from 'src/api/repositories/postgres/admin-management.repository';
 import { CreateAdminDto } from './dto/create-admin.dto'; 
 import { GetAdminsDto } from './dto/get-admins.dto';  
 import { UpdateAdminDto } from './dto/update-admin.dto';

@@ -1,16 +1,15 @@
 
 import { Admin } from 'src/api/entities/admin.entity';
 import { DataSource, Repository } from "typeorm";
-import { CreateAdminDto } from '../dto/create-admin.dto';
+import { CreateAdminDto } from 'src/api/admin/admin-management/dto/create-admin.dto';
 import { Injectable , HttpException, HttpStatus, NotFoundException, Logger, ConflictException} from "@nestjs/common";
-import { GetAdminsDto } from "../dto/get-admins.dto"; 
+import { GetAdminsDto } from 'src/api/admin/admin-management/dto/get-admins.dto';
 import * as bcrypt from 'bcrypt' 
-import { AdminRole } from "../../../enums/admin-role.enum";
-import { AdminStatus } from "../../../enums/admin-status.enum";
+import { AdminRole } from 'src/api/enums/admin-role.enum';
+import { AdminStatus } from 'src/api/enums/admin-status.enum';
 import { EmailService } from "src/email/email.service";  
-import { JwtService } from "@nestjs/jwt";
-import * as dotenv from 'dotenv';
-import { UpdateAdminDto } from "../dto/update-admin.dto"; 
+import { JwtService } from "@nestjs/jwt"; 
+import { UpdateAdminDto } from 'src/api/admin/admin-management/dto/update-admin.dto';
 
 
 @Injectable()
@@ -97,7 +96,7 @@ export class AdminManagementRepository extends Repository<Admin> {
         query.skip(offsetNumber)
 
         const [result, totalRecords ] = await query.getManyAndCount() 
-        const currentPage = Math.ceil(offset/limitNumber) + 1
+        const currentPage = Math.floor(offset/limitNumber) + 1
         const totalPages = Math.ceil(totalRecords / limitNumber);
 
         return {

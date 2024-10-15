@@ -2,9 +2,9 @@ import { ConflictException, Injectable, NotFoundException } from "@nestjs/common
 import { User } from "src/api/entities/user.entity";
 import { UserStatus } from "src/api/enums/user-status.enum";
 import { DataSource, Repository } from "typeorm";
-import { ListAllUsersDto } from "../dto/list-all-users.dto";
+import { ListAllUsersDto } from "../../admin/client-management/dto/list-all-users.dto";
 import { Company } from "src/api/entities/company.entity";
-import { UpdateUserDto } from "../dto/updateUser.dto";
+import { UpdateUserDto } from "../../admin/client-management/dto/updateUser.dto";
 import { EmailService } from "src/email/email.service";
 import { JwtService } from "@nestjs/jwt"; 
 import * as bcrypt from "bcrypt" 
@@ -98,7 +98,7 @@ export class UserRepository extends Repository<User>{
 
         const [result, totalRecords ] = await query.getManyAndCount() 
         const totalPages = Math.ceil(totalRecords/numLimit)
-        const currentPage = Math.ceil(numOffset/numLimit) + 1
+        const currentPage = Math.floor(numOffset/numLimit) + 1
         return {
             result,
             totalRecords,

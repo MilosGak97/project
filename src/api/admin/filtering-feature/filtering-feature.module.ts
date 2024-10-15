@@ -1,10 +1,9 @@
 import { Module } from '@nestjs/common';
-import { FilteringFeatureService } from './filtering-feature.service';
-import { FilteringFeatureController } from './filtering-feature.controller';
+import { FilteringFeatureService } from './filtering-feature.service'; 
 import { MongooseModule } from '@nestjs/mongoose';
 import { Filtering, FilteringSchema } from 'src/api/schemas/filtering-logs.schema';
-import { PropertyListingRepository } from '../zillow-scrapper/repository/property-listing.repository';
-import { FilteringRepository } from './repositories/filtering.repository';
+import { PropertyListingRepository } from '../../repositories/postgres/property-listing.repository';
+import { FilteringRepository } from '../../repositories/mongodb/filtering.repository';
 import { MarketRepository } from 'src/api/repositories/market.repository';
 
 @Module({
@@ -19,6 +18,6 @@ import { MarketRepository } from 'src/api/repositories/market.repository';
     FilteringRepository,
     MarketRepository,
   ],
-  controllers: [FilteringFeatureController]
+  controllers: [ ]
 })
 export class FilteringFeatureModule {}

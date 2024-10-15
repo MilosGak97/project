@@ -1,9 +1,9 @@
 import { DataSource, Repository } from "typeorm"; 
 import { Injectable, NotFoundException } from "@nestjs/common";
-import { ZillowScrapperSnapshot } from "../../../entities/zillow-scrapper-snapshot.entity";
-import { ScrapperSnapshotStatus } from "../../../enums/scrapper-snapshot-status.enum";
-import { ListSnapshotsDto } from "../dto/list-snapshots.dto";
-import { ListMarketSnapshotsDto } from "../dto/list-market-snapshots.dto";
+import { ZillowScrapperSnapshot } from "src/api/entities/zillow-scrapper-snapshot.entity";
+import { ScrapperSnapshotStatus } from "src/api/enums/scrapper-snapshot-status.enum";
+import { ListSnapshotsDto } from "src/api/admin/zillow-scrapper/dto/list-snapshots.dto";
+import { ListMarketSnapshotsDto } from "src/api/admin/zillow-scrapper/dto/list-market-snapshots.dto";
 
 @Injectable()
 export class ZillowScrapperSnapshotRepository extends Repository<ZillowScrapperSnapshot>{

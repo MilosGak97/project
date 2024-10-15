@@ -1,8 +1,8 @@
 import { Company } from "src/api/entities/company.entity";
 import { DataSource, Repository } from "typeorm";
-import { ListAllCompaniesDto } from "../dto/list-all-companies.dto";
+import { ListAllCompaniesDto } from "../../admin/client-management/dto/list-all-companies.dto";
 import { ConflictException, Injectable, NotFoundException } from "@nestjs/common";
-import { UpdateCompanyDataDto } from "../dto/update-company-data.dto";
+import { UpdateCompanyDataDto } from "../../admin/client-management/dto/update-company-data.dto";
 import { CompanyStatus } from "src/api/enums/company-status.enum";
 
 @Injectable()
@@ -36,7 +36,7 @@ export class CompanyRepository extends Repository<Company> {
         query.skip(offset)
         const [result, totalRecords] = await query.getManyAndCount() 
         const totalPages = Math.ceil(totalRecords / numLimit)
-        const currentPage = Math.ceil(numOffset / numLimit) + 1
+        const currentPage = Math.floor(numOffset / numLimit) + 1
 
         return {
             result,

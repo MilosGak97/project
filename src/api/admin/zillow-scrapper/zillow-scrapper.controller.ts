@@ -12,7 +12,7 @@ import { UpdateCountyDto } from './dto/update-county.dto';
 import { ListSnapshotsDto } from './dto/list-snapshots.dto';
 import { ListMarketSnapshotsDto } from './dto/list-market-snapshots.dto';
 import { ZillowScrapperSnapshot } from 'src/api/entities/zillow-scrapper-snapshot.entity';
-
+/*
 @ApiTags('Zillow Scrapper')
 @Controller('admin/scrapper')
 export class ZillowScrapperController {
@@ -161,3 +161,4 @@ export class ZillowScrapperController {
 
 
 }
+*/
