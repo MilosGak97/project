@@ -21,7 +21,7 @@ import { ListMarketSnapshotsDto } from 'src/api/admin/zillow-scrapper/dto/list-m
 import { UpdateCountyDto } from 'src/api/admin/zillow-scrapper/dto/update-county.dto';
 
 
-@ApiTags('Data/Properties - On Market')
+@ApiTags('Data/Properties/ On-Market')
 @Controller('data/properties/on-market')
 export class OnMarketController { 
         constructor(
