@@ -12,6 +12,7 @@ export class FilteringRepository{
         @InjectModel(Filtering.name) private filteringModel: Model<Filtering>
     ){}
  
+    //active
     async createFilteringLog(propertyId: string, admin: Admin, action: FilteredStatus): Promise<{
         message: string
     }> {
@@ -20,6 +21,7 @@ export class FilteringRepository{
         return {message: "Filtering log is succesfully created."}
       }
       
+      //active
       async listLogs(listLogsDto: ListLogsDto): Promise<Filtering[]> {
         const {limit, offset } = listLogsDto
         

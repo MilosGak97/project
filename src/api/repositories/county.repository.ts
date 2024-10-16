@@ -16,7 +16,7 @@ export class CountyRepository extends Repository<County>{
         super(County, dataSource.createEntityManager())
     }
 
-    
+    /*
 // new method
 async createCounty(marketId:string, createCountyDto: CreateCountyDto):Promise<{
     message: string
@@ -125,4 +125,7 @@ async getCounty(marketId: string, countyId:string ):Promise<County>{
     }
     return county
 }
+    */
+
+
 }

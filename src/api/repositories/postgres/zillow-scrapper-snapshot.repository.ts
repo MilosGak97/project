@@ -1,9 +1,8 @@
 import { DataSource, Repository } from "typeorm"; 
-import { Injectable, NotFoundException } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { ZillowScrapperSnapshot } from "src/api/entities/zillow-scrapper-snapshot.entity";
 import { ScrapperSnapshotStatus } from "src/api/enums/scrapper-snapshot-status.enum";
-import { ListSnapshotsDto } from "src/api/admin/zillow-scrapper/dto/list-snapshots.dto";
-import { ListMarketSnapshotsDto } from "src/api/admin/zillow-scrapper/dto/list-market-snapshots.dto";
+import { ListSnapshotsDto } from "src/api/admin/zillow-scrapper/dto/list-snapshots.dto"; 
 
 @Injectable()
 export class ZillowScrapperSnapshotRepository extends Repository<ZillowScrapperSnapshot>{
@@ -13,6 +12,7 @@ export class ZillowScrapperSnapshotRepository extends Repository<ZillowScrapperS
         super(ZillowScrapperSnapshot, dataSource.createEntityManager())
     }
     
+    //active
     async logSnapshot(snapshot_id, market_id):Promise<{
         message:string
     }>{
@@ -27,6 +27,7 @@ export class ZillowScrapperSnapshotRepository extends Repository<ZillowScrapperS
         }
     }
 
+    //active
     async listSnapshots(listSnapshotsDto: ListSnapshotsDto):Promise<{
         result: ZillowScrapperSnapshot[],
         totalRecords: number,
@@ -63,43 +64,5 @@ export class ZillowScrapperSnapshotRepository extends Repository<ZillowScrapperS
 
         }
     }
-
-    async listMarketSnapshots(marketId:string, listMarketSnapshotsDto:ListMarketSnapshotsDto):Promise<{
-        
-        result: ZillowScrapperSnapshot[],
-        totalRecords: number,
-        totalPage: number,
-        currentPage: number,
-        limit: number,
-        offset: number
-    }>{
-        const query = await this.createQueryBuilder('snapshot')
-        .leftJoinAndSelect('snapshot.market', 'market')
-        .where('snapshot.marketId = :marketId', {marketId})
-        
-        const { status, limit, offset } =listMarketSnapshotsDto
-
-        if(status){
-            query.andWhere('(snapshot.status = :status)', {status})
-        }
-        query.take(limit)
-        query.skip(offset)
-
-        const [result, totalRecords] =await query.getManyAndCount()
-        if(totalRecords === 0 ){
-            throw new NotFoundException("No snapshots found for this Market ID")
-        }
-        const totalPage = Math.ceil(totalRecords/limit)
-        const currentPage = Math.floor(limit/offset) + 1
-        return{
-            result,
-            totalRecords,
-            totalPage,
-            currentPage,
-            limit,
-            offset
-        }
-        
-        
-    }
+ 
 }

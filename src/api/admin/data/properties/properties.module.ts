@@ -7,8 +7,7 @@ import { Filtering, FilteringSchema } from 'src/api/schemas/filtering-logs.schem
 import { OnMarketService } from './on-market/on-market.service';
 import { MarketRepository } from 'src/api/repositories/market.repository';
 import { PropertyListingRepository } from 'src/api/repositories/postgres/property-listing.repository';
-import { FilteringRepository } from 'src/api/repositories/mongodb/filtering.repository';
-import { CollectingService } from './on-market/collecting/collecting.service';
+import { FilteringRepository } from 'src/api/repositories/mongodb/filtering.repository'; 
 import { OffMarketService } from './off-market/off-market.service';
 import { ZillowScrapperSnapshotRepository } from 'src/api/repositories/postgres/zillow-scrapper-snapshot.repository'; 
 import { CountyRepository } from 'src/api/repositories/county.repository';
@@ -31,8 +30,7 @@ import { HttpModule } from '@nestjs/axios';
     OffMarketService,
     MarketRepository,
     PropertyListingRepository,
-    FilteringRepository,
-    CollectingService,
+    FilteringRepository, 
     ZillowScrapperSnapshotRepository, 
     CountyRepository,  
   ]

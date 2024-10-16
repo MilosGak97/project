@@ -7,30 +7,30 @@ import { Market } from "src/api/entities/market.entity";
 import { FilterMarketDto } from "../../admin/filtering-feature/dto/filter-market.dto";
 
 @Injectable()
-export class PropertyListingRepository extends Repository<PropertyListing>{
+export class PropertyListingRepository extends Repository<PropertyListing> {
     constructor(
         private readonly dataSource: DataSource
-    ){
+    ) {
         super(PropertyListing, dataSource.createEntityManager())
     }
-
-    async filterMarket(marketId: string, filterMarketDto: FilterMarketDto):Promise<{
+    //active
+    async filterMarket(marketId: string, filterMarketDto: FilterMarketDto): Promise<{
         properties: PropertyListing[],
         propertiesCount: number,
         limit: number,
         offset: number,
         totalPages: number,
         currentPage: number
-    }>{
+    }> {
         const { limit, offset } = filterMarketDto
         const [properties, propertiesCount] = await this.findAndCount({
-            where: {market: {id: marketId}, filtered_status: IsNull()},
+            where: { market: { id: marketId }, filtered_status: IsNull() },
             take: limit,
             skip: offset,
             select: ['id', 'photos', 'zpid', 'photoCount']
         })
-        
-        const totalPages = Math.ceil(propertiesCount/limit) 
+
+        const totalPages = Math.ceil(propertiesCount / limit)
         const currentPage = Math.floor(offset / limit) + 1
 
         return {
@@ -42,8 +42,8 @@ export class PropertyListingRepository extends Repository<PropertyListing>{
             currentPage
         }
 
-    }        
-
+    }
+    //active
     async createProperty(createPropertyListingDto: CreatePropertyListingDto) {
         // Destructure properties from the DTO
         const {
@@ -70,10 +70,10 @@ export class PropertyListingRepository extends Repository<PropertyListing>{
             market,
             snapshot
         } = createPropertyListingDto;
-    
 
-        const zpidExist = await this.findOne({where: { zpid}})
-        if(zpidExist){
+
+        const zpidExist = await this.findOne({ where: { zpid } })
+        if (zpidExist) {
             throw new ConflictException("User with this ZPID already exist")
         }
 
@@ -99,23 +99,24 @@ export class PropertyListingRepository extends Repository<PropertyListing>{
         property.photos = photos; // Assuming property entity has photos property
         property.county = county; // Assuming property entity has county property
         property.market = market;
-        property.filtered_status= null; 
+        property.filtered_status = null;
         property.snapshot = snapshot
-    
+
         // If you want to store additionalInfo, ensure your entity supports it
         if (additionalInfo) {
             property.additionalInfo = additionalInfo; // Assuming property entity has additionalInfo property
         }
-    
+
         // Save the property instance to the database (implement your saving logic here)
         await this.save(property); // Assuming propertyRepository is injected and set up
-    
+
         return { message: "Property created successfully", property };
     }
-    
-    async unfilteredMarket(market: Market ):Promise<number>{
-       const count = await this.count({where: {market: {id: market.id}, filtered_status: IsNull()}})
- 
+
+    //active
+    async unfilteredMarket(market: Market): Promise<number> {
+        const count = await this.count({ where: { market: { id: market.id }, filtered_status: IsNull() } })
+
         return count
     }
 }

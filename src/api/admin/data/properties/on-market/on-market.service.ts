@@ -31,65 +31,15 @@ import { UpdateCountyDto } from 'src/api/admin/zillow-scrapper/dto/update-county
 @Injectable()
 export class OnMarketService {
 
-    constructor(
-        private readonly marketRepository: MarketRepository,
-        private readonly propertyListingRepository: PropertyListingRepository,
-        private readonly filteringRepository: FilteringRepository,
-        private readonly zillowScrapperSnapshotRepository: ZillowScrapperSnapshotRepository,
-        private readonly httpService: HttpService, 
-        private readonly countyRepository: CountyRepository, 
+  constructor(
+    private readonly marketRepository: MarketRepository,
+    private readonly propertyListingRepository: PropertyListingRepository,
+    private readonly filteringRepository: FilteringRepository,
+    private readonly zillowScrapperSnapshotRepository: ZillowScrapperSnapshotRepository,
+    private readonly httpService: HttpService,
+    private readonly countyRepository: CountyRepository,
 
-    ){}
-
-    //new method
-    async listMarkets():Promise<{
-      response: any[]}>{
-      const listMarketsDto = new ListMarketsDto()
-      listMarketsDto.limit = 9999
-      listMarketsDto.offset = 0
-
-      const markets = await this.marketRepository.listMarkets(listMarketsDto)
-      let response = []
-      if(!markets){
-        throw new NotFoundException("Did not find any markets")
-      }
-      for(const market of markets.result){
-        const unfilteredCount = await this.propertyListingRepository.unfilteredMarket(market)
-
-        response.push({
-          market: market,
-          unfilteredCount: unfilteredCount
-        })
-      }
-
-      return {response}
-
-    }
-
-    //new method
-    async filterMarket(marketId:string, filterMarketDto: FilterMarketDto):Promise<{
-      properties: PropertyListing[],
-      propertiesCount: number,
-      limit: number,
-      offset: number,
-      totalPages: number,
-      currentPage: number
-  }>{
-      return await this.propertyListingRepository.filterMarket(marketId,filterMarketDto)
-    }
-
-
-    //new method
-    async createFilteringLog(propertyId:string, admin:Admin, action:FilteredStatus){
-      return this.filteringRepository.createFilteringLog(propertyId,admin,action)
-    }
-
-
-    //new method
-    async listLogs(listLogsDto: ListLogsDto):Promise<Filtering[]>{
-      return this.filteringRepository.listLogs(listLogsDto)
-    }
-
+  ) { }
 
   // -------------- PRIVATE FUNCTIONs -------------------  
   // new method
@@ -140,7 +90,7 @@ export class OnMarketService {
   private async pullData(snapshot_id) {
     // Fetch the snapshot data from BrightData API snapshot_id
     const url = `https://api.brightdata.com/datasets/v3/snapshot/${snapshot_id}?compress=true&format=json`;
-    const headers = {  Authorization: `Bearer ${process.env.BRIGHTDATA_API_TOKEN}` }; 
+    const headers = { Authorization: `Bearer ${process.env.BRIGHTDATA_API_TOKEN}` };
 
     try {
       const response = await firstValueFrom(
@@ -148,8 +98,8 @@ export class OnMarketService {
       );
       const decompressedData = await this.decompressData(response.data);
       const jsonData = JSON.parse(decompressedData.toString());
-      const snapshot = await this.zillowScrapperSnapshotRepository.findOne({where: {brightdata_id: snapshot_id}, relations:['market']})
-      
+      const snapshot = await this.zillowScrapperSnapshotRepository.findOne({ where: { brightdata_id: snapshot_id }, relations: ['market'] })
+
 
 
       if (Array.isArray(jsonData)) {
@@ -277,7 +227,7 @@ export class OnMarketService {
             }
             snapshot.duplicatesProperties.push(zpidExist); // Add to the duplicatesProperties array
             snapshot.duplicatesCount = snapshot.duplicatesCount + 1
-            snapshot.count = snapshot.count - 1 
+            snapshot.count = snapshot.count - 1
             await this.zillowScrapperSnapshotRepository.save(snapshot)
             console.log("This zpid already exist: " + zpid)
             continue;
@@ -297,15 +247,15 @@ export class OnMarketService {
   }
 
 
-  private async monitorStatus(snapshot_id){
+  private async monitorStatus(snapshot_id) {
     const url = `https://api.brightdata.com/datasets/v3/progress/${snapshot_id}`
- 
-    const headers = { Authorization : `Bearer ${process.env.BRIGHTDATA_API_TOKEN} `} 
 
-    try{
-      const response = await firstValueFrom(this.httpService.get(url, {headers}))
+    const headers = { Authorization: `Bearer ${process.env.BRIGHTDATA_API_TOKEN} ` }
+
+    try {
+      const response = await firstValueFrom(this.httpService.get(url, { headers }))
       return response.data
-    }catch(error){
+    } catch (error) {
       console.log(error)
     }
 
@@ -347,14 +297,63 @@ export class OnMarketService {
   }
 
 
+  //active
+  async filterMarketList(): Promise<{
+    response: any[]
+  }> {
+    const listMarketsDto = new ListMarketsDto()
+    listMarketsDto.limit = 9999
+    listMarketsDto.offset = 0
+
+    const markets = await this.marketRepository.listMarkets(listMarketsDto)
+    let response = []
+    if (!markets) {
+      throw new NotFoundException("Did not find any markets")
+    }
+    for (const market of markets.result) {
+      const unfilteredCount = await this.propertyListingRepository.unfilteredMarket(market)
+
+      response.push({
+        market: market,
+        unfilteredCount: unfilteredCount
+      })
+    }
+
+    return { response }
+
+  }
+
+  //active
+  async filterMarket(marketId: string, filterMarketDto: FilterMarketDto): Promise<{
+    properties: PropertyListing[],
+    propertiesCount: number,
+    limit: number,
+    offset: number,
+    totalPages: number,
+    currentPage: number
+  }> {
+    return await this.propertyListingRepository.filterMarket(marketId, filterMarketDto)
+  }
+
+
+  //active
+  async filteringAction(propertyId: string, admin: Admin, action: FilteredStatus) {
+    return this.filteringRepository.createFilteringLog(propertyId, admin, action)
+  }
+
+
+  //active
+  async listLogs(listLogsDto: ListLogsDto): Promise<Filtering[]> {
+    return this.filteringRepository.listLogs(listLogsDto)
+  }
+
+
   // --------------- PUBLIC ROUTES - ENDPOINTS
-  async handleNotification(payload): Promise<{ message: string }> {
+  //active
+  async notificationBrightdata(payload): Promise<{ message: string }> {
     if (!payload.snapshot_id) {
       throw new NotFoundException("Snapshot ID is not found.");
     }
-
-
-
 
     // Fetch snapshot and relations
     const snapshot = await this.zillowScrapperSnapshotRepository.findOne({
@@ -369,13 +368,11 @@ export class OnMarketService {
     // Only save and proceed if status is 'ready'
     if (payload.status === "ready") {
       snapshot.status = payload.status;
-      
+
       const moreInfo = await this.monitorStatus(payload.snapshot_id)
 
-      console.log("PAYLOAD RECORDS: "+ moreInfo.records)
       snapshot.count = Number(moreInfo.records)
 
-      console.log("PAYLOAD ERRORS: " + moreInfo.errors)
       snapshot.errors = Number(moreInfo.errors)
 
       await this.zillowScrapperSnapshotRepository.save(snapshot);
@@ -391,81 +388,7 @@ export class OnMarketService {
   }
 
 
-  // new method
-  async createMarket(createMarketDto: CreateMarketDto): Promise<{
-    message: string
-  }> {
-    return this.marketRepository.createMarket(createMarketDto)
-  }
-
-  /* Duplicate method ???
-  // new method
-  async listMarkets(listMarketsDto: ListMarketsDto): Promise<{
-
-    limit: number,
-    offset: number,
-    totalRecords: number,
-    totalPages: number,
-    currentPage: number,
-    result: Market[]
-
-  }> {
-    return this.marketRepository.listMarkets(listMarketsDto)
-  }
-*/
-  // new method
-  async getMarket(marketId: string): Promise<Market> {
-    return await this.marketRepository.getMarket(marketId)
-  }
-
-  // new method
-  async deleteMarket(marketId: string): Promise<{
-    message: string
-  }> {
-    return await this.marketRepository.deleteMarket(marketId)
-  }
-
-  // new method
-  async updateMarket(marketId: string, updateMarketDto: UpdateMarketDto): Promise<{
-    message: string
-  }> {
-    return this.marketRepository.updateMarket(marketId, updateMarketDto)
-  }
-
-  // new method
-  async createCounty(marketId: string, createCountyDto: CreateCountyDto): Promise<{
-    message: string
-  }> {
-    return this.countyRepository.createCounty(marketId, createCountyDto)
-  }
-
-  // new method
-  async listCounties(marketId: string, listCountiesDto: ListCountiesDto): Promise<{
-    counties: County[]
-  }> {
-    return this.countyRepository.listCounties(marketId, listCountiesDto)
-  }
-
-  // new method
-  async deleteCounty(marketId: string, countyId: string): Promise<{
-    message: string
-  }> {
-    return await this.countyRepository.deleteCounty(marketId, countyId)
-  }
-
-  // new method
-  async getCounty(marketId: string, countyId: string): Promise<County> {
-    return await this.countyRepository.getCounty(marketId, countyId)
-  }
-
-  // new method
-  async updateCounty(marketId: string, countyId: string, updateCountyDto: UpdateCountyDto): Promise<{
-    message: string
-  }> {
-    return await this.countyRepository.updateCounty(marketId, countyId, updateCountyDto)
-  }
-
-  // new method
+  //active
   async listSnapshots(listSnapshotsDto: ListSnapshotsDto): Promise<{
     result: ZillowScrapperSnapshot[],
     totalRecords: number,
@@ -477,20 +400,7 @@ export class OnMarketService {
     return this.zillowScrapperSnapshotRepository.listSnapshots(listSnapshotsDto)
   }
 
-  // new method
-  async listMarketSnapshots(marketId: string, listMarketSnapshotsDto: ListMarketSnapshotsDto): Promise<{
-
-    result: ZillowScrapperSnapshot[],
-    totalRecords: number,
-    totalPage: number,
-    currentPage: number,
-    limit: number,
-    offset: number
-  }> {
-    return await this.zillowScrapperSnapshotRepository.listMarketSnapshots(marketId, listMarketSnapshotsDto)
-  }
-
-  // new method
+  //active
   async runScrapperMarket(marketId: string): Promise<{
     message: string
   }> {
@@ -510,8 +420,8 @@ export class OnMarketService {
 
   }
 
-  // new method
-  async fetchSnapshot(  snapshotId: string): Promise<{
+  //active
+  async fetchSnapshot(snapshotId: string): Promise<{
     message: string
   }> {
     const snapshot = await this.zillowScrapperSnapshotRepository.findOne({
