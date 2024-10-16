@@ -1,7 +1,6 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
-import { ListAllCompaniesDto } from './dto/list-all-companies.dto';
-import { ClientManagementService } from './client-management.service';
+import { ListAllCompaniesDto } from './dto/list-all-companies.dto'; 
 import { UpdateCompanyDataDto } from './dto/update-company-data.dto';
 import { ListAllUsersDto } from './dto/list-all-users.dto'; 
 import { User } from 'src/api/entities/user.entity';
@@ -11,14 +10,15 @@ import { RolesGuard } from '../auth/roles.guard';
 import { Roles } from '../auth/roles.decorator';
 import { AdminRole } from 'src/api/enums/admin-role.enum';
 import { Company } from 'src/api/entities/company.entity';
+import { CompaniesService } from './companies.service';
 
 
 @ApiTags('Companies')
 @Controller('admin')
 @UseGuards(AuthGuard(), RolesGuard)
 @Roles(AdminRole.HEAD, AdminRole.SUPPORT)
-export class ClientManagementController {
-    constructor(private readonly clientManagementService: ClientManagementService) { }
+export class CompaniesController {
+    constructor(private readonly companiesService: CompaniesService) { }
 
 // GET - endpoint to list all companies    
     @Get('companies')
@@ -31,14 +31,14 @@ export class ClientManagementController {
         numLimit: number,
         numOffset: number
     }> {
-        return this.clientManagementService.listAllCompanies(listAllCompaniesDto)
+        return this.companiesService.listAllCompanies(listAllCompaniesDto)
     }
 
 // GET - endpoint to show single company data
     @Get('companies/:id')
     @ApiOperation({ summary: "Show data of single company" }) 
     async showCompanyData(@Param('id') id: string): Promise<{ companyData: Company }> {
-        return this.clientManagementService.companyData(id)
+        return this.companiesService.companyData(id)
     }
 
 // PATCH - endpoint to update single company data    
@@ -49,7 +49,7 @@ export class ClientManagementController {
     ):Promise<{
         message:string
     }>  {
-        return this.clientManagementService.updateCompanyData(id, updateCompanyDataDto)
+        return this.companiesService.updateCompanyData(id, updateCompanyDataDto)
     }
 
 // DELETE - endpoint to delete single company    
@@ -58,7 +58,7 @@ export class ClientManagementController {
     async deleteCompany(@Param('id') id: string): Promise<{
         message: string
     }> {
-        return this.clientManagementService.deleteCompany(id)
+        return this.companiesService.deleteCompany(id)
     }
 
 
@@ -74,7 +74,7 @@ export class ClientManagementController {
         numOffset: number,
         numLimit: number
     }> {
-        return this.clientManagementService.listAllUsers(id, listAllUsersDto)
+        return this.companiesService.listAllUsers(id, listAllUsersDto)
     }
 
 
@@ -85,7 +85,7 @@ export class ClientManagementController {
         userData: User,
         companyData: Company
     }>{
-        return this.clientManagementService.showUserData(companyId, userId)
+        return this.companiesService.showUserData(companyId, userId)
     }
 
 
@@ -99,7 +99,7 @@ export class ClientManagementController {
     ):Promise<{
         message: string
     }>{
-        return this.clientManagementService.updateUser(companyId,userId,updateUserDto)
+        return this.companiesService.updateUser(companyId,userId,updateUserDto)
     }
 
 
@@ -112,7 +112,7 @@ export class ClientManagementController {
 ):Promise<{
     message:string
 }>{
-        return this.clientManagementService.deleteUser(companyId,userId)
+        return this.companiesService.deleteUser(companyId,userId)
     }
 
 // POST - endpoint to reset password for single user    
@@ -121,7 +121,7 @@ export class ClientManagementController {
     async resetPassword(@Param('companyId') companyId:string, @Param('id') userId:string):Promise<{
         message:string
     }>{
-        return this.clientManagementService.resetPassword(companyId,userId)
+        return this.companiesService.resetPassword(companyId,userId)
     }
 
 }

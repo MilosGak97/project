@@ -1,10 +1,10 @@
 import { ConflictException, Injectable } from "@nestjs/common";
 import { PropertyListing } from "src/api/entities/property-listing.entity";
 import { DataSource, IsNull, Repository } from "typeorm";
-import { CreatePropertyListingDto } from "../../admin/zillow-scrapper/dto/create-property-listing.dto";
-import { ListForFilteringDto } from "../../admin/filtering-feature/dto/list-for-filtering.dto";
-import { Market } from "src/api/entities/market.entity";
-import { FilterMarketDto } from "../../admin/filtering-feature/dto/filter-market.dto";
+import { CreatePropertyListingDto } from "../../admin/data/properties/on-market/dto/create-property-listing.dto";
+import { ListForFilteringDto } from "../../admin/data/properties/on-market/dto/list-for-filtering.dto";
+import { Market } from "src/api/entities/property-market.entity";
+import { FilterMarketDto } from "../../admin/data/properties/on-market/dto/filter-market.dto";
 
 @Injectable()
 export class PropertyListingRepository extends Repository<PropertyListing> {

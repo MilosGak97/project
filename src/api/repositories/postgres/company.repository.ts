@@ -1,8 +1,8 @@
 import { Company } from "src/api/entities/company.entity";
 import { DataSource, Repository } from "typeorm";
-import { ListAllCompaniesDto } from "../../admin/client-management/dto/list-all-companies.dto";
+import { ListAllCompaniesDto } from "../../admin/companies/dto/list-all-companies.dto";
 import { ConflictException, Injectable, NotFoundException } from "@nestjs/common";
-import { UpdateCompanyDataDto } from "../../admin/client-management/dto/update-company-data.dto";
+import { UpdateCompanyDataDto } from "../../admin/companies/dto/update-company-data.dto";
 import { CompanyStatus } from "src/api/enums/company-status.enum";
 
 @Injectable()

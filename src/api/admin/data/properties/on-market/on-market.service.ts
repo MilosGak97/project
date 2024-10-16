@@ -4,44 +4,34 @@ import { FilteredStatus } from 'src/api/enums/filtered-status.enum';
 import { FilteringRepository } from 'src/api/repositories/mongodb/filtering.repository';
 import { Admin } from 'src/api/entities/admin.entity';
 import { Filtering } from 'src/api/schemas/filtering-logs.schema';
-import { MarketRepository } from 'src/api/repositories/market.repository';
-import { ListMarketsDto } from 'src/api/admin/zillow-scrapper/dto/list-markets.dto';
-import { FilterMarketDto } from 'src/api/admin/filtering-feature/dto/filter-market.dto';
+import { PropertyMarketRepository } from 'src/api/repositories/postgres/property-market.repository';
+import { ListMarketsDto } from 'src/api/admin/data/properties/on-market/dto/list-markets.dto';
+import { FilterMarketDto } from 'src/api/admin/data/properties/on-market/dto/filter-market.dto';
 import { PropertyListing } from 'src/api/entities/property-listing.entity';
-import { ListLogsDto } from 'src/api/admin/filtering-feature/dto/list-logs.dto';
-import { ZillowScrapperSnapshotRepository } from 'src/api/repositories/postgres/zillow-scrapper-snapshot.repository';
-import { HttpService } from '@nestjs/axios';
-import { CountyRepository } from 'src/api/repositories/county.repository';
+import { ListLogsDto } from 'src/api/admin/data/properties/on-market/dto/list-logs.dto'; 
+import { HttpService } from '@nestjs/axios'; 
 import * as zlib from 'zlib'
 import { delay, firstValueFrom } from 'rxjs';
-import { CreatePropertyListingDto } from 'src/api/admin/zillow-scrapper/dto/create-property-listing.dto';
-import { Cron, CronExpression } from '@nestjs/schedule';
-import { CreateMarketDto } from 'src/api/admin/zillow-scrapper/dto/create-market.dto';
-import { Market } from 'src/api/entities/market.entity';
-import { UpdateMarketDto } from 'src/api/admin/zillow-scrapper/dto/update-market.dto';
-import { CreateCountyDto } from 'src/api/admin/zillow-scrapper/dto/create-county.dto';
-import { ListCountiesDto } from 'src/api/admin/zillow-scrapper/dto/list-counties.dto';
-import { County } from 'src/api/entities/county.entity';
-import { ListSnapshotsDto } from 'src/api/admin/zillow-scrapper/dto/list-snapshots.dto';
-import { ZillowScrapperSnapshot } from 'src/api/entities/zillow-scrapper-snapshot.entity';
-import { ListMarketSnapshotsDto } from 'src/api/admin/zillow-scrapper/dto/list-market-snapshots.dto';
-import { UpdateCountyDto } from 'src/api/admin/zillow-scrapper/dto/update-county.dto';
+import { CreatePropertyListingDto } from 'src/api/admin/data/properties/on-market/dto/create-property-listing.dto';
+import { Cron, CronExpression } from '@nestjs/schedule';  
+import { ListSnapshotsDto } from 'src/api/admin/data/properties/on-market/dto/list-snapshots.dto'; 
+import { BrightdataSnapshotRepository } from 'src/api/repositories/postgres/brightdata-snapshot.repository';
+import { BrightdataSnapshot } from 'src/api/entities/brightdata-snapshot.entity';
 
 
 @Injectable()
 export class OnMarketService {
 
   constructor(
-    private readonly marketRepository: MarketRepository,
+    private readonly propertyMarketRepository: PropertyMarketRepository,
     private readonly propertyListingRepository: PropertyListingRepository,
     private readonly filteringRepository: FilteringRepository,
-    private readonly zillowScrapperSnapshotRepository: ZillowScrapperSnapshotRepository,
-    private readonly httpService: HttpService,
-    private readonly countyRepository: CountyRepository,
+    private readonly brightdataSnapshotRepository: BrightdataSnapshotRepository,
+    private readonly httpService: HttpService, 
 
   ) { }
 
-  // -------------- PRIVATE FUNCTIONs -------------------  
+  // -------------- PRIVATE FUNCTIONs  ----------------------------------------------------------------------------------------------
   // new method
   private async decompressData(stream: NodeJS.ReadableStream): Promise<string> {
     const chunks: Buffer[] = [];
@@ -98,7 +88,7 @@ export class OnMarketService {
       );
       const decompressedData = await this.decompressData(response.data);
       const jsonData = JSON.parse(decompressedData.toString());
-      const snapshot = await this.zillowScrapperSnapshotRepository.findOne({ where: { brightdata_id: snapshot_id }, relations: ['market'] })
+      const snapshot = await this.brightdataSnapshotRepository.findOne({ where: { brightdata_id: snapshot_id }, relations: ['market'] })
 
 
 
@@ -212,7 +202,7 @@ export class OnMarketService {
 
 
 
-            const snapshot = await this.zillowScrapperSnapshotRepository.findOne({ where: { brightdata_id: snapshot_id }, relations: ['duplicatesProperties'] })
+            const snapshot = await this.brightdataSnapshotRepository.findOne({ where: { brightdata_id: snapshot_id }, relations: ['duplicatesProperties'] })
 
             // Initialize duplicatesProperties if not already done
             if (!snapshot.duplicatesProperties) {
@@ -228,7 +218,7 @@ export class OnMarketService {
             snapshot.duplicatesProperties.push(zpidExist); // Add to the duplicatesProperties array
             snapshot.duplicatesCount = snapshot.duplicatesCount + 1
             snapshot.count = snapshot.count - 1
-            await this.zillowScrapperSnapshotRepository.save(snapshot)
+            await this.brightdataSnapshotRepository.save(snapshot)
             console.log("This zpid already exist: " + zpid)
             continue;
           }
@@ -261,7 +251,11 @@ export class OnMarketService {
 
 
   }
-  // --------------- CRON FUNCTIONS ----------------------
+
+
+
+
+  // --------------- CRON FUNCTIONS ----------------------------------------------------------------------------------------------
   @Cron(CronExpression.EVERY_DAY_AT_6AM) // change this to 6AM after testing
   async cronHandler() {
     console.log('Triggering daily sendPostRequest...');
@@ -271,7 +265,7 @@ export class OnMarketService {
   // new method - cron request   
   private async sendCronRequest() {
 
-    const markets = await this.marketRepository.marketsDailyActive()
+    const markets = await this.propertyMarketRepository.marketsDailyActive()
 
     if (markets.length > 0) {
 
@@ -285,7 +279,7 @@ export class OnMarketService {
 
           console.log("Snapshot ID:" + snapshot_id)
           console.log("Market ID:" + market.id)
-          await this.zillowScrapperSnapshotRepository.logSnapshot(snapshot_id, market.id)
+          await this.brightdataSnapshotRepository.logSnapshot(snapshot_id, market.id)
         } else {
           console.log("Didnt found any urls in this market, ID:" + market.id)
         }
@@ -297,6 +291,11 @@ export class OnMarketService {
   }
 
 
+
+
+  // ---- PUBLIC ROUTES  ----------- PUBLIC ROUTES ----------- PUBLIC ROUTES  ------------------------------------------------------------
+
+  // ---------------  PUBLIC ROUTES /filter  ----------------------------------------------------------------------------------------------
   //active
   async filterMarketList(): Promise<{
     response: any[]
@@ -305,7 +304,7 @@ export class OnMarketService {
     listMarketsDto.limit = 9999
     listMarketsDto.offset = 0
 
-    const markets = await this.marketRepository.listMarkets(listMarketsDto)
+    const markets = await this.propertyMarketRepository.listMarkets(listMarketsDto)
     let response = []
     if (!markets) {
       throw new NotFoundException("Did not find any markets")
@@ -348,7 +347,7 @@ export class OnMarketService {
   }
 
 
-  // --------------- PUBLIC ROUTES - ENDPOINTS
+  // --------------- PUBLIC ROUTES /brightdata ----------------------------------------------------------------------------------------------
   //active
   async notificationBrightdata(payload): Promise<{ message: string }> {
     if (!payload.snapshot_id) {
@@ -356,7 +355,7 @@ export class OnMarketService {
     }
 
     // Fetch snapshot and relations
-    const snapshot = await this.zillowScrapperSnapshotRepository.findOne({
+    const snapshot = await this.brightdataSnapshotRepository.findOne({
       where: { brightdata_id: payload.snapshot_id },
       relations: ['market'],
     });
@@ -375,7 +374,7 @@ export class OnMarketService {
 
       snapshot.errors = Number(moreInfo.errors)
 
-      await this.zillowScrapperSnapshotRepository.save(snapshot);
+      await this.brightdataSnapshotRepository.save(snapshot);
       console.log(`Processing snapshot with BrightData ID: ${snapshot.brightdata_id}`);
 
       return await this.pullData(snapshot.brightdata_id)
@@ -387,24 +386,23 @@ export class OnMarketService {
     return { message: "Status is not ready" };
   }
 
-
   //active
   async listSnapshots(listSnapshotsDto: ListSnapshotsDto): Promise<{
-    result: ZillowScrapperSnapshot[],
+    result: BrightdataSnapshot[],
     totalRecords: number,
     totalPages: number,
     currentPage: number,
     limit: number,
     offset: number
   }> {
-    return this.zillowScrapperSnapshotRepository.listSnapshots(listSnapshotsDto)
+    return this.brightdataSnapshotRepository.listSnapshots(listSnapshotsDto)
   }
 
   //active
   async runScrapperMarket(marketId: string): Promise<{
     message: string
   }> {
-    const market = await this.marketRepository.findOne({ where: { id: marketId }, relations: ['counties'] })
+    const market = await this.propertyMarketRepository.findOne({ where: { id: marketId }, relations: ['counties'] })
     if (!market) {
       throw new NotFoundException("Market with provided ID does not exist.")
     }
@@ -416,7 +414,7 @@ export class OnMarketService {
     const data = counties.map(county => ({ url: county.zillow_url_new })).filter(item => item.url)
     const snapshotId = await this.triggerScrape(data)
 
-    return await this.zillowScrapperSnapshotRepository.logSnapshot(snapshotId, marketId)
+    return await this.brightdataSnapshotRepository.logSnapshot(snapshotId, marketId)
 
   }
 
@@ -424,7 +422,7 @@ export class OnMarketService {
   async fetchSnapshot(snapshotId: string): Promise<{
     message: string
   }> {
-    const snapshot = await this.zillowScrapperSnapshotRepository.findOne({
+    const snapshot = await this.brightdataSnapshotRepository.findOne({
       where: { brightdata_id: snapshotId },
     });
 

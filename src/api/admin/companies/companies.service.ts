@@ -9,7 +9,7 @@ import { UpdateUserDto } from './dto/updateUser.dto';
 import { Company } from 'src/api/entities/company.entity';
 
 @Injectable()
-export class ClientManagementService {
+export class CompaniesService {
     constructor(
         private readonly companyRepository: CompanyRepository,
         private readonly userRepository: UserRepository

@@ -1,12 +1,11 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { IsBoolean, IsEnum, IsNotEmpty, IsOptional, IsString } from "class-validator";
-import { Column, CreateDateColumn, Entity, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";  
+import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";  
 import { County } from "./county.entity";
-import { ZillowScrapperSnapshot } from "./zillow-scrapper-snapshot.entity";
-import { MarketStatus } from "../enums/market-status";
-//import { Subscription } from "../property-listings/entities/subscription.entity";
+import { BrightdataSnapshot } from "./brightdata-snapshot.entity";
+import { MarketStatus } from "../enums/market-status"; 
 
-@Entity('markets')
+@Entity('property-markets')
 export class Market{
     @ApiProperty({required:true})
     @PrimaryGeneratedColumn('uuid')
@@ -38,8 +37,8 @@ export class Market{
     
     @ApiProperty({required:false})
     @IsOptional()
-    @OneToMany(() => ZillowScrapperSnapshot, (snapshot) => snapshot.market) // county 1 --- m snapshots
-    snapshots?: ZillowScrapperSnapshot[]
+    @OneToMany(() => BrightdataSnapshot, (snapshot) => snapshot.market) // county 1 --- m snapshots
+    snapshots?: BrightdataSnapshot[]
 
     // Automatically handles 'created at' timestamp
     @ApiProperty()

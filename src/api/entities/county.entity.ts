@@ -1,9 +1,8 @@
 import { ApiProperty } from "@nestjs/swagger";
 import {  IsEnum, IsNotEmpty, IsOptional, IsString } from "class-validator";
 import { States } from "src/api/enums/states.enum";
-import { Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
-import { Market } from "./market.entity";
-import { ZillowScrapperSnapshot } from "src/api/entities/zillow-scrapper-snapshot.entity";
+import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Market } from "./property-market.entity"; 
 import { CountyStatus } from "../enums/county-status.enum";
 
 @Entity('counties')

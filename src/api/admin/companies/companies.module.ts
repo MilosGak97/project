@@ -1,6 +1,4 @@
-import { Module } from '@nestjs/common';
-import { ClientManagementController } from './client-management.controller';
-import { ClientManagementService } from './client-management.service';
+import { Module } from '@nestjs/common'; 
 import { CompanyRepository } from '../../repositories/postgres/company.repository';
 import { UserRepository } from '../../repositories/postgres/users.repository';  
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -10,6 +8,8 @@ import { PassportModule } from '@nestjs/passport';
 //import { Subscription } from 'src/api/data/property-listings/entities/subscription.entity';
 import { EmailService } from 'src/email/email.service';
 import { Company } from 'src/api/entities/company.entity';
+import { CompaniesController } from './companies.controller';
+import { CompaniesService } from './companies.service';
 
 @Module({
   imports:
@@ -18,7 +18,7 @@ import { Company } from 'src/api/entities/company.entity';
     JwtModule.register({secret: 'topSecret51'}),
     PassportModule.register({defaultStrategy: 'jwt'})
   ] ,
-  controllers: [ClientManagementController],
-  providers: [ClientManagementService, CompanyRepository, UserRepository, EmailService]
+  controllers: [CompaniesController],
+  providers: [CompaniesService, CompanyRepository, UserRepository, EmailService]
 })
-export class ClientManagementModule {}
+export class CompaniesModule {}

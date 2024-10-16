@@ -2,9 +2,9 @@ import { ConflictException, Injectable, NotFoundException } from "@nestjs/common
 import { User } from "src/api/entities/user.entity";
 import { UserStatus } from "src/api/enums/user-status.enum";
 import { DataSource, Repository } from "typeorm";
-import { ListAllUsersDto } from "../../admin/client-management/dto/list-all-users.dto";
+import { ListAllUsersDto } from "../../admin/companies/dto/list-all-users.dto";
 import { Company } from "src/api/entities/company.entity";
-import { UpdateUserDto } from "../../admin/client-management/dto/updateUser.dto";
+import { UpdateUserDto } from "../../admin/companies/dto/updateUser.dto";
 import { EmailService } from "src/email/email.service";
 import { JwtService } from "@nestjs/jwt"; 
 import * as bcrypt from "bcrypt" 

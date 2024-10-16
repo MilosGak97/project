@@ -6,7 +6,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { RolesGuard } from '../auth/roles.guard';
 import { Roles } from '../auth/roles.decorator';
 import { AdminRole } from '../../enums/admin-role.enum';
-import { AdminManagementService } from './admin-management.service';  
+import { AdminsService } from './admins.service';
 import { UpdateAdminDto } from './dto/update-admin.dto';
 import { Admin } from 'src/api/entities/admin.entity';
 
@@ -16,8 +16,8 @@ import { Admin } from 'src/api/entities/admin.entity';
 @Controller('admin') 
 @UseGuards(AuthGuard(), RolesGuard) 
 @Roles(AdminRole.HEAD)
-export class AdminManagementController {
-    constructor(private adminManagementService: AdminManagementService) {}
+export class AdminsController {
+    constructor(private adminsService: AdminsService) {}
 
 
 // GET - end point to get all admins
@@ -38,7 +38,7 @@ export class AdminManagementController {
         offsetNumber: number
 
     }> {
-        return this.adminManagementService.getAdmins(getAdminsDto);
+        return this.adminsService.getAdmins(getAdminsDto);
     }
 
 // POST - end point to create new admin
@@ -53,7 +53,7 @@ export class AdminManagementController {
     ):Promise<{
         message: string
     }>{
-        return this.adminManagementService.createAdmin(createAdminDto)
+        return this.adminsService.createAdmin(createAdminDto)
     }
 
 // GET - end point to show information of single admin    
@@ -62,7 +62,7 @@ export class AdminManagementController {
     showAdminData(@Param('id') id:string):Promise<{
         adminData: Admin
     }>{
-        return this.adminManagementService.showAdminData(id)
+        return this.adminsService.showAdminData(id)
     }
 
 
@@ -75,7 +75,7 @@ export class AdminManagementController {
     ):Promise<{
         message: string
     }>{
-        return this.adminManagementService.updateAdmin(updateAdminDto, id)
+        return this.adminsService.updateAdmin(updateAdminDto, id)
     }
 
 // POST - end point to resend email for email verification    
@@ -84,7 +84,7 @@ export class AdminManagementController {
     resendEmailVerification(@Param('id') id: string):Promise<{
         message:string
     }>{
-        return this.adminManagementService.resendEmailVerification(id)
+        return this.adminsService.resendEmailVerification(id)
         
     }
 
@@ -94,7 +94,7 @@ export class AdminManagementController {
     resetPassword(@Param('id') id: string):Promise<{
         message:string
     }>{
-        return this.adminManagementService.resetPassword(id)
+        return this.adminsService.resetPassword(id)
     }
 
 // DELETE - end point to delete admin user    
@@ -103,6 +103,6 @@ export class AdminManagementController {
     deleteAdmin(@Param('id') id:string):Promise<{
         message:string
     }>{
-        return this.adminManagementService.deleteAdmin(id)
+        return this.adminsService.deleteAdmin(id)
     }
 }

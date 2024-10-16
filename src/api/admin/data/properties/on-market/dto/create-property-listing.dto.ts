@@ -1,7 +1,7 @@
 import { Type } from "class-transformer";
 import { IsOptional, IsString } from "class-validator";
-import { Market } from "src/api/entities/market.entity";
-import { ZillowScrapperSnapshot } from "src/api/entities/zillow-scrapper-snapshot.entity";
+import { BrightdataSnapshot } from "src/api/entities/brightdata-snapshot.entity";
+import { Market } from "src/api/entities/property-market.entity"; 
 
 export class CreatePropertyListingDto{
     @IsOptional()
@@ -91,7 +91,7 @@ export class CreatePropertyListingDto{
 
     @IsOptional()
     @IsString()
-    snapshot: ZillowScrapperSnapshot
+    snapshot: BrightdataSnapshot
 
     @IsOptional()
     market: Market

@@ -1,19 +1,15 @@
-import { Module } from '@nestjs/common'; 
-import { AdminManagementModule } from './admin-management/admin-management.module'; 
-import { AuthModule } from './auth/auth.module'; 
-import { ClientManagementModule } from './client-management/client-management.module'; 
-import { ZillowScrapperModule } from './zillow-scrapper/zillow-scrapper.module'; 
-import { FilteringFeatureModule } from './filtering-feature/filtering-feature.module';
+import { Module } from '@nestjs/common';  
+import { AuthModule } from './auth/auth.module';  
 import { DataModule } from './data/data.module';
+import { CompaniesModule } from './companies/companies.module';
+import { AdminsModule } from './admins/admins.module';
 
 @Module({
     imports: [ 
-        AdminManagementModule, 
+        AdminsModule, 
         AuthModule, 
-        ClientManagementModule,
-        ZillowScrapperModule, 
-        DataModule, 
-        FilteringFeatureModule
+        CompaniesModule, 
+        DataModule,  
     ],
     controllers: [],  
     providers: [],  

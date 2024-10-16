@@ -4,7 +4,7 @@ import { Model } from "mongoose";
 import { Admin } from "src/api/entities/admin.entity";
 import { FilteredStatus } from "src/api/enums/filtered-status.enum";
 import { Filtering } from "src/api/schemas/filtering-logs.schema";
-import { ListLogsDto } from "../../admin/filtering-feature/dto/list-logs.dto";
+import { ListLogsDto } from "../../admin/data/properties/on-market/dto/list-logs.dto";
 
 @Injectable()
 export class FilteringRepository{

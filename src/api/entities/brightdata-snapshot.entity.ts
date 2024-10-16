@@ -1,14 +1,13 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsEnum, IsNotEmpty, IsNumber, IsOptional, IsString } from "class-validator";
+import { IsEnum, IsNotEmpty, IsNumber, IsOptional } from "class-validator";
 import { Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
-import { ScrapperSnapshotStatus } from "../enums/scrapper-snapshot-status.enum";  
-import { County } from "src/api/entities/county.entity";
-import { Market } from "./market.entity";
+import { ScrapperSnapshotStatus } from "../enums/scrapper-snapshot-status.enum";   
+import { Market } from "./property-market.entity";
 import { Type } from "class-transformer";
 import { PropertyListing } from "./property-listing.entity";
 
-@Entity('zillow-scrapper-snapshots')
-export class ZillowScrapperSnapshot {
+@Entity('brightdata-snapshots')
+export class BrightdataSnapshot {
     @ApiProperty({required:true})
     @PrimaryGeneratedColumn('increment')
     id: number

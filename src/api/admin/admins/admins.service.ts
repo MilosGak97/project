@@ -1,14 +1,14 @@
-import { Injectable, Inject } from '@nestjs/common';  
-import { AdminManagementRepository } from 'src/api/repositories/postgres/admin-management.repository';
+import { Injectable } from '@nestjs/common';  
+import { AdminRepository } from 'src/api/repositories/postgres/admin.repository';
 import { CreateAdminDto } from './dto/create-admin.dto'; 
 import { GetAdminsDto } from './dto/get-admins.dto';  
 import { UpdateAdminDto } from './dto/update-admin.dto';
 import { Admin } from 'src/api/entities/admin.entity';
 
 @Injectable()
-export class AdminManagementService { 
+export class AdminsService { 
     constructor(
-        private readonly adminManagementRepository: AdminManagementRepository, 
+        private readonly adminRepository: AdminRepository, 
     ) {}
 
 
@@ -23,14 +23,14 @@ export class AdminManagementService {
         offsetNumber: number
 
     }>{
-        return await this.adminManagementRepository.getAdmins(getAdminsDto)
+        return await this.adminRepository.getAdmins(getAdminsDto)
     }
 
 // method to create admin
     async createAdmin(createAdminDto: CreateAdminDto): Promise<{
         message: string
     }>{
-        return this.adminManagementRepository.createAdmin(createAdminDto)
+        return this.adminRepository.createAdmin(createAdminDto)
     }
 
 
@@ -38,7 +38,7 @@ export class AdminManagementService {
     async showAdminData(id:string):Promise<{
         adminData:Admin
     }>{
-        return this.adminManagementRepository.showAdminData(id)
+        return this.adminRepository.showAdminData(id)
     }
 
 
@@ -46,7 +46,7 @@ export class AdminManagementService {
     async updateAdmin( updateAdminDto: UpdateAdminDto, id: string):Promise<{
         message:string
     }>{
-        return this.adminManagementRepository.updateAdmin(updateAdminDto, id);
+        return this.adminRepository.updateAdmin(updateAdminDto, id);
     }
 
 
@@ -54,20 +54,20 @@ export class AdminManagementService {
     async resendEmailVerification(id:string):Promise<{
         message:string
     }>{
-        return this.adminManagementRepository.resendEmailVerification(id);
+        return this.adminRepository.resendEmailVerification(id);
     }
 
 // method to reset password
     async resetPassword(id:string):Promise<{
         message:string
     }>{
-        return this.adminManagementRepository.resetPassword(id)
+        return this.adminRepository.resetPassword(id)
     }
 
 // method to delete admin
     async deleteAdmin(id:string):Promise<{
         message:string
     }>{
-        return this.adminManagementRepository.deleteAdmin(id)
+        return this.adminRepository.deleteAdmin(id)
     }
 }

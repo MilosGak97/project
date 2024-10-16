@@ -6,8 +6,7 @@ import { AdminModule } from './api/admin/admin.module';
 import { ClientModule } from './api/client/client.module';
 import { ConfigModule } from '@nestjs/config';   
 import { MongooseModule } from '@nestjs/mongoose';
-import { DataModule } from './api/admin/data/data.module'; 
-import { ZillowScrapperModule } from './api/admin/zillow-scrapper/zillow-scrapper.module';
+import { DataModule } from './api/admin/data/data.module';  
 
 
 
@@ -33,8 +32,7 @@ import { ZillowScrapperModule } from './api/admin/zillow-scrapper/zillow-scrappe
     EmailModule,
     AdminModule,
     ClientModule,
-    DataModule,
-    ZillowScrapperModule,
+    DataModule, 
   ],
   controllers: [HealthController]
 })

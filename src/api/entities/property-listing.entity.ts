@@ -1,9 +1,9 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { Type } from "class-transformer";
-import { IsOptional, IsString } from "class-validator";
-import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
-import { ZillowScrapperSnapshot } from "./zillow-scrapper-snapshot.entity";
-import { Market } from "./market.entity";
+import { IsOptional } from "class-validator";
+import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm"; 
+import { Market } from "./property-market.entity";
+import { BrightdataSnapshot } from "./brightdata-snapshot.entity";
 
 @Entity('property-listings')
 export class PropertyListing{
@@ -137,8 +137,8 @@ export class PropertyListing{
     additionalInfo?: any
  
     @ApiProperty({required:false})
-    @ManyToOne(()=> ZillowScrapperSnapshot, (snapshot) => snapshot.id)
-    snapshot: ZillowScrapperSnapshot
+    @ManyToOne(()=> BrightdataSnapshot, (snapshot) => snapshot.id)
+    snapshot: BrightdataSnapshot
 
     @ApiProperty({required:false})
     @ManyToOne(()=> Market, (market) => market.id)

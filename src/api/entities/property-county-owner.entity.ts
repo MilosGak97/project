@@ -1,14 +1,11 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
-@Entity('property-skiptracing')
-export class PropertySkiptracing{
+@Entity('property-county-owners')
+export class PropertyCountyOwner{
     @ApiProperty()
     @PrimaryGeneratedColumn('uuid')
     id:string
-
-
-
 
         // Automatically handles 'created at' timestamp
         @ApiProperty()

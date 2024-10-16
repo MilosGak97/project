@@ -1,22 +1,22 @@
 import { DataSource, Repository } from "typeorm"; 
-import { Injectable } from "@nestjs/common";
-import { ZillowScrapperSnapshot } from "src/api/entities/zillow-scrapper-snapshot.entity";
+import { Injectable } from "@nestjs/common"; 
 import { ScrapperSnapshotStatus } from "src/api/enums/scrapper-snapshot-status.enum";
-import { ListSnapshotsDto } from "src/api/admin/zillow-scrapper/dto/list-snapshots.dto"; 
+import { ListSnapshotsDto } from "src/api/admin/data/properties/on-market/dto/list-snapshots.dto"; 
+import { BrightdataSnapshot } from "src/api/entities/brightdata-snapshot.entity";
 
 @Injectable()
-export class ZillowScrapperSnapshotRepository extends Repository<ZillowScrapperSnapshot>{
+export class BrightdataSnapshotRepository extends Repository<BrightdataSnapshot>{
     constructor(
         private readonly dataSource: DataSource
     ){
-        super(ZillowScrapperSnapshot, dataSource.createEntityManager())
+        super(BrightdataSnapshot, dataSource.createEntityManager())
     }
     
     //active
     async logSnapshot(snapshot_id, market_id):Promise<{
         message:string
     }>{
-        const snapshot_log = new ZillowScrapperSnapshot()
+        const snapshot_log = new BrightdataSnapshot()
         snapshot_log.brightdata_id = snapshot_id
         snapshot_log.market = market_id
         snapshot_log.status = ScrapperSnapshotStatus.IN_PROGRESS
@@ -29,7 +29,7 @@ export class ZillowScrapperSnapshotRepository extends Repository<ZillowScrapperS
 
     //active
     async listSnapshots(listSnapshotsDto: ListSnapshotsDto):Promise<{
-        result: ZillowScrapperSnapshot[],
+        result: BrightdataSnapshot[],
         totalRecords: number,
         totalPages: number,
         currentPage: number,

@@ -1,17 +1,13 @@
-import { ConflictException, Injectable, NotFoundException } from "@nestjs/common"
-import { County } from "../entities/county.entity"
-import { DataSource, Repository } from "typeorm"
-import { MarketRepository } from "./market.repository"
-import { CreateCountyDto } from "../admin/zillow-scrapper/dto/create-county.dto"
-import { ListCountiesDto } from "../admin/zillow-scrapper/dto/list-counties.dto"
-import { CountyStatus } from "../enums/county-status.enum"
-import { UpdateCountyDto } from "../admin/zillow-scrapper/dto/update-county.dto"
+import { Injectable } from "@nestjs/common"
+import { County } from "src/api/entities/county.entity"
+import { DataSource, Repository } from "typeorm" 
+import { PropertyMarketRepository } from "./property-market.repository"
 
 @Injectable()
 export class CountyRepository extends Repository<County>{
     constructor(
          private readonly dataSource: DataSource,
-         private readonly marketRepository: MarketRepository,
+         private readonly propertyMarketRepository: PropertyMarketRepository,
     ){
         super(County, dataSource.createEntityManager())
     }
