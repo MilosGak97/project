@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Query, Req } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Query, Req, UseGuards } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { GetAdmin } from 'src/api/admin/auth/get-admin.decorator';
 import { FilterMarketDto } from 'src/api/admin/data/properties/on-market/dto/filter-market.dto';
@@ -9,9 +9,14 @@ import { FilteredStatus } from 'src/api/enums/filtered-status.enum';
 import { Filtering } from 'src/api/schemas/filtering-logs.schema';
 import { OnMarketService } from './on-market.service'; 
 import { ListSnapshotsDto } from 'src/api/admin/data/properties/on-market/dto/list-snapshots.dto'; 
+import { AuthGuard } from '@nestjs/passport';
+import { RolesGuard } from 'src/api/admin/auth/roles.guard';
+import { Roles } from 'src/api/admin/auth/roles.decorator';
+import { AdminRole } from 'src/api/enums/admin-role.enum';
 
 
 @ApiTags('Data/Properties/ On-Market')
+@UseGuards(AuthGuard(), RolesGuard)
 @Controller('data/properties/on-market')
 export class OnMarketController {
     constructor(
@@ -19,6 +24,7 @@ export class OnMarketController {
     ) { }
 
     //new endpoint
+    @Roles(AdminRole.HEAD, AdminRole.FILTERING)
     @ApiOperation({ summary: "List all markets that need to be filtered" })
     @Get('filter/markets')
     async filterMarketList() {
@@ -28,6 +34,7 @@ export class OnMarketController {
 
 
     //new endpoint
+    @Roles(AdminRole.HEAD, AdminRole.FILTERING)
     @ApiOperation({ summary: "Filter properties by market" })
     @Get('filter/markets/:marketId([0-9a-fA-F-]{36})')
     async filterMarket(@Param('marketId') marketId: string, @Query() filterMarketDto: FilterMarketDto): Promise<{
@@ -42,6 +49,7 @@ export class OnMarketController {
     }
 
     //new endpoint
+    @Roles(AdminRole.HEAD, AdminRole.FILTERING)
     @ApiOperation({ summary: "Show logs of filtering actions taken by admins" })
     @Get('filter/logs')
     async listLogs(@Query() listLogsDto: ListLogsDto): Promise<Filtering[]> {
@@ -50,6 +58,7 @@ export class OnMarketController {
 
 
     //new endpoint
+    @Roles(AdminRole.HEAD, AdminRole.FILTERING)
     @ApiOperation({ summary: "Log and update filtering action to property" })
     @Patch('filter/:propertyId') // was post, test it
     async filteringAction(@Param('propertyId') propertyId: string, @GetAdmin() admin: Admin, @Body() action: FilteredStatus): Promise<{
@@ -60,6 +69,7 @@ export class OnMarketController {
 
 
     // new endpoint
+    @Roles(AdminRole.HEAD, AdminRole.SCRAPPING)
     @Post('brightdata/notifications')
     @ApiOperation({ summary: "Webhook: Receive notification from brightdata" })
 
@@ -74,6 +84,7 @@ export class OnMarketController {
     /* 
     ubaci ovde opciju da se filtrira po market IDju
     */
+    @Roles(AdminRole.HEAD, AdminRole.SCRAPPING)
     @Get('brightdata/snapshots')
     @ApiOperation({ summary: "List Snapshots logs" })
     async listSnapshots(@Query() listSnapshotsDto: ListSnapshotsDto) {
@@ -96,6 +107,7 @@ export class OnMarketController {
     */
 
 
+    @Roles(AdminRole.HEAD, AdminRole.SCRAPPING)
     @Post('brightdata/snapshots/:marketId')
     @ApiOperation({ summary: "Run manually scrapper for this market (24hrs)" })
     async runScrapperMarket(@Param('marketId') marketId: string): Promise<{
@@ -106,6 +118,7 @@ export class OnMarketController {
 
 
 
+    @Roles(AdminRole.HEAD, AdminRole.SCRAPPING)
     @Post('brightdata/snapshots/:snapshotId') //
     @ApiOperation({ summary: "Re-run snapshot import function manually" })
     async fetchSnapshot(@Param('snapshotId') snapshotId: string): Promise<{

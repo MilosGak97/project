@@ -49,7 +49,10 @@ async function bootstrap() {
   const adminDocument = SwaggerModule.createDocument(app, adminConfig, optionAdmin); // No include option here
   SwaggerModule.setup('api/admin', app, adminDocument); // Admin Swagger UI
 
-
+  // Expose the Admin API OpenAPI JSON
+  app.getHttpAdapter().get('/api/admin/api-json', (req, res) => {
+    res.json(adminDocument);
+  });
 
   // Swagger setup for Client API
   const clientConfig = new DocumentBuilder()

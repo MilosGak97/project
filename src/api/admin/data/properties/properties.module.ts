@@ -12,6 +12,8 @@ import { CountyRepository } from 'src/api/repositories/postgres/county.repositor
 import { HttpModule } from '@nestjs/axios';
 import { PropertyMarketRepository } from 'src/api/repositories/postgres/property-market.repository';
 import { BrightdataSnapshotRepository } from 'src/api/repositories/postgres/brightdata-snapshot.repository';
+import { JwtModule } from '@nestjs/jwt';
+import { PassportModule } from '@nestjs/passport';
 
 @Module({ 
   controllers: [
@@ -23,6 +25,8 @@ import { BrightdataSnapshotRepository } from 'src/api/repositories/postgres/brig
       {name: Filtering.name, schema: FilteringSchema}
     ]),
     HttpModule, 
+    JwtModule.register({secret: 'topSecret51'}),
+    PassportModule.register({defaultStrategy: 'jwt'})
   ],
   providers:[
     PropertiesService,
