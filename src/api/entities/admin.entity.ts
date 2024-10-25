@@ -3,6 +3,7 @@ import { IsEmail, IsOptional, IsString, IsPhoneNumber, IsEnum, IsBoolean, IsNotE
 import { ApiProperty } from '@nestjs/swagger';
 import { AdminStatus } from "../enums/admin-status.enum";
 import { AdminRole } from "../enums/admin-role.enum";
+import { UserType } from "../enums/user-type.enum";
 
 @Entity('admins')   
 export class Admin {
@@ -54,6 +55,11 @@ export class Admin {
     @IsEnum(AdminRole)
     @Column()
     role: AdminRole;
+
+    @ApiProperty()
+    @IsEnum(UserType)
+    @Column()
+    user_type: UserType.EMPLOYEE
 
     @ApiProperty({ required: true })
     @IsNotEmpty()

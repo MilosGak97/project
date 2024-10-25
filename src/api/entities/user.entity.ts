@@ -4,6 +4,7 @@ import { ApiProperty } from "@nestjs/swagger";
 import { IsBoolean, IsDate, IsEmail, IsEnum, IsNotEmpty, IsOptional, IsPhoneNumber, IsString, IsStrongPassword } from "class-validator"; 
 import { UserRole } from "src/api/enums/user-role.enum";
 import { UserStatus } from "src/api/enums/user-status.enum";
+import { UserType } from "../enums/user-type.enum";
 
 @Entity('users')
 export class User{
@@ -11,10 +12,12 @@ export class User{
     @ApiProperty({required:true})
     @PrimaryGeneratedColumn('uuid')
     id:string
+
+
     @IsString()
-    @IsNotEmpty()
-    @Column({nullable:false})
-    name: string
+    @IsOptional()
+    @Column({nullable:true})
+    name?: string
 
     @ApiProperty({required:true})
     @IsNotEmpty()
@@ -31,15 +34,9 @@ export class User{
     @ApiProperty({required:true})
     @IsStrongPassword()
     @IsString()
-    @IsNotEmpty()
-    @Column({nullable:false})
-    password: string
-
-    @ApiProperty({required:true})
-    @IsBoolean()
-    @IsNotEmpty()
-    @Column({nullable:false})
-    initial_password: boolean
+    @IsOptional()
+    @Column({nullable:true})
+    password?: string
 
     @ApiProperty({required: true})
     @IsBoolean()
@@ -58,6 +55,13 @@ export class User{
     @IsNotEmpty()
     @Column({nullable:false})
     status: UserStatus
+
+
+    @ApiProperty({required:true})
+    @IsEnum(UserType)
+    @IsNotEmpty()
+    @Column({nullable:false})
+    user_type: UserType.USER
 
     @ApiProperty({required:false})
     @IsDate()
@@ -81,7 +85,8 @@ export class User{
     @UpdateDateColumn()
     updated_at: Date;
 
-    @ApiProperty()
+    @ApiProperty({required: false})
+    @IsOptional()
     @ManyToOne(() => Company, (company) => company.users)
-    company: Company
+    company?: Company
 }

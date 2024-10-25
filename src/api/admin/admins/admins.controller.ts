@@ -100,9 +100,9 @@ export class AdminsController {
 // DELETE - end point to delete admin user    
     @Delete('admins/:id')
     @ApiOperation({summary: 'Delete admin, set status to deleted '})
-    deleteAdmin(@Param('id') id:string):Promise<{
+   async deleteAdmin(@Param('id') id:string):Promise<{
         message:string
     }>{
-        return this.adminsService.deleteAdmin(id)
+        return await this.adminsService.deleteAdmin(id)
     }
 }

@@ -11,7 +11,7 @@ import { Admin } from 'src/api/entities/admin.entity';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Admin]),  
-    JwtModule.register({secret: 'topSecret51'}),
+    JwtModule.register({secret:  process.env.ADMIN_JWT_SECRET }),
     PassportModule.register({ defaultStrategy: 'jwt'}),] ,
   providers: [AuthService, JwtStrategy, AuthRepository, EmailService],
   controllers: [AuthController],

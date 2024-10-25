@@ -1,5 +1,5 @@
 import { BadRequestException, Injectable, Logger, NotFoundException, UnauthorizedException } from "@nestjs/common";
-import { JwtService } from "@nestjs/jwt"; 
+import { JsonWebTokenError, JwtService } from "@nestjs/jwt"; 
 import { AdminStatus } from "src/api/enums/admin-status.enum";
 import { DataSource, Repository } from "typeorm";
 import { SignInDto } from "../dto/sign-in-admin.dto";
@@ -29,8 +29,8 @@ export class AuthRepository extends Repository<Admin>{
         const user = await this.findOne({ where: { id: payload.userId } });
     
         // Sign new access and refresh tokens without the exp property
-        const accessToken = await this.jwtService.sign(payload);
-        const refreshToken = await this.jwtService.sign(payload);
+        const accessToken = await this.jwtService.sign(payload, { secret: process.env.ADMIN_JWT_SECRET });
+        const refreshToken = await this.jwtService.sign(payload, { secret: process.env.ADMIN_JWT_SECRET });
     
         // If user is not found, throw an error
         if (!user) {
@@ -72,8 +72,8 @@ export class AuthRepository extends Repository<Admin>{
                     const adminId = user.id;
                     const payload: JwtPayload = { adminId };
         
-                    const accessToken = await this.jwtService.sign(payload);
-                    const refreshToken = await this.jwtService.sign(payload, { expiresIn: '7d' });
+                    const accessToken = await this.jwtService.sign(payload, { secret: process.env.ADMIN_JWT_SECRET });
+                    const refreshToken = await this.jwtService.sign(payload, { expiresIn: '7d', secret: process.env.ADMIN_JWT_SECRET });
         
                     user.refreshToken = refreshToken; // Save the refresh token as needed
                     await this.save(user); // Ensure save operation is awaited
@@ -91,7 +91,7 @@ export class AuthRepository extends Repository<Admin>{
     async logout(token: string ):Promise<boolean>{
 
         try {
-            const payload: JwtPayload = await this.jwtService.verify(token);
+            const payload: JwtPayload = await this.jwtService.verify(token, { secret: process.env.ADMIN_JWT_SECRET });
             const adminId = payload.adminId
 
             const adminUser = await this.findOne( {where: {id: adminId}})
@@ -159,7 +159,7 @@ export class AuthRepository extends Repository<Admin>{
             throw new UnauthorizedException('No Token Found')
         }
  
-            const payload:JwtPayload = await this.jwtService.verify(token)
+            const payload:JwtPayload = await this.jwtService.verify(token, {secret: process.env.ADMIN_JWT_SECRET})
 
             const adminId = payload.adminId
     
@@ -177,31 +177,91 @@ export class AuthRepository extends Repository<Admin>{
         throw new UnauthorizedException(error)
     }
     }
-
+/*
 // new method
-    async refreshAccessToken(refreshToken:string):Promise<{
-        newAccessToken: string
-    }>{
-        try{
-            const payload:JwtPayload = await this.jwtService.verify(refreshToken)
+async refreshAccessToken(refreshToken: string): Promise<{
+    newAccessToken: string;
+}> {
+    console.log('Starting refreshAccessToken method');
+    
+    try {
+        console.log('Received refresh token:', refreshToken);
+        
+        // Verify the refresh token
+        const payload: JwtPayload = await this.jwtService.verify(refreshToken, { secret: process.env.ADMIN_JWT_SECRET });
+        console.log('Refresh token verified successfully. Payload:', payload);
 
-            const adminId = payload.adminId;
+        const adminId = payload.adminId;
+        console.log('Extracted adminId from payload:', adminId);
 
-            const adminProfile = await this.findOne({where: {id: adminId}})
+        // Fetch admin profile
+        const adminProfile = await this.findOne({ where: { id: adminId } });
+        console.log('Fetched admin profile:', adminProfile);
 
-            if(!adminProfile){
-                throw new NotFoundException('Didnt find the user with that id')
-            }
-
-            // Create a new access token
-            const newAccessToken = this.jwtService.sign({ adminId }, {expiresIn: '1h'});
-            return {newAccessToken};
-        }catch(error){
-            throw new UnauthorizedException('Invalid refresh token')
+        if (!adminProfile) {
+            console.error('Admin profile not found for id:', adminId);
+            throw new NotFoundException('Didn\'t find the user with that id');
         }
+
+        // Create a new access token
+        const newAccessToken = await this.jwtService.sign({ adminId }, { expiresIn: '1h', secret: process.env.ADMIN_JWT_SECRET });
+        console.log('New access token created successfully:', newAccessToken);
+
+        return { newAccessToken };
+    } catch (error) {
+        console.error('Error in refreshAccessToken:', error);
+        throw new UnauthorizedException('Invalid refresh token');
+    }
+}
+    */
+
+async refreshAccessToken(refreshToken: string): Promise<{
+    newAccessToken: string;
+}> {
+    console.log('Starting refreshAccessToken method');
+
+    if (!refreshToken) {
+        console.error('No refresh token provided');
+        throw new UnauthorizedException('No refresh token found');
     }
 
-  
+    try {
+        console.log('Received refresh token:', refreshToken);
+
+        // Verify the refresh token
+        const payload: JwtPayload = await this.jwtService.verify(refreshToken, { secret: process.env.ADMIN_JWT_SECRET });
+        console.log('Refresh token verified successfully. Payload:', payload);
+
+        const adminId = payload.adminId;
+        console.log('Extracted adminId from payload:', adminId);
+
+        // Fetch admin profile
+        const adminProfile = await this.findOne({ where: { id: adminId } });
+        console.log('Fetched admin profile:', adminProfile);
+
+        if (!adminProfile) {
+            console.error('Admin profile not found for id:', adminId);
+            throw new NotFoundException('Didnt find the user with that id');
+        }
+
+        // Create a new access token
+        
+        const payload2: JwtPayload = { adminId };
+        
+        const newAccessToken = await this.jwtService.sign(payload2, { secret: process.env.ADMIN_JWT_SECRET });
+        console.log('New access token created successfully:', newAccessToken);
+
+        return { newAccessToken };
+    } catch (error) {
+        console.error('Error in refreshAccessToken:', error);
+        if (error instanceof JsonWebTokenError) {
+            throw new UnauthorizedException('Invalid or expired refresh token');
+        }
+        throw new UnauthorizedException('Error processing refresh token');
+    }
+}
+
+
 
 
 }

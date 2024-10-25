@@ -1,4 +1,3 @@
- 
 export interface JwtPayload{
-    adminId:string
+    userId:string
 }

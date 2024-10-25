@@ -68,6 +68,6 @@ export class AdminsService {
     async deleteAdmin(id:string):Promise<{
         message:string
     }>{
-        return this.adminRepository.deleteAdmin(id)
+        return await this.adminRepository.deleteAdmin(id)
     }
 }

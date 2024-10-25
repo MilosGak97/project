@@ -1,8 +1,7 @@
 import { ConflictException, Injectable } from "@nestjs/common";
 import { PropertyListing } from "src/api/entities/property-listing.entity";
 import { DataSource, IsNull, Repository } from "typeorm";
-import { CreatePropertyListingDto } from "../../admin/data/properties/on-market/dto/create-property-listing.dto";
-import { ListForFilteringDto } from "../../admin/data/properties/on-market/dto/list-for-filtering.dto";
+import { CreatePropertyListingDto } from "../../admin/data/properties/on-market/dto/create-property-listing.dto"; 
 import { Market } from "src/api/entities/property-market.entity";
 import { FilterMarketDto } from "../../admin/data/properties/on-market/dto/filter-market.dto";
 

@@ -10,6 +10,7 @@ import { AdminStatus } from 'src/api/enums/admin-status.enum';
 import { EmailService } from "src/email/email.service";  
 import { JwtService } from "@nestjs/jwt"; 
 import { UpdateAdminDto } from 'src/api/admin/admins/dto/update-admin.dto';
+import { UserType } from 'src/api/enums/user-type.enum';
 
 
 @Injectable()
@@ -41,8 +42,9 @@ export class AdminRepository extends Repository<Admin> {
     private async verifyEmail(userId: string,email: string, randomPassword?:string ):Promise<{
         message:string
     }>{
-        const jwtPayload = { userId: userId, expireIn: '3600' };
-        const jwtToken = await this.jwtService.sign(jwtPayload)
+        const jwtPayload = { userId: userId, expireIn: '3600' }; 
+        const jwtToken = await this.jwtService.sign(jwtPayload, { secret: process.env.ADMIN_JWT_SECRET });
+
         const verifyUrl = `${process.env.BASE_URL}admin/auth/email?jwtToken=${encodeURIComponent(jwtToken)}`;
         return await this.emailService.authEmail(email, verifyUrl, randomPassword || '' );
     }
@@ -176,6 +178,7 @@ export class AdminRepository extends Repository<Admin> {
             newAdminUser.email_verified = false;
             newAdminUser.initial_password = true;
             newAdminUser.status_changed_at = new Date();
+            newAdminUser.user_type = UserType.EMPLOYEE;
 
             // Save the new admin user to the database
             await this.save(newAdminUser);
@@ -268,6 +271,9 @@ export class AdminRepository extends Repository<Admin> {
         if(!adminData){
             throw new NotFoundException('No user found with this ID.')
         }
+        if(adminData.email_verified === true){
+            throw new ConflictException("User's email is already verified")
+        }
         await this.verifyEmail(id, adminData.email)
         return {message: "A new email verification link has been sent."}
     }
@@ -306,6 +312,7 @@ export class AdminRepository extends Repository<Admin> {
         }
 
         userData.status = AdminStatus.DELETED
+        await this.save(userData)
         return { message: "Account has been successfully deleted."}
     }
 }

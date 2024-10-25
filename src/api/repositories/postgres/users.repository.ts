@@ -217,8 +217,7 @@ export class UserRepository extends Repository<User>{
         userData.password = hashedPassword
 
         await this.verifyEmail(userId, userData.email, hashedPassword)
-        userData.initial_password = true
-        
+         
         return {
             message: "New password has been sent to email"
         }

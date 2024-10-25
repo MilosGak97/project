@@ -69,7 +69,14 @@ async function bootstrap() {
   const clientDocument = SwaggerModule.createDocument(app, clientConfig, optionClient);
  
   SwaggerModule.setup('api/client', app, clientDocument); // Client Swagger UI
-  
+   // Expose the Client API OpenAPI JSON
+   app.getHttpAdapter().get('/api/client/api-json', (req, res) => {
+    res.json(clientDocument);
+  });
+
+
+
+
   const PORT = process.env.PORT || 3000;
   await app.listen(PORT);
   console.log(`Application is running on: http://localhost:${PORT}`);

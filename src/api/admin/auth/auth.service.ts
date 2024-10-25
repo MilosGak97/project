@@ -24,7 +24,7 @@ export class AuthService {
         refreshToken:string,
         accessToken: string
     }>{
-        return this.authRepository.signIn(signInDto)     
+        return await this.authRepository.signIn(signInDto)     
     }
 
 
@@ -38,13 +38,13 @@ export class AuthService {
     async passwordReset(passwordResetDto: PasswordResetDto, admin: Admin):Promise<{
         message:string
     }>{
-        return this.authRepository.passwordReset(passwordResetDto, admin);
+        return await this.authRepository.passwordReset(passwordResetDto, admin);
     }
 
 
 // new method
     async whoAmI(token):Promise<Admin>{
-        return this.authRepository.whoAmI(token)
+        return await this.authRepository.whoAmI(token)
     }
      
 
@@ -52,7 +52,7 @@ export class AuthService {
     async refreshAccessToken(refreshToken):Promise<{
         newAccessToken: string
     }>{
-        return this.authRepository.refreshAccessToken(refreshToken)
+        return await this.authRepository.refreshAccessToken(refreshToken)
     }
 
 

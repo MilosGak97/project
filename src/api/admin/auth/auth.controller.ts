@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, HttpStatus, NotFoundException, Post, Query, Req, Res, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, NotFoundException, Post, Query, Req, Res, UseGuards } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { SignInDto } from './dto/sign-in-admin.dto'; 
@@ -51,9 +51,7 @@ export class AuthController {
     @Post()
     @ApiOperation({summary:"Sign in admin end point"})
     @ApiResponse({status:401, description: 'Unauthorized'})
-    async signIn(@Body() signInAdminDto: SignInDto, @Res() res: Response):Promise<{
-     message: string
-    }>{
+    async signIn(@Body() signInAdminDto: SignInDto, @Res() res: Response):Promise<any>{
         const { accessToken, refreshToken } = await this.authService.signIn(signInAdminDto);
 
         // Set the HTTP-only cookie for the access token
@@ -73,7 +71,8 @@ export class AuthController {
         });
 
         // Optionally send a response
-        return { message: 'Login successful' };
+        
+        return res.json({ message: 'Login successful' });
 
     }
 
@@ -82,9 +81,7 @@ export class AuthController {
     @Delete()
     @ApiOperation({summary: "Logout user and delete refresh and access token"})
     @UseGuards(AuthGuard())
-    async logout(@Req() req: Request, @Res() res:Response):Promise<{
-        message:string
-    }>{
+    async logout(@Req() req: Request, @Res() res:Response):Promise<any>{
         const token = req.cookies['accessToken']
        const removedRefreshToken = await this.authService.logout(token) 
     
@@ -94,9 +91,8 @@ export class AuthController {
 
        res.clearCookie('accessToken', { httpOnly: true, secure:true, sameSite:'strict'})
        res.clearCookie('refreshToken', {httpOnly:true, sameSite:"strict", secure:true})
-        return {
-            message: "User is logged out."
-        };
+       
+       res.json({message: "User is logged out."})
     }
 
 
@@ -122,23 +118,24 @@ export class AuthController {
 // new endpoint
     @Post('token')
     @ApiOperation({summary: 'Refresh Access Token'})
-    async refreshAccesToken(@Req() req: Request, @Res() res: Response):Promise<{
-        message: string
-    }>{
+    async refreshAccesToken(@Req() req: Request, @Res() res: Response):Promise<any>{
        const refreshToken =  req.cookies['refreshToken']
        if(!refreshToken){
         throw new NotFoundException('No refresh token found')
        }
 
-       const newAccessToken = await this.authService.refreshAccessToken(refreshToken);
-       res.cookie('accessToken', newAccessToken, {
-        httpOnly:true,
-        maxAge: 60*60*1000,
-        secure: process.env.NODE_ENV === 'production', // Use secure cookies in production
-        sameSite: 'lax', // Adjust as necessary
-       })
-       
-       return {message: "Token is refreshed"}
+       const { newAccessToken }= await this.authService.refreshAccessToken(refreshToken);
+
+        // Set the HTTP-only cookie for the access token
+        res.cookie('accessToken', newAccessToken, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production', // Use secure cookies in production
+            sameSite: 'lax', // Adjust as necessary
+            maxAge: 60 * 60 * 1000 // 1 hour for access token
+        });
+
+
+       res.json({message: "Token is refreshed."})
 
     }
 }

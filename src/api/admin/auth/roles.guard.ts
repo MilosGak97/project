@@ -2,6 +2,7 @@ import { Injectable, CanActivate, ExecutionContext, ForbiddenException, Unauthor
 import { Reflector } from '@nestjs/core'; 
 import { AdminRole } from '../../enums/admin-role.enum';
 import { Admin } from 'src/api/entities/admin.entity';
+import { UserType } from 'src/api/enums/user-type.enum';
 
 @Injectable()
 export class RolesGuard implements CanActivate {
@@ -24,6 +25,11 @@ export class RolesGuard implements CanActivate {
         if (!user) {
             throw new UnauthorizedException('User not authenticated');
         }
+
+        if(user.user_type !== UserType.EMPLOYEE){
+            throw new ForbiddenException("User type is not " + UserType.EMPLOYEE)
+        }
+
 
         // Check if the user has at least one of the required roles
         const hasRole = roles.some((role) => user.role === role);
