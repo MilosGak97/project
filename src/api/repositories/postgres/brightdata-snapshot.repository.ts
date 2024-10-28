@@ -18,7 +18,7 @@ export class BrightdataSnapshotRepository extends Repository<BrightdataSnapshot>
     }>{
         const snapshot_log = new BrightdataSnapshot()
         snapshot_log.brightdata_id = snapshot_id
-       // snapshot_log.state = state_id
+        snapshot_log.state = state_id
         snapshot_log.status = ScrapperSnapshotStatus.IN_PROGRESS
 
         await this.save(snapshot_log)
@@ -38,9 +38,9 @@ export class BrightdataSnapshotRepository extends Repository<BrightdataSnapshot>
     }>{
         const { searchQuery, created_at, status, limit, offset } = listSnapshotsDto
         const query = await this.createQueryBuilder('snapshot')
-        .leftJoinAndSelect('snapshot.market', 'market')
+        .leftJoinAndSelect('snapshot.state', 'state')
         if(searchQuery){
-            query.andWhere('(snapshot.brightdata_id LIKE :searchQuery OR snapshot.marketId LIKE :searchQuery)', {searchQuery: `%${searchQuery}%`})
+            query.andWhere('(snapshot.brightdata_id LIKE :searchQuery OR snapshot.state LIKE :searchQuery)', {searchQuery: `%${searchQuery}%`})
         }
         if(created_at){
             query.andWhere('(snapshot.created_at::date = :created_at)', {created_at})

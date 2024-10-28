@@ -159,6 +159,11 @@ export class PropertyListing{
     @IsString()
     @Column({nullable:true})
     lpb_phone_number?: string
+
+    @IsOptional()
+    @IsString()
+    @Column({nullable:true})
+    isNonOwnerOccupied?:string
  
     @ApiProperty({required:false})
     @ManyToOne(()=> BrightdataSnapshot, (snapshot) => snapshot.properties)

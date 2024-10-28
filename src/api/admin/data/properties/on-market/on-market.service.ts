@@ -86,13 +86,17 @@ export class OnMarketService {
       const response = await firstValueFrom(
         this.httpService.request({ url, method: 'GET', headers, responseType: 'stream', timeout: 10000 })
       );
+      
       const decompressedData = await this.decompressData(response.data);
+      
       const jsonData = JSON.parse(decompressedData.toString());
-      const snapshot = await this.brightdataSnapshotRepository.findOne({ where: { brightdata_id: snapshot_id }, relations: ['market'] })
+      
+      const snapshot = await this.brightdataSnapshotRepository.findOne({ where: { brightdata_id: snapshot_id }})
 
 
 
       if (Array.isArray(jsonData)) {
+        
         for (const item of jsonData) {
 
           const zpid = item.zpid || null;
@@ -121,7 +125,8 @@ export class OnMarketService {
           const lpb_email = item.listing_provided_by?.email || null;
           const lpb_company = item.listing_provided_by?.company || null;
           const lpb_phone_number = item.listing_provided_by?.phone_number || null;
-
+          
+          const isNonOwnerOccupied = item.isNonOwnerOccupied || null;
 
           const photos = [];
 
@@ -204,8 +209,9 @@ export class OnMarketService {
 
           propertyListingDto.lpb_name = lpb_name;
           propertyListingDto.lpb_email = lpb_email;
-          propertyListingDto.lpb_company = lpb_company
-          propertyListingDto.lpb_phone_number = lpb_phone_number
+          propertyListingDto.lpb_company = lpb_company;
+          propertyListingDto.lpb_phone_number = lpb_phone_number;
+          propertyListingDto.isNonOwnerOccupied = isNonOwnerOccupied;
 
 
           const zpidExist = await this.propertyListingRepository.findOne({ where: { zpid }, relations: ['snapshot'] });
@@ -359,8 +365,7 @@ export class OnMarketService {
 
     // Fetch snapshot and relations
     const snapshot = await this.brightdataSnapshotRepository.findOne({
-      where: { brightdata_id: payload.snapshot_id },
-      relations: ['market'],
+      where: { brightdata_id: payload.snapshot_id }
     });
 
 
@@ -400,37 +405,34 @@ export class OnMarketService {
   }> {
     return this.brightdataSnapshotRepository.listSnapshots(listSnapshotsDto)
   }
-/*
+
   //active
-  async runScrapperMarket(marketId: string): Promise<{
+  async runScrapperState(stateAbbrevation: string): Promise<{
     message: string
   }> {
-    const market = await this.propertyMarketRepository.findOne({ where: { id: marketId }, relations: ['counties'] })
-    if (!market) {
-      throw new NotFoundException("Market with provided ID does not exist.")
-    }
-    const counties = market.counties
-    if (counties.length === 0) {
-      throw new NotFoundException("No counties found for this market")
-    }
+    const state = await this.stateRepository.findOne({where: {abbreviation: stateAbbrevation}})
+    //const market = await this.propertyMarketRepository.findOne({ where: { id: marketId }, relations: ['counties'] })
+    if (!state) {
+      throw new NotFoundException("State with provided Abbreviation does not exist.")
+    } 
 
-    const data = counties.map(county => ({ url: county.zillow_url_new })).filter(item => item.url)
+    const data = {url: state.zillow_url_new}
     const snapshotId = await this.triggerScrape(data)
 
-    return await this.brightdataSnapshotRepository.logSnapshot(snapshotId, marketId)
+    return await this.brightdataSnapshotRepository.logSnapshot(snapshotId, state.id)
 
   }
-*/
+
   //active
   async fetchSnapshot(snapshotId: string): Promise<{
     message: string
-  }> {
+  }> { 
     const snapshot = await this.brightdataSnapshotRepository.findOne({
-      where: { brightdata_id: snapshotId },
+      where: { brightdata_id: snapshotId }
     });
-    console.log("SNAPSHOT: " + snapshot.brightdata_id)
+     
     if (!snapshot) {
-      throw new NotFoundException("Snapshot with this ID and Market ID does not exist.");
+      throw new NotFoundException("Snapshot with this BrightData ID does not exist.");
     }
 
     return await this.pullData(snapshot.brightdata_id)

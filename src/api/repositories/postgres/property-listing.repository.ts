@@ -79,6 +79,7 @@ export class PropertyListingRepository extends Repository<PropertyListing> {
             lpb_company,
             lpb_email,
             lpb_phone_number,
+            isNonOwnerOccupied
         } = createPropertyListingDto;
 
 
@@ -114,6 +115,7 @@ export class PropertyListingRepository extends Repository<PropertyListing> {
         property.lpb_company = lpb_company;
         property.lpb_email = lpb_email;
         property.lpb_phone_number = lpb_phone_number;
+        property.isNonOwnerOccupied = isNonOwnerOccupied;
 
         // If you want to store additionalInfo, ensure your entity supports it
         if (additionalInfo) {

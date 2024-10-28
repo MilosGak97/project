@@ -111,6 +111,10 @@ export class CreatePropertyListingDto{
     @IsString()
     lpb_phone_number: string
 
+    @IsOptional()
+    @IsString()
+    isNonOwnerOccupied: string
+
 
 /*
  
@@ -129,7 +133,6 @@ export class CreatePropertyListingDto{
         "hdpUrl": "https://www.zillow.com/homedetails/616-S-Orange-Ave-APT-6E-Maplewood-NJ-07040/441727596_zpid/",  
         "livingAreaUnits": "Square Feet", 
 
-        "isNonOwnerOccupied": "false",
  
  
         "daysOnZillow": 0,

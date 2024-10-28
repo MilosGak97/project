@@ -60,8 +60,8 @@ export class User{
     @ApiProperty({required:true})
     @IsEnum(UserType)
     @IsNotEmpty()
-    @Column({nullable:false})
-    user_type: UserType.USER
+    @Column({nullable:true})
+    user_type?: UserType.USER
 
     @ApiProperty({required:false})
     @IsDate()

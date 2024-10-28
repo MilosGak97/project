@@ -58,8 +58,8 @@ export class Admin {
 
     @ApiProperty()
     @IsEnum(UserType)
-    @Column()
-    user_type: UserType.EMPLOYEE
+    @Column({nullable:true})
+    user_type?: UserType.EMPLOYEE
 
     @ApiProperty({ required: true })
     @IsNotEmpty()

@@ -24,6 +24,8 @@ export class OnMarketController {
         private readonly onMarketService: OnMarketService
     ) { }
 
+
+
     //new endpoint
     @Roles(AdminRole.HEAD, AdminRole.FILTERING)
     @ApiOperation({ summary: "List all states that need to be filtered" })
@@ -108,23 +110,24 @@ export class OnMarketController {
     */
 
 
+        @Roles(AdminRole.HEAD, AdminRole.SCRAPPING)
+        @Post('brightdata/snapshots/:snapshotId') //
+        @ApiOperation({ summary: "Re-run snapshot import function manually" })
+        async fetchSnapshot(@Param('snapshotId') snapshotId: string): Promise<{
+            message: string
+        }> {
+            return await this.onMarketService.fetchSnapshot(snapshotId)
+        }
+
     @Roles(AdminRole.HEAD, AdminRole.SCRAPPING)
-    @Post('brightdata/snapshots/:marketId')
-    @ApiOperation({ summary: "Run manually scrapper for this market (24hrs)" })
-    async runScrapperMarket(@Param('marketId') marketId: string) {
-       // return await this.onMarketService.runScrapperMarket(marketId)
+    @Post('brightdata/states/:stateAbbrevation')
+    @ApiOperation({ summary: "Run manually scrapper for this state (24hrs)" })
+    async runScrapperMarket(@Param('stateAbbrevation') stateAbbrevation: string) {
+
+       return await this.onMarketService.runScrapperState(stateAbbrevation)
     }
 
 
-
-    @Roles(AdminRole.HEAD, AdminRole.SCRAPPING)
-    @Post('brightdata/snapshots/:snapshotId') //
-    @ApiOperation({ summary: "Re-run snapshot import function manually" })
-    async fetchSnapshot(@Param('snapshotId') snapshotId: string): Promise<{
-        message: string
-    }> {
-        return await this.onMarketService.fetchSnapshot(snapshotId)
-    }
 
 
 
