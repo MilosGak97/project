@@ -1,7 +1,7 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { IsNotEmpty } from "class-validator";
 
-export class FilterMarketDto{
+export class FilterStatesDto{
     @ApiProperty({required:true})
     @IsNotEmpty()
     limit: number

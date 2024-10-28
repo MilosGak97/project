@@ -1,9 +1,9 @@
 import { ApiProperty } from "@nestjs/swagger";
 import {  IsEnum, IsNotEmpty, IsOptional, IsString } from "class-validator";
 import { States } from "src/api/enums/states.enum";
-import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
-import { Market } from "./property-market.entity"; 
+import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm"; 
 import { CountyStatus } from "../enums/county-status.enum";
+import { State } from "./state.entity";
 
 @Entity('counties')
 export class County{
@@ -26,33 +26,16 @@ export class County{
 
     @ApiProperty({required:true})
     @IsNotEmpty()
-    @IsEnum(States)
-    @Column({nullable:false})
-    state: States
-
-    @ApiProperty({required:false})
-    @IsString()
-    @IsOptional()
-    @Column({nullable:true})
-    zillow_url_new?: string
-
-    @ApiProperty({required:false})
-    @IsString()
-    @IsOptional()
-    @Column({nullable:true})
-    zillow_url_sold?: string
+    @ManyToOne(() => State, (state) => state.counties)
+    state?: State
+ 
 
     @ApiProperty({required: false})
     @IsString()
     @IsOptional()
     @Column({type: 'json', nullable:true})
     zipcodes?: string[];
-
-    @ApiProperty({required:false})
-    @IsOptional() 
-    @ManyToOne(() => Market, (market) => market.counties)
-    market: Market // This should automatically map to the correct foreign key
-    
+ 
     // Automatically handles 'created at' timestamp
     @ApiProperty()
     @CreateDateColumn()

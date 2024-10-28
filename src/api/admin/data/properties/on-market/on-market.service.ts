@@ -3,31 +3,31 @@ import { PropertyListingRepository } from 'src/api/repositories/postgres/propert
 import { FilteredStatus } from 'src/api/enums/filtered-status.enum';
 import { FilteringRepository } from 'src/api/repositories/mongodb/filtering.repository';
 import { Admin } from 'src/api/entities/admin.entity';
-import { Filtering } from 'src/api/schemas/filtering-logs.schema';
-import { PropertyMarketRepository } from 'src/api/repositories/postgres/property-market.repository';
-import { ListMarketsDto } from 'src/api/admin/data/properties/on-market/dto/list-markets.dto';
-import { FilterMarketDto } from 'src/api/admin/data/properties/on-market/dto/filter-market.dto';
+import { Filtering } from 'src/api/schemas/filtering-logs.schema'; 
+import {  FilterStatesDto } from 'src/api/admin/data/properties/on-market/dto/filter-states.dto';
 import { PropertyListing } from 'src/api/entities/property-listing.entity';
-import { ListLogsDto } from 'src/api/admin/data/properties/on-market/dto/list-logs.dto'; 
-import { HttpService } from '@nestjs/axios'; 
+import { ListLogsDto } from 'src/api/admin/data/properties/on-market/dto/list-logs.dto';
+import { HttpService } from '@nestjs/axios';
 import * as zlib from 'zlib'
 import { delay, firstValueFrom } from 'rxjs';
 import { CreatePropertyListingDto } from 'src/api/admin/data/properties/on-market/dto/create-property-listing.dto';
-import { Cron, CronExpression } from '@nestjs/schedule';  
-import { ListSnapshotsDto } from 'src/api/admin/data/properties/on-market/dto/list-snapshots.dto'; 
+import { Cron, CronExpression } from '@nestjs/schedule';
+import { ListSnapshotsDto } from 'src/api/admin/data/properties/on-market/dto/list-snapshots.dto';
 import { BrightdataSnapshotRepository } from 'src/api/repositories/postgres/brightdata-snapshot.repository';
 import { BrightdataSnapshot } from 'src/api/entities/brightdata-snapshot.entity';
+import { StatesAbbreviation } from 'src/api/enums/states-abbreviation.enum';
+import { StateRepository } from 'src/api/repositories/postgres/state.repository';
 
 
 @Injectable()
 export class OnMarketService {
 
-  constructor(
-    private readonly propertyMarketRepository: PropertyMarketRepository,
+  constructor( 
+    private readonly stateRepository: StateRepository,
     private readonly propertyListingRepository: PropertyListingRepository,
     private readonly filteringRepository: FilteringRepository,
     private readonly brightdataSnapshotRepository: BrightdataSnapshotRepository,
-    private readonly httpService: HttpService, 
+    private readonly httpService: HttpService,
 
   ) { }
 
@@ -116,6 +116,13 @@ export class OnMarketService {
           const photoCount = item.photoCount ? parseInt(item.photoCount, 10) : null;
 
 
+          //listing_provided_by
+          const lpb_name = item.listing_provided_by?.name || null;
+          const lpb_email = item.listing_provided_by?.email || null;
+          const lpb_company = item.listing_provided_by?.company || null;
+          const lpb_phone_number = item.listing_provided_by?.phone_number || null;
+
+
           const photos = [];
 
           if (item.photos && Array.isArray(item.photos)) {
@@ -193,7 +200,12 @@ export class OnMarketService {
           propertyListingDto.county = county;
           propertyListingDto.additionalInfo = additionalInfo;
           propertyListingDto.snapshot = snapshot
-          propertyListingDto.market = snapshot.market
+
+
+          propertyListingDto.lpb_name = lpb_name;
+          propertyListingDto.lpb_email = lpb_email;
+          propertyListingDto.lpb_company = lpb_company
+          propertyListingDto.lpb_phone_number = lpb_phone_number
 
 
           const zpidExist = await this.propertyListingRepository.findOne({ where: { zpid }, relations: ['snapshot'] });
@@ -265,24 +277,21 @@ export class OnMarketService {
   // new method - cron request   
   private async sendCronRequest() {
 
-    const markets = await this.propertyMarketRepository.marketsDailyActive()
+    const states = await this.stateRepository.statesDaily()
 
-    if (markets.length > 0) {
+    if (states.length > 0) {
 
-      for (const market of markets) {
+      for (const state of states) {
 
-        const data = market.counties.map(county => ({ url: county.zillow_url_new })).filter(item => item.url)
-
-        if (data.length > 0) {
+        const data = { url: state.zillow_url_new }
 
           const snapshot_id = await this.triggerScrape(data)
 
           console.log("Snapshot ID:" + snapshot_id)
-          console.log("Market ID:" + market.id)
-          await this.brightdataSnapshotRepository.logSnapshot(snapshot_id, market.id)
-        } else {
-          console.log("Didnt found any urls in this market, ID:" + market.id)
-        }
+          console.log("State ID:" + state.id)
+          console.log("State Abbreviation:" + state.abbreviation)
+          await this.brightdataSnapshotRepository.logSnapshot(snapshot_id, state.id)
+    
       }
     } else {
       console.log("No active markets found")
@@ -291,39 +300,33 @@ export class OnMarketService {
   }
 
 
-
-
   // ---- PUBLIC ROUTES  ----------- PUBLIC ROUTES ----------- PUBLIC ROUTES  ------------------------------------------------------------
 
   // ---------------  PUBLIC ROUTES /filter  ----------------------------------------------------------------------------------------------
-  //active
-  async filterMarketList(): Promise<{
+
+  async filterStatesList(): Promise<{
     response: any[]
+    
   }> {
-    const listMarketsDto = new ListMarketsDto()
-    listMarketsDto.limit = 9999
-    listMarketsDto.offset = 0
-
-    const markets = await this.propertyMarketRepository.listMarkets(listMarketsDto)
+    const states = await this.stateRepository.statesDaily()
     let response = []
-    if (!markets) {
-      throw new NotFoundException("Did not find any markets")
+    for(const state of states){
+      const countUnfiltered = await this.propertyListingRepository.countUnfiltered(state.id)
+      if(countUnfiltered>0){
+
+        response.push({
+          state: state.id,
+          state_abbreviation: state.abbreviation,
+          countUnfiltered: countUnfiltered
+        })
+      }
     }
-    for (const market of markets.result) {
-      const unfilteredCount = await this.propertyListingRepository.unfilteredMarket(market)
 
-      response.push({
-        market: market,
-        unfilteredCount: unfilteredCount
-      })
-    }
-
-    return { response }
-
+    return {response}
+   // return await this.propertyListingRepository.countUnfiltered()
   }
-
   //active
-  async filterMarket(marketId: string, filterMarketDto: FilterMarketDto): Promise<{
+  async filterStates(state: StatesAbbreviation, filterStateDto: FilterStatesDto): Promise<{
     properties: PropertyListing[],
     propertiesCount: number,
     limit: number,
@@ -331,7 +334,7 @@ export class OnMarketService {
     totalPages: number,
     currentPage: number
   }> {
-    return await this.propertyListingRepository.filterMarket(marketId, filterMarketDto)
+    return await this.propertyListingRepository.filterStates(state, filterStateDto)
   }
 
 
@@ -397,7 +400,7 @@ export class OnMarketService {
   }> {
     return this.brightdataSnapshotRepository.listSnapshots(listSnapshotsDto)
   }
-
+/*
   //active
   async runScrapperMarket(marketId: string): Promise<{
     message: string
@@ -417,7 +420,7 @@ export class OnMarketService {
     return await this.brightdataSnapshotRepository.logSnapshot(snapshotId, marketId)
 
   }
-
+*/
   //active
   async fetchSnapshot(snapshotId: string): Promise<{
     message: string
@@ -425,7 +428,7 @@ export class OnMarketService {
     const snapshot = await this.brightdataSnapshotRepository.findOne({
       where: { brightdata_id: snapshotId },
     });
-
+    console.log("SNAPSHOT: " + snapshot.brightdata_id)
     if (!snapshot) {
       throw new NotFoundException("Snapshot with this ID and Market ID does not exist.");
     }

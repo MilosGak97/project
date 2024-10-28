@@ -1,7 +1,7 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post, Query, Req, UseGuards } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { GetAdmin } from 'src/api/admin/auth/get-admin.decorator';
-import { FilterMarketDto } from 'src/api/admin/data/properties/on-market/dto/filter-market.dto';
+import { FilterStatesDto } from 'src/api/admin/data/properties/on-market/dto/filter-states.dto';
 import { ListLogsDto } from 'src/api/admin/data/properties/on-market/dto/list-logs.dto';
 import { Admin } from 'src/api/entities/admin.entity';
 import { PropertyListing } from 'src/api/entities/property-listing.entity';
@@ -13,11 +13,12 @@ import { AuthGuard } from '@nestjs/passport';
 import { RolesGuard } from 'src/api/admin/auth/roles.guard';
 import { Roles } from 'src/api/admin/auth/roles.decorator';
 import { AdminRole } from 'src/api/enums/admin-role.enum';
+import { StatesAbbreviation } from 'src/api/enums/states-abbreviation.enum';
 
 
 @ApiTags('Data/Properties/ On-Market')
 @UseGuards(AuthGuard(), RolesGuard)
-@Controller('data/properties/on-market')
+@Controller('admin/data/properties/on-market')
 export class OnMarketController {
     constructor(
         private readonly onMarketService: OnMarketService
@@ -25,19 +26,19 @@ export class OnMarketController {
 
     //new endpoint
     @Roles(AdminRole.HEAD, AdminRole.FILTERING)
-    @ApiOperation({ summary: "List all markets that need to be filtered" })
-    @Get('filter/markets')
-    async filterMarketList() {
-        return this.onMarketService.filterMarketList()
+    @ApiOperation({ summary: "List all states that need to be filtered" })
+    @Get('filter/states')
+    async filterStatesList() {
+        return this.onMarketService.filterStatesList()
     }
 
 
 
     //new endpoint
     @Roles(AdminRole.HEAD, AdminRole.FILTERING)
-    @ApiOperation({ summary: "Filter properties by market" })
-    @Get('filter/markets/:marketId([0-9a-fA-F-]{36})')
-    async filterMarket(@Param('marketId') marketId: string, @Query() filterMarketDto: FilterMarketDto): Promise<{
+    @ApiOperation({ summary: "Filter properties by states" })
+    @Get('filter/states/:stateAbbreviation')
+    async filterStates(@Param('stateAbbreviation') state: StatesAbbreviation, @Query() filterStateDto: FilterStatesDto): Promise<{
         properties: PropertyListing[],
         propertiesCount: number,
         limit: number,
@@ -45,7 +46,7 @@ export class OnMarketController {
         totalPages: number,
         currentPage: number
     }> {
-        return this.onMarketService.filterMarket(marketId, filterMarketDto)
+        return this.onMarketService.filterStates(state, filterStateDto)
     }
 
     //new endpoint
@@ -110,10 +111,8 @@ export class OnMarketController {
     @Roles(AdminRole.HEAD, AdminRole.SCRAPPING)
     @Post('brightdata/snapshots/:marketId')
     @ApiOperation({ summary: "Run manually scrapper for this market (24hrs)" })
-    async runScrapperMarket(@Param('marketId') marketId: string): Promise<{
-        message: string
-    }> {
-        return await this.onMarketService.runScrapperMarket(marketId)
+    async runScrapperMarket(@Param('marketId') marketId: string) {
+       // return await this.onMarketService.runScrapperMarket(marketId)
     }
 
 

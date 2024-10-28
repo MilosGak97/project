@@ -1,13 +1,11 @@
 import { Injectable } from "@nestjs/common"
 import { County } from "src/api/entities/county.entity"
-import { DataSource, Repository } from "typeorm" 
-import { PropertyMarketRepository } from "./property-market.repository"
+import { DataSource, Repository } from "typeorm"  
 
 @Injectable()
 export class CountyRepository extends Repository<County>{
     constructor(
-         private readonly dataSource: DataSource,
-         private readonly propertyMarketRepository: PropertyMarketRepository,
+         private readonly dataSource: DataSource, 
     ){
         super(County, dataSource.createEntityManager())
     }

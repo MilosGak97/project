@@ -1,10 +1,11 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { IsEnum, IsNotEmpty, IsNumber, IsOptional } from "class-validator";
 import { Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
-import { ScrapperSnapshotStatus } from "../enums/scrapper-snapshot-status.enum";   
-import { Market } from "./property-market.entity";
+import { ScrapperSnapshotStatus } from "../enums/scrapper-snapshot-status.enum";    
 import { Type } from "class-transformer";
-import { PropertyListing } from "./property-listing.entity";
+import { PropertyListing } from "./property-listing.entity"; 
+import { State } from "./state.entity";
+import { County } from "./county.entity";
 
 @Entity('brightdata-snapshots')
 export class BrightdataSnapshot {
@@ -22,11 +23,7 @@ export class BrightdataSnapshot {
     @IsEnum(ScrapperSnapshotStatus)
     @Column()
     status: ScrapperSnapshotStatus
-
-    @ApiProperty({required:false})
-    @IsOptional()
-    @ManyToOne(() => Market, (market) => market.snapshots)
-    market: Market
+ 
 
     @ApiProperty({required:false})
     @IsOptional()
@@ -54,6 +51,11 @@ export class BrightdataSnapshot {
     @OneToMany(() => PropertyListing, (property) => property.snapshot)
     properties: PropertyListing[] 
 
+
+
+    @ApiProperty({required:false})
+    @ManyToOne(() => State, (state) => state.brightdataSnapshots)
+    state?: State
 
 
 

@@ -1,8 +1,7 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { Type } from "class-transformer";
-import { IsOptional } from "class-validator";
-import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm"; 
-import { Market } from "./property-market.entity";
+import { IsOptional, IsString } from "class-validator";
+import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";  
 import { BrightdataSnapshot } from "./brightdata-snapshot.entity";
 
 @Entity('property-listings')
@@ -135,14 +134,36 @@ export class PropertyListing{
     @IsOptional()
     @Column({ type: 'json', nullable:true }) // or 'json' if you prefer
     additionalInfo?: any
+
+
+    
+    @IsOptional()
+    @IsString()
+    @Column({nullable:true})
+    lpb_name?: string
+
+    
+    @IsOptional()
+    @IsString()
+    @Column({nullable:true})
+    lpb_email?: string
+
+    
+    @IsOptional()
+    @IsString()
+    @Column({nullable:true})
+    lpb_company?: string
+
+    
+    @IsOptional()
+    @IsString()
+    @Column({nullable:true})
+    lpb_phone_number?: string
  
     @ApiProperty({required:false})
-    @ManyToOne(()=> BrightdataSnapshot, (snapshot) => snapshot.id)
+    @ManyToOne(()=> BrightdataSnapshot, (snapshot) => snapshot.properties)
     snapshot: BrightdataSnapshot
-
-    @ApiProperty({required:false})
-    @ManyToOne(()=> Market, (market) => market.id)
-    market: Market
+ 
 
 
     @ApiProperty({required:false})

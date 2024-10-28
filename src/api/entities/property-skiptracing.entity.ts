@@ -1,8 +1,8 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
-@Entity('property-skiptracing-owners')
-export class PropertySkiptracingOwner{
+@Entity('property-skiptracing')
+export class PropertySkiptracing{
     @ApiProperty()
     @PrimaryGeneratedColumn('uuid')
     id:string

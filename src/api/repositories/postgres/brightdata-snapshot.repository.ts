@@ -13,12 +13,12 @@ export class BrightdataSnapshotRepository extends Repository<BrightdataSnapshot>
     }
     
     //active
-    async logSnapshot(snapshot_id, market_id):Promise<{
+    async logSnapshot(snapshot_id, state_id):Promise<{
         message:string
     }>{
         const snapshot_log = new BrightdataSnapshot()
         snapshot_log.brightdata_id = snapshot_id
-        snapshot_log.market = market_id
+       // snapshot_log.state = state_id
         snapshot_log.status = ScrapperSnapshotStatus.IN_PROGRESS
 
         await this.save(snapshot_log)

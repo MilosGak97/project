@@ -1,14 +1,11 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
-@Entity('realtor-agents')
-export class RealtorAgent{
+@Entity('property-owners')
+export class PropertyOwner{
     @ApiProperty()
     @PrimaryGeneratedColumn('uuid')
     id:string
-
-
-
 
         // Automatically handles 'created at' timestamp
         @ApiProperty()

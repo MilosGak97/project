@@ -1,7 +1,6 @@
 import { Type } from "class-transformer";
 import { IsOptional, IsString } from "class-validator";
-import { BrightdataSnapshot } from "src/api/entities/brightdata-snapshot.entity";
-import { Market } from "src/api/entities/property-market.entity"; 
+import { BrightdataSnapshot } from "src/api/entities/brightdata-snapshot.entity"; 
 
 export class CreatePropertyListingDto{
     @IsOptional()
@@ -92,9 +91,26 @@ export class CreatePropertyListingDto{
     @IsOptional()
     @IsString()
     snapshot: BrightdataSnapshot
-
+ 
     @IsOptional()
-    market: Market
+    @IsString()
+    lpb_name: string
+
+    
+    @IsOptional()
+    @IsString()
+    lpb_email: string
+
+    
+    @IsOptional()
+    @IsString()
+    lpb_company: string
+
+    
+    @IsOptional()
+    @IsString()
+    lpb_phone_number: string
+
 
 /*
  
@@ -142,12 +158,7 @@ export class CreatePropertyListingDto{
     },
 
     
-    "listing_provided_by": {
-        "name": "Stephanie Mallios",
-        "email": null,
-        "company": "Compass New Jersey, Llc",
-        "phone_number": "973-310-6816"
-    },   
+  
 
 
 */

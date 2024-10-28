@@ -1,9 +1,9 @@
-import { ConflictException, Injectable } from "@nestjs/common";
-import { PropertyListing } from "src/api/entities/property-listing.entity";
+import { ConflictException, Injectable } from "@nestjs/common"; 
 import { DataSource, IsNull, Repository } from "typeorm";
 import { CreatePropertyListingDto } from "../../admin/data/properties/on-market/dto/create-property-listing.dto"; 
-import { Market } from "src/api/entities/property-market.entity";
-import { FilterMarketDto } from "../../admin/data/properties/on-market/dto/filter-market.dto";
+import { StatesAbbreviation } from "src/api/enums/states-abbreviation.enum";
+import { FilterStatesDto } from "src/api/admin/data/properties/on-market/dto/filter-states.dto";
+import { PropertyListing } from "src/api/entities/property-listing.entity";
 
 @Injectable()
 export class PropertyListingRepository extends Repository<PropertyListing> {
@@ -11,9 +11,9 @@ export class PropertyListingRepository extends Repository<PropertyListing> {
         private readonly dataSource: DataSource
     ) {
         super(PropertyListing, dataSource.createEntityManager())
-    }
-    //active
-    async filterMarket(marketId: string, filterMarketDto: FilterMarketDto): Promise<{
+    } 
+
+    async filterStates(state: StatesAbbreviation, filterStatesDto: FilterStatesDto): Promise<{
         properties: PropertyListing[],
         propertiesCount: number,
         limit: number,
@@ -21,9 +21,10 @@ export class PropertyListingRepository extends Repository<PropertyListing> {
         totalPages: number,
         currentPage: number
     }> {
-        const { limit, offset } = filterMarketDto
+
+        const { limit, offset } = filterStatesDto
         const [properties, propertiesCount] = await this.findAndCount({
-            where: { market: { id: marketId }, filtered_status: IsNull() },
+            where: { filtered_status: IsNull(), state },
             take: limit,
             skip: offset,
             select: ['id', 'photos', 'zpid', 'photoCount']
@@ -41,6 +42,13 @@ export class PropertyListingRepository extends Repository<PropertyListing> {
             currentPage
         }
 
+    }
+
+    async countUnfiltered(state: string): Promise<number> { 
+
+            const unfilteredCount = await this.count({ where: { state } }); 
+ 
+        return unfilteredCount
     }
     //active
     async createProperty(createPropertyListingDto: CreatePropertyListingDto) {
@@ -66,8 +74,11 @@ export class PropertyListingRepository extends Repository<PropertyListing> {
             photos,
             county,
             additionalInfo,
-            market,
-            snapshot
+            snapshot,
+            lpb_name,
+            lpb_company,
+            lpb_email,
+            lpb_phone_number,
         } = createPropertyListingDto;
 
 
@@ -96,10 +107,13 @@ export class PropertyListingRepository extends Repository<PropertyListing> {
         property.hdpTypeDimension = hdpTypeDimension; // Assuming property entity has hdpTypeDimension property
         property.photoCount = photoCount; // Assuming property entity has photoCount property
         property.photos = photos; // Assuming property entity has photos property
-        property.county = county; // Assuming property entity has county property
-        property.market = market;
+        property.county = county; // Assuming property entity has county property 
         property.filtered_status = null;
-        property.snapshot = snapshot
+        property.snapshot = snapshot;
+        property.lpb_name = lpb_name
+        property.lpb_company = lpb_company;
+        property.lpb_email = lpb_email;
+        property.lpb_phone_number = lpb_phone_number;
 
         // If you want to store additionalInfo, ensure your entity supports it
         if (additionalInfo) {
@@ -110,12 +124,7 @@ export class PropertyListingRepository extends Repository<PropertyListing> {
         await this.save(property); // Assuming propertyRepository is injected and set up
 
         return { message: "Property created successfully", property };
-    }
+    } 
 
-    //active
-    async unfilteredMarket(market: Market): Promise<number> {
-        const count = await this.count({ where: { market: { id: market.id }, filtered_status: IsNull() } })
 
-        return count
-    }
 }

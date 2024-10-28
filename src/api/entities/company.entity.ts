@@ -60,12 +60,7 @@ export class Company{
     @Column()
     status: CompanyStatus
 
-/*
-    @ApiProperty({required:false})
-    @IsOptional()
-    @OneToMany(() => Subscription, (subscription) => subscription.company) // Company (1) ---- Subscription (M)
-    subscriptions?: Subscription[]
-*/
+
     @ApiProperty({required: false})
     @IsOptional()
     @OneToMany(() => User, (user) => user.company)
