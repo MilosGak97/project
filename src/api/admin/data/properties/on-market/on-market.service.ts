@@ -300,7 +300,7 @@ export class OnMarketService {
     
       }
     } else {
-      console.log("No active markets found")
+      console.log("No active states found")
     }
 
   }
@@ -318,14 +318,14 @@ export class OnMarketService {
     let response = []
     for(const state of states){
       const countUnfiltered = await this.propertyListingRepository.countUnfiltered(state.id)
-      if(countUnfiltered>0){
+      //if(countUnfiltered>0){
 
         response.push({
           state: state.id,
           state_abbreviation: state.abbreviation,
           countUnfiltered: countUnfiltered
         })
-      }
+     // }
     }
 
     return {response}
@@ -410,8 +410,7 @@ export class OnMarketService {
   async runScrapperState(stateAbbrevation: string): Promise<{
     message: string
   }> {
-    const state = await this.stateRepository.findOne({where: {abbreviation: stateAbbrevation}})
-    //const market = await this.propertyMarketRepository.findOne({ where: { id: marketId }, relations: ['counties'] })
+    const state = await this.stateRepository.findOne({where: {abbreviation: stateAbbrevation}}) 
     if (!state) {
       throw new NotFoundException("State with provided Abbreviation does not exist.")
     } 
