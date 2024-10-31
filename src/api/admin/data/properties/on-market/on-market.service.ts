@@ -216,7 +216,7 @@ export class OnMarketService {
           propertyListingDto.lpb_phone_number = lpb_phone_number;
           propertyListingDto.isNonOwnerOccupied = isNonOwnerOccupied;
 
-/*
+
           const zpidExist = await this.propertyListingRepository.findOne({ where: { zpid }, relations: ['snapshot'] });
           
           if (zpidExist) {
@@ -243,10 +243,9 @@ export class OnMarketService {
             await this.brightdataSnapshotRepository.save(snapshot)
             console.log("This zpid already exist: " + zpid)
             continue;
-          }
-          */
-          //await this.propertyListingRepository.createProperty(propertyListingDto)
-          await this.listingsLARepository.createProperty(propertyListingDto)
+          } 
+          await this.propertyListingRepository.createProperty(propertyListingDto)
+          //await this.listingsLARepository.createProperty(propertyListingDto)
         };
         return { message: "Successfully processed the job" };
       } else {

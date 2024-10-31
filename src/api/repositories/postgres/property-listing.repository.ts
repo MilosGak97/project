@@ -125,7 +125,7 @@ export class PropertyListingRepository extends Repository<PropertyListing> {
         // Save the property instance to the database (implement your saving logic here)
         await this.save(property); // Assuming propertyRepository is injected and set up
 
-        return { message: "Property created successfully", property };
+        return { message: "Properties created successfully"};
     } 
 
 
