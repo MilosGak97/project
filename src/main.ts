@@ -73,13 +73,13 @@ async function bootstrap() {
    app.getHttpAdapter().get('/api/client/api-json', (req, res) => {
     res.json(clientDocument);
   });
-
+/*
   app.enableCors({
     origin: 'https://localhost:5174',  // Only allow this origin
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
     credentials: true,
 });
-
+*/
 
   const PORT = process.env.PORT || 3000;
   await app.listen(PORT);

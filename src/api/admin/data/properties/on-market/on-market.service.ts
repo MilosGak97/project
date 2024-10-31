@@ -3,8 +3,8 @@ import { PropertyListingRepository } from 'src/api/repositories/postgres/propert
 import { FilteredStatus } from 'src/api/enums/filtered-status.enum';
 import { FilteringRepository } from 'src/api/repositories/mongodb/filtering.repository';
 import { Admin } from 'src/api/entities/admin.entity';
-import { Filtering } from 'src/api/schemas/filtering-logs.schema'; 
-import {  FilterStatesDto } from 'src/api/admin/data/properties/on-market/dto/filter-states.dto';
+import { Filtering } from 'src/api/schemas/filtering-logs.schema';
+import { FilterStatesDto } from 'src/api/admin/data/properties/on-market/dto/filter-states.dto';
 import { PropertyListing } from 'src/api/entities/property-listing.entity';
 import { ListLogsDto } from 'src/api/admin/data/properties/on-market/dto/list-logs.dto';
 import { HttpService } from '@nestjs/axios';
@@ -17,14 +17,17 @@ import { BrightdataSnapshotRepository } from 'src/api/repositories/postgres/brig
 import { BrightdataSnapshot } from 'src/api/entities/brightdata-snapshot.entity';
 import { StatesAbbreviation } from 'src/api/enums/states-abbreviation.enum';
 import { StateRepository } from 'src/api/repositories/postgres/state.repository';
+import { ListingsLA } from 'src/api/schemas/listingsLA.schema';
+import { ListingsLARepository } from 'src/api/repositories/mongodb/listingsLA.repository';
 
 
 @Injectable()
 export class OnMarketService {
 
-  constructor( 
+  constructor(
     private readonly stateRepository: StateRepository,
     private readonly propertyListingRepository: PropertyListingRepository,
+    private readonly listingsLARepository: ListingsLARepository,
     private readonly filteringRepository: FilteringRepository,
     private readonly brightdataSnapshotRepository: BrightdataSnapshotRepository,
     private readonly httpService: HttpService,
@@ -86,17 +89,17 @@ export class OnMarketService {
       const response = await firstValueFrom(
         this.httpService.request({ url, method: 'GET', headers, responseType: 'stream', timeout: 10000 })
       );
-      
+
       const decompressedData = await this.decompressData(response.data);
-      
+
       const jsonData = JSON.parse(decompressedData.toString());
-      
-      const snapshot = await this.brightdataSnapshotRepository.findOne({ where: { brightdata_id: snapshot_id }})
+
+      const snapshot = await this.brightdataSnapshotRepository.findOne({ where: { brightdata_id: snapshot_id } })
 
 
 
       if (Array.isArray(jsonData)) {
-        
+
         for (const item of jsonData) {
 
           const zpid = item.zpid || null;
@@ -125,7 +128,7 @@ export class OnMarketService {
           const lpb_email = item.listing_provided_by?.email || null;
           const lpb_company = item.listing_provided_by?.company || null;
           const lpb_phone_number = item.listing_provided_by?.phone_number || null;
-          
+
           const isNonOwnerOccupied = item.isNonOwnerOccupied || null;
 
           const photos = [];
@@ -213,8 +216,9 @@ export class OnMarketService {
           propertyListingDto.lpb_phone_number = lpb_phone_number;
           propertyListingDto.isNonOwnerOccupied = isNonOwnerOccupied;
 
-
+/*
           const zpidExist = await this.propertyListingRepository.findOne({ where: { zpid }, relations: ['snapshot'] });
+          
           if (zpidExist) {
 
 
@@ -240,8 +244,9 @@ export class OnMarketService {
             console.log("This zpid already exist: " + zpid)
             continue;
           }
-
-          await this.propertyListingRepository.createProperty(propertyListingDto)
+          */
+          //await this.propertyListingRepository.createProperty(propertyListingDto)
+          await this.listingsLARepository.createProperty(propertyListingDto)
         };
         return { message: "Successfully processed the job" };
       } else {
@@ -291,13 +296,13 @@ export class OnMarketService {
 
         const data = { url: state.zillow_url_new }
 
-          const snapshot_id = await this.triggerScrape(data)
+        const snapshot_id = await this.triggerScrape(data)
 
-          console.log("Snapshot ID:" + snapshot_id)
-          console.log("State ID:" + state.id)
-          console.log("State Abbreviation:" + state.abbreviation)
-          await this.brightdataSnapshotRepository.logSnapshot(snapshot_id, state.id)
-    
+        console.log("Snapshot ID:" + snapshot_id)
+        console.log("State ID:" + state.id)
+        console.log("State Abbreviation:" + state.abbreviation)
+        await this.brightdataSnapshotRepository.logSnapshot(snapshot_id, state.id)
+
       }
     } else {
       console.log("No active states found")
@@ -312,24 +317,24 @@ export class OnMarketService {
 
   async filterStatesList(): Promise<{
     response: any[]
-    
+
   }> {
     const states = await this.stateRepository.statesDaily()
     let response = []
-    for(const state of states){
+    for (const state of states) {
       const countUnfiltered = await this.propertyListingRepository.countUnfiltered(state.id)
       //if(countUnfiltered>0){
 
-        response.push({
-          state: state.id,
-          state_abbreviation: state.abbreviation,
-          countUnfiltered: countUnfiltered
-        })
-     // }
+      response.push({
+        state: state.id,
+        state_abbreviation: state.abbreviation,
+        countUnfiltered: countUnfiltered
+      })
+      // }
     }
 
-    return {response}
-   // return await this.propertyListingRepository.countUnfiltered()
+    return { response }
+    // return await this.propertyListingRepository.countUnfiltered()
   }
   //active
   async filterStates(state: StatesAbbreviation, filterStateDto: FilterStatesDto): Promise<{
@@ -410,12 +415,12 @@ export class OnMarketService {
   async runScrapperState(stateAbbrevation: string): Promise<{
     message: string
   }> {
-    const state = await this.stateRepository.findOne({where: {abbreviation: stateAbbrevation}}) 
+    const state = await this.stateRepository.findOne({ where: { abbreviation: stateAbbrevation } })
     if (!state) {
       throw new NotFoundException("State with provided Abbreviation does not exist.")
-    } 
+    }
 
-    const data = {url: state.zillow_url_new}
+    const data = { url: state.zillow_url_new }
     const snapshotId = await this.triggerScrape(data)
 
     return await this.brightdataSnapshotRepository.logSnapshot(snapshotId, state.id)
@@ -425,11 +430,11 @@ export class OnMarketService {
   //active
   async fetchSnapshot(snapshotId: string): Promise<{
     message: string
-  }> { 
+  }> {
     const snapshot = await this.brightdataSnapshotRepository.findOne({
       where: { brightdata_id: snapshotId }
     });
-     
+
     if (!snapshot) {
       throw new NotFoundException("Snapshot with this BrightData ID does not exist.");
     }

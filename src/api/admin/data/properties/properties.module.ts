@@ -19,6 +19,8 @@ import { PropertyListing } from 'src/api/entities/property-listing.entity';
 import { BrightdataSnapshot } from 'src/api/entities/brightdata-snapshot.entity';
 import { State } from 'src/api/entities/state.entity';
 import { County } from 'src/api/entities/county.entity';
+import { ListingsLA, ListingsLASchema } from 'src/api/schemas/listingsLA.schema'; 
+import { ListingsLARepository } from 'src/api/repositories/mongodb/listingsLA.repository';
 
 @Module({ 
   controllers: [
@@ -28,7 +30,7 @@ import { County } from 'src/api/entities/county.entity';
   imports: [  
     TypeOrmModule.forFeature([PropertyListing, BrightdataSnapshot,State, County]),
     MongooseModule.forFeature([
-      {name: Filtering.name, schema: FilteringSchema}
+      {name: Filtering.name, schema: FilteringSchema} , {name: ListingsLA.name, schema: ListingsLASchema}
     ]),
     HttpModule, 
     JwtModule.register({secret: 'topSecret51'}),
@@ -40,6 +42,7 @@ import { County } from 'src/api/entities/county.entity';
     OffMarketService,
     PropertyListingRepository,
     FilteringRepository,
+    ListingsLARepository,
     BrightdataSnapshotRepository,
     CountyRepository,  
     StateRepository,
