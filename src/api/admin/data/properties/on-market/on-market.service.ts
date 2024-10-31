@@ -51,7 +51,7 @@ export class OnMarketService {
   private async triggerScrape(data): Promise<{
     snapshot_id: string
   }> {
-    const url = 'https://api.brightdata.com/datasets/v3/trigger?dataset_id=gd_lfqkr8wm13ixtbd8f5&notify=https://uniqueproject-229b37d9b8ca.herokuapp.com/api/admin/scrapper/notification&format=json&type=discover_new&discover_by=url';
+    const url = 'https://api.brightdata.com/datasets/v3/trigger?dataset_id=gd_lfqkr8wm13ixtbd8f5&notify=https://uniqueproject-229b37d9b8ca.herokuapp.com/api/admin/data/properties/on-market/brightdata/notifications&format=json&type=discover_new&discover_by=url';
 
     const headers = {
       Authorization: `Bearer ${process.env.BRIGHTDATA_API_TOKEN}`,
