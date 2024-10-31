@@ -7,8 +7,8 @@ import { Admin } from 'src/api/entities/admin.entity';
 import { PropertyListing } from 'src/api/entities/property-listing.entity';
 import { FilteredStatus } from 'src/api/enums/filtered-status.enum';
 import { Filtering } from 'src/api/schemas/filtering-logs.schema';
-import { OnMarketService } from './on-market.service'; 
-import { ListSnapshotsDto } from 'src/api/admin/data/properties/on-market/dto/list-snapshots.dto'; 
+import { OnMarketService } from './on-market.service';
+import { ListSnapshotsDto } from 'src/api/admin/data/properties/on-market/dto/list-snapshots.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { RolesGuard } from 'src/api/admin/auth/roles.guard';
 import { Roles } from 'src/api/admin/auth/roles.decorator';
@@ -17,7 +17,6 @@ import { StatesAbbreviation } from 'src/api/enums/states-abbreviation.enum';
 
 
 @ApiTags('Data/Properties/ On-Market')
-@UseGuards(AuthGuard(), RolesGuard)
 @Controller('admin/data/properties/on-market')
 export class OnMarketController {
     constructor(
@@ -27,6 +26,7 @@ export class OnMarketController {
 
 
     //new endpoint
+    @UseGuards(AuthGuard(), RolesGuard)
     @Roles(AdminRole.HEAD, AdminRole.FILTERING)
     @ApiOperation({ summary: "List all states that need to be filtered" })
     @Get('filter/states')
@@ -37,6 +37,8 @@ export class OnMarketController {
 
 
     //new endpoint
+
+    @UseGuards(AuthGuard(), RolesGuard)
     @Roles(AdminRole.HEAD, AdminRole.FILTERING)
     @ApiOperation({ summary: "Filter properties by states" })
     @Get('filter/states/:stateAbbreviation')
@@ -52,6 +54,8 @@ export class OnMarketController {
     }
 
     //new endpoint
+
+    @UseGuards(AuthGuard(), RolesGuard)
     @Roles(AdminRole.HEAD, AdminRole.FILTERING)
     @ApiOperation({ summary: "Show logs of filtering actions taken by admins" })
     @Get('filter/logs')
@@ -61,6 +65,8 @@ export class OnMarketController {
 
 
     //new endpoint
+
+    @UseGuards(AuthGuard(), RolesGuard)
     @Roles(AdminRole.HEAD, AdminRole.FILTERING)
     @ApiOperation({ summary: "Log and update filtering action to property" })
     @Patch('filter/:propertyId') // was post, test it
@@ -71,8 +77,7 @@ export class OnMarketController {
     }
 
 
-    // new endpoint
-    @Roles(AdminRole.HEAD, AdminRole.SCRAPPING)
+    // new endpoint 
     @Post('brightdata/notifications')
     @ApiOperation({ summary: "Webhook: Receive notification from brightdata" })
 
@@ -84,47 +89,32 @@ export class OnMarketController {
         return this.onMarketService.notificationBrightdata(payload)
     }
 
-    /* 
-    ubaci ovde opciju da se filtrira po market IDju
-    */
+    @UseGuards(AuthGuard(), RolesGuard)
     @Roles(AdminRole.HEAD, AdminRole.SCRAPPING)
     @Get('brightdata/snapshots')
     @ApiOperation({ summary: "List Snapshots logs" })
     async listSnapshots(@Query() listSnapshotsDto: ListSnapshotsDto) {
         return await this.onMarketService.listSnapshots(listSnapshotsDto)
     }
-    /*
-        @Get('brightdata/:marketId/snapshots')
-        @ApiOperation({ summary: "List snapshots per market id" })
-        async listMarketSnapshot(@Param('marketId') marketId: string, @Query() listMarketSnapshotDto: ListMarketSnapshotsDto): Promise<{
-    
-            result: ZillowScrapperSnapshot[],
-            totalRecords: number,
-            totalPage: number,
-            currentPage: number,
-            limit: number,
-            offset: number
-        }> {
-            return await this.onMarketService.listMarketSnapshots(marketId, listMarketSnapshotDto)
-        }
-    */
+
+    @UseGuards(AuthGuard(), RolesGuard)
+    @Roles(AdminRole.HEAD, AdminRole.SCRAPPING)
+    @Post('brightdata/snapshots/:snapshotId') //
+    @ApiOperation({ summary: "Re-run snapshot import function manually" })
+    async fetchSnapshot(@Param('snapshotId') snapshotId: string): Promise<{
+        message: string
+    }> {
+        return await this.onMarketService.fetchSnapshot(snapshotId)
+    }
 
 
-        @Roles(AdminRole.HEAD, AdminRole.SCRAPPING)
-        @Post('brightdata/snapshots/:snapshotId') //
-        @ApiOperation({ summary: "Re-run snapshot import function manually" })
-        async fetchSnapshot(@Param('snapshotId') snapshotId: string): Promise<{
-            message: string
-        }> {
-            return await this.onMarketService.fetchSnapshot(snapshotId)
-        }
-
+    @UseGuards(AuthGuard(), RolesGuard)
     @Roles(AdminRole.HEAD, AdminRole.SCRAPPING)
     @Post('brightdata/states/:stateAbbrevation')
     @ApiOperation({ summary: "Run manually scrapper for this state (24hrs)" })
     async runScrapperMarket(@Param('stateAbbrevation') stateAbbrevation: string) {
 
-       return await this.onMarketService.runScrapperState(stateAbbrevation)
+        return await this.onMarketService.runScrapperState(stateAbbrevation)
     }
 
 
