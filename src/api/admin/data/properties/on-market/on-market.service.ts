@@ -19,6 +19,7 @@ import { StatesAbbreviation } from 'src/api/enums/states-abbreviation.enum';
 import { StateRepository } from 'src/api/repositories/postgres/state.repository';
 import { ListingsLA } from 'src/api/schemas/listingsLA.schema';
 import { ListingsLARepository } from 'src/api/repositories/mongodb/listingsLA.repository';
+import { FilterActionDto } from './dto/filter-action.dto';
 
 
 @Injectable()
@@ -51,6 +52,7 @@ export class OnMarketService {
   private async triggerScrape(data): Promise<{
     snapshot_id: string
   }> {
+    // CHANGE LINK HERE FOR NOTIFICATION ONCE DOMAIN IS CHANGED 
     const url = 'https://api.brightdata.com/datasets/v3/trigger?dataset_id=gd_lfqkr8wm13ixtbd8f5&notify=https://uniqueproject-229b37d9b8ca.herokuapp.com/api/admin/data/properties/on-market/brightdata/notifications&format=json&type=discover_new&discover_by=url';
 
     const headers = {
@@ -321,7 +323,7 @@ export class OnMarketService {
     const states = await this.stateRepository.statesDaily()
     let response = []
     for (const state of states) {
-      const countUnfiltered = await this.propertyListingRepository.countUnfiltered(state.id)
+      const countUnfiltered = await this.propertyListingRepository.countUnfiltered(state.abbreviation)
       //if(countUnfiltered>0){
 
       response.push({
@@ -349,8 +351,16 @@ export class OnMarketService {
 
 
   //active
-  async filteringAction(propertyId: string, admin: Admin, action: FilteredStatus) {
-    return this.filteringRepository.createFilteringLog(propertyId, admin, action)
+  async filteringAction(propertyId: string, admin: Admin, action: FilteredStatus):Promise<{
+    message:string
+  }> {
+    this.filteringRepository.createFilteringLog(propertyId, admin, action)
+    const filterActionDto = new FilterActionDto()
+    filterActionDto.propertyId = propertyId
+    filterActionDto.action = action
+    
+    this.propertyListingRepository.filterAction(filterActionDto)
+    return { message: "Successfull filtered"} 
   }
 
 

@@ -2,6 +2,7 @@ import { ApiProperty } from "@nestjs/swagger";
 import { Type } from "class-transformer";
 import { IsDate, IsEnum, IsNotEmpty, IsNumber, IsOptional, IsString } from "class-validator";
 import { ScrapperSnapshotStatus } from "src/api/enums/scrapper-snapshot-status.enum";
+import { StatesAbbreviation } from "src/api/enums/states-abbreviation.enum";
 import { IsNull } from "typeorm";
 
 export class ListSnapshotsDto{
@@ -19,6 +20,12 @@ export class ListSnapshotsDto{
     @IsOptional()
     @IsEnum(ScrapperSnapshotStatus)
     status: ScrapperSnapshotStatus
+
+    
+    @ApiProperty({required:false})
+    @IsOptional()
+    @IsEnum(StatesAbbreviation)
+    state: StatesAbbreviation
 
     @ApiProperty({required:true})
     @IsNotEmpty()

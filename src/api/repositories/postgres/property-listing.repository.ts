@@ -1,9 +1,10 @@
-import { ConflictException, Injectable } from "@nestjs/common"; 
+import { ConflictException, Injectable, NotFoundException } from "@nestjs/common"; 
 import { DataSource, IsNull, Repository } from "typeorm";
 import { CreatePropertyListingDto } from "../../admin/data/properties/on-market/dto/create-property-listing.dto"; 
 import { StatesAbbreviation } from "src/api/enums/states-abbreviation.enum";
 import { FilterStatesDto } from "src/api/admin/data/properties/on-market/dto/filter-states.dto";
 import { PropertyListing } from "src/api/entities/property-listing.entity";
+import { FilterActionDto } from "src/api/admin/data/properties/on-market/dto/filter-action.dto";
 
 @Injectable()
 export class PropertyListingRepository extends Repository<PropertyListing> {
@@ -44,9 +45,9 @@ export class PropertyListingRepository extends Repository<PropertyListing> {
 
     }
 
-    async countUnfiltered(state: string): Promise<number> { 
+    async countUnfiltered(stateAbbrevation: string): Promise<number> { 
+        const unfilteredCount = await this.count({ where: { state: stateAbbrevation, filtered_status: IsNull()} });
 
-            const unfilteredCount = await this.count({ where: { state } }); 
  
         return unfilteredCount
     }
@@ -128,5 +129,21 @@ export class PropertyListingRepository extends Repository<PropertyListing> {
         return { message: "Properties created successfully"};
     } 
 
+    async filterAction(filterActionDto: FilterActionDto):Promise<{
+        message: string
+    }>{
+        const { propertyId, action } = filterActionDto
+        
+        const property = await this.findOne({where: { id: propertyId }})
+        if(!propertyId){
+            throw new NotFoundException('Could not find Property with provided ID.')
+        }
+        property.filtered_status  = action
+        await this.save(property)
+
+        return {
+            message: "Filter action is updated succesfully"
+        }
+    }
 
 }

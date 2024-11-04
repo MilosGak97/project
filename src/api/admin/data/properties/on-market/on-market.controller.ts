@@ -70,9 +70,9 @@ export class OnMarketController {
     @Roles(AdminRole.HEAD, AdminRole.FILTERING)
     @ApiOperation({ summary: "Log and update filtering action to property" })
     @Patch('filter/:propertyId') // was post, test it
-    async filteringAction(@Param('propertyId') propertyId: string, @GetAdmin() admin: Admin, @Body() action: FilteredStatus): Promise<{
+    async filteringAction(@Param('propertyId') propertyId: string, @GetAdmin() admin: Admin, @Body('action') action: FilteredStatus): Promise<{
         message: string
-    }> {
+    }> { 
         return this.onMarketService.filteringAction(propertyId, admin, action)
     }
 

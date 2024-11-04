@@ -8,7 +8,7 @@ export type FilteringDocument = Filtering & Document;
 export class Filtering{
     @ApiProperty({required:true})
     @Prop({required: true})
-    userId: string
+    adminId: string
 
     @ApiProperty({required:true})
     @Prop({required:true})

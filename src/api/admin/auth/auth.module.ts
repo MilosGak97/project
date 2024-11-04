@@ -6,7 +6,7 @@ import { PassportModule } from '@nestjs/passport';
 import { JwtStrategy } from './jwt.strategy';
 import { JwtModule } from '@nestjs/jwt';
 import { AuthRepository } from './repository/auth.repository';
-import { EmailService } from 'src/email/email.service';
+import { EmailService } from 'src/api/email/email.service';
 import { Admin } from 'src/api/entities/admin.entity';
 
 @Module({

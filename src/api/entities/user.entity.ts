@@ -1,10 +1,11 @@
-import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { Company } from "./company.entity";
 import { ApiProperty } from "@nestjs/swagger";
 import { IsBoolean, IsDate, IsEmail, IsEnum, IsNotEmpty, IsOptional, IsPhoneNumber, IsString, IsStrongPassword } from "class-validator"; 
 import { UserRole } from "src/api/enums/user-role.enum";
 import { UserStatus } from "src/api/enums/user-status.enum";
 import { UserType } from "../enums/user-type.enum";
+import { Token } from "./token.entity";
 
 @Entity('users')
 export class User{
@@ -28,10 +29,10 @@ export class User{
     @ApiProperty({required:false})
     @IsPhoneNumber('US')
     @IsOptional()
-    @Column()
+    @Column({nullable:true})
     phone_number?: string
 
-    @ApiProperty({required:true})
+    @ApiProperty({required:false})
     @IsStrongPassword()
     @IsString()
     @IsOptional()
@@ -66,14 +67,13 @@ export class User{
     @ApiProperty({required:false})
     @IsDate()
     @IsOptional()
-    @Column()
+    @Column({nullable:true})
     status_updated_at: Date
 
-    @ApiProperty({required:false})
-    @IsString()
+    @ApiProperty({required:false}) 
     @IsOptional()
-    @Column()
-    refreshToken: string
+    @OneToMany(() => Token, (token) => token.user)
+    tokens: Token[]
 
     // Automatically handles 'created at' timestamp
     @ApiProperty()

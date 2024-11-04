@@ -5,7 +5,7 @@ import { DataSource, Repository } from "typeorm";
 import { ListAllUsersDto } from "../../admin/companies/dto/list-all-users.dto";
 import { Company } from "src/api/entities/company.entity";
 import { UpdateUserDto } from "../../admin/companies/dto/updateUser.dto";
-import { EmailService } from "src/email/email.service";
+import { EmailService } from "src/api/email/email.service";
 import { JwtService } from "@nestjs/jwt"; 
 import * as bcrypt from "bcrypt" 
 

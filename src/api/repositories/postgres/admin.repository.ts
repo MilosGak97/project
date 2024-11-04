@@ -7,7 +7,7 @@ import { GetAdminsDto } from 'src/api/admin/admins/dto/get-admins.dto';
 import * as bcrypt from 'bcrypt' 
 import { AdminRole } from 'src/api/enums/admin-role.enum';
 import { AdminStatus } from 'src/api/enums/admin-status.enum';
-import { EmailService } from "src/email/email.service";  
+import { EmailService } from "src/api/email/email.service";  
 import { JwtService } from "@nestjs/jwt"; 
 import { UpdateAdminDto } from 'src/api/admin/admins/dto/update-admin.dto';
 import { UserType } from 'src/api/enums/user-type.enum';

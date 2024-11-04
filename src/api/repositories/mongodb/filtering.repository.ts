@@ -17,7 +17,12 @@ export class FilteringRepository{
         message: string
     }> {
         const adminId:string  = admin.id  
+
+        console.log("Admin ID: " + adminId)
+        console.log("Property ID: " + propertyId)
+        console.log("Action: " + action)
         const filtering = new this.filteringModel({ adminId, propertyId, action });
+        filtering.save()
         return {message: "Filtering log is succesfully created."}
       }
       

@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { EmailModule } from './email/email.module';
+import { EmailModule } from './api/email/email.module';
 import { HealthController } from './app.controller';
 import { AdminModule } from './api/admin/admin.module';
 import { ClientModule } from './api/client/client.module';
