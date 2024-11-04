@@ -89,8 +89,17 @@ export class AuthController {
         throw new NotFoundException('couldnt find refresh token in database')
        }
 
-       res.clearCookie('accessToken', { httpOnly: true, secure:true, sameSite:'none'})
-       res.clearCookie('refreshToken', {httpOnly:true, sameSite:'none', secure:true})
+         // Clear the cookies with SameSite and Secure attributes
+    res.clearCookie('accessToken', { 
+        httpOnly: true, 
+        secure: process.env.NODE_ENV === 'production', // Secure only in production
+        sameSite: 'none' 
+    });
+    res.clearCookie('refreshToken', { 
+        httpOnly: true, 
+        secure: process.env.NODE_ENV === 'production', // Secure only in production
+        sameSite: 'none' 
+    });
        
        res.json({message: "User is logged out."})
     }
