@@ -58,7 +58,7 @@ export class AuthController {
         res.cookie('accessToken', accessToken, {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production', // Use secure cookies in production
-            sameSite: 'lax', // Adjust as necessary
+            sameSite: 'none', // Adjust as necessary
             maxAge: 60 * 60 * 1000 // 1 hour for access token
         });
 
@@ -66,7 +66,7 @@ export class AuthController {
         res.cookie('refreshToken', refreshToken, {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production', // Use secure cookies in production
-            sameSite: 'lax', // Adjust as necessary
+            sameSite: 'none', // Adjust as necessary
             maxAge: 30 * 24 * 60 * 60 * 1000 // 30 days for refresh token
         });
 
@@ -89,8 +89,8 @@ export class AuthController {
         throw new NotFoundException('couldnt find refresh token in database')
        }
 
-       res.clearCookie('accessToken', { httpOnly: true, secure:true, sameSite:'strict'})
-       res.clearCookie('refreshToken', {httpOnly:true, sameSite:"strict", secure:true})
+       res.clearCookie('accessToken', { httpOnly: true, secure:true, sameSite:'none'})
+       res.clearCookie('refreshToken', {httpOnly:true, sameSite:'none', secure:true})
        
        res.json({message: "User is logged out."})
     }
