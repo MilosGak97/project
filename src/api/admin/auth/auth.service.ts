@@ -3,6 +3,7 @@ import { AuthRepository } from './repository/auth.repository';
 import { SignInDto } from './dto/sign-in-admin.dto';  
 import { PasswordResetDto } from './dto/password-reset.dto'; 
 import { Admin } from 'src/api/entities/admin.entity';
+import { MessageResponseDto } from 'src/api/responses/message-response.dto';
 
 @Injectable()
 export class AuthService {
@@ -35,9 +36,7 @@ export class AuthService {
 
 
 // new method
-    async passwordReset(passwordResetDto: PasswordResetDto, admin: Admin):Promise<{
-        message:string
-    }>{
+    async passwordReset(passwordResetDto: PasswordResetDto, admin: Admin):Promise<MessageResponseDto>{
         return await this.authRepository.passwordReset(passwordResetDto, admin);
     }
 

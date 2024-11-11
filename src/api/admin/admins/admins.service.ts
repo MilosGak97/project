@@ -4,6 +4,7 @@ import { CreateAdminDto } from './dto/create-admin.dto';
 import { GetAdminsDto } from './dto/get-admins.dto';  
 import { UpdateAdminDto } from './dto/update-admin.dto';
 import { Admin } from 'src/api/entities/admin.entity';
+import { GetAdminsResponseDto } from './dto/get-admins-response.dto';
 
 @Injectable()
 export class AdminsService { 
@@ -14,15 +15,7 @@ export class AdminsService {
 
 
 // method to get all admins
-    async getAdmins(getAdminsDto:GetAdminsDto):Promise<{
-        result: Admin[],
-        totalRecords: number,
-        currentPage: number,
-        totalPages: number,
-        limitNumber: number,
-        offsetNumber: number
-
-    }>{
+    async getAdmins(getAdminsDto:GetAdminsDto):Promise<GetAdminsResponseDto>{
         return await this.adminRepository.getAdmins(getAdminsDto)
     }
 
@@ -35,9 +28,7 @@ export class AdminsService {
 
 
 // method to show single admin data
-    async showAdminData(id:string):Promise<{
-        adminData:Admin
-    }>{
+    async showAdminData(id:string):Promise<Admin>{
         return this.adminRepository.showAdminData(id)
     }
 

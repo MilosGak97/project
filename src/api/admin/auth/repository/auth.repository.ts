@@ -7,6 +7,7 @@ import * as bcrypt from 'bcrypt'
 import { JwtPayload } from "../dto/jwt-payload.interface";
 import { PasswordResetDto } from "../dto/password-reset.dto";
 import { Admin } from "src/api/entities/admin.entity";
+import { MessageResponseDto } from "src/api/responses/message-response.dto";
 
 @Injectable()
 export class AuthRepository extends Repository<Admin>{
@@ -111,9 +112,7 @@ export class AuthRepository extends Repository<Admin>{
 
 
 // new method
-    async passwordReset(passwordResetDto: PasswordResetDto, admin: Admin ):Promise<{
-        message: string
-    }>{
+    async passwordReset(passwordResetDto: PasswordResetDto, admin: Admin ):Promise<MessageResponseDto>{
             const {oldPassword , newPassword , newPasswordRepeat} = passwordResetDto;
 
             const user = await this.findOne({where: {id: admin.id}})

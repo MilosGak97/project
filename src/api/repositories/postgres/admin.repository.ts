@@ -11,6 +11,7 @@ import { EmailService } from "src/api/email/email.service";
 import { JwtService } from "@nestjs/jwt"; 
 import { UpdateAdminDto } from 'src/api/admin/admins/dto/update-admin.dto';
 import { UserType } from 'src/api/enums/user-type.enum';
+import { GetAdminsResponseDto } from 'src/api/admin/admins/dto/get-admins-response.dto';
 
 
 @Injectable()
@@ -54,15 +55,7 @@ export class AdminRepository extends Repository<Admin> {
     /* ---------- PUBLIC METHOD ------------- */
 
 // method to get all admin data
-    async getAdmins(getAdminsDto:GetAdminsDto):Promise<{
-        result: Admin[],
-        totalRecords: number,
-        currentPage: number,
-        totalPages: number,
-        limitNumber: number,
-        offsetNumber: number
-
-    }>{
+    async getAdmins(getAdminsDto:GetAdminsDto):Promise<GetAdminsResponseDto>{
         const { searchQuery, role, status, email_verified , initial_password, limit, offset} = getAdminsDto
 
         const query = this.createQueryBuilder('adminUser')
@@ -202,16 +195,14 @@ export class AdminRepository extends Repository<Admin> {
 
 
  // method to show single admin data   
-    async showAdminData(id:string):Promise<{
-        adminData: Admin
-    }>{
+    async showAdminData(id:string):Promise<Admin>{
         const adminData = await this.findOne({where: {id}})
 
         if(!adminData){
             throw new NotFoundException('Admin with this ID is not found.')
         }
         
-        return {adminData}
+        return adminData
     }
 
 
