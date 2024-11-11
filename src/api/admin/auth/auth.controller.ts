@@ -1,5 +1,5 @@
 import { Body, Controller, Delete, Get, NotFoundException, Post, Query, Req, Res, UseGuards } from '@nestjs/common';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiOkResponse, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { SignInDto } from './dto/sign-in-admin.dto'; 
 import { Request, Response } from 'express'; 
@@ -118,6 +118,7 @@ export class AuthController {
 // new end point    
     @Get('who-am-i')
     @ApiOperation({summary: 'Get information about logged user'})
+    @ApiOkResponse({ type: Admin })
     async whoAmI(@Req() req: Request):Promise<{admin: Admin}>{
         const token = req.cookies['accessToken']
         const admin = await this.authService.whoAmI(token);
@@ -143,6 +144,7 @@ export class AuthController {
             sameSite: 'lax', // Adjust as necessary
             maxAge: 60 * 60 * 1000 // 1 hour for access token
         });
+
 
 
        res.json({message: "Token is refreshed."})
