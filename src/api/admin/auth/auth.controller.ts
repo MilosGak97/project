@@ -119,10 +119,10 @@ export class AuthController {
     @Get('who-am-i')
     @ApiOperation({summary: 'Get information about logged user'})
     @ApiOkResponse({ type: Admin })
-    async whoAmI(@Req() req: Request):Promise<{admin: Admin}>{
+    async whoAmI(@Req() req: Request):Promise<Admin>{
         const token = req.cookies['accessToken']
-        const admin = await this.authService.whoAmI(token);
-        return { admin }
+        return await this.authService.whoAmI(token);
+        
     }
  
 
