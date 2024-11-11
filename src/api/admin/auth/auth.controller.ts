@@ -118,16 +118,17 @@ export class AuthController {
 // new end point    
     @Get('who-am-i')
     @ApiOperation({summary: 'Get information about logged user'})
-    whoAmI(@Req() req: Request):Promise<Admin>{
+    async whoAmI(@Req() req: Request):Promise<{admin: Admin}>{
         const token = req.cookies['accessToken']
-        return this.authService.whoAmI(token);
+        const admin = await this.authService.whoAmI(token);
+        return { admin }
     }
  
 
 // new endpoint
     @Post('token')
     @ApiOperation({summary: 'Refresh Access Token'})
-    async refreshAccesToken(@Req() req: Request, @Res() res: Response):Promise<any>{
+    async refreshAccesToken(@Req() req: Request, @Res() res: Response):Promise<void>{
        const refreshToken =  req.cookies['refreshToken']
        if(!refreshToken){
         throw new NotFoundException('No refresh token found')
