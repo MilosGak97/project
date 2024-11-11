@@ -81,7 +81,7 @@ export class ListingsLARepository{
           llisting_provided_by_phone_number: lpb_phone_number,
           isNonOwnerOccupied,
           additionalInfo, // If additionalInfo is provided
-          initial_scrapping,
+          initial_scrapping: true,
           verified: null
         });
     

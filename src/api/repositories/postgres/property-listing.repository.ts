@@ -86,7 +86,7 @@ export class PropertyListingRepository extends Repository<PropertyListing> {
 
         const zpidExist = await this.findOne({ where: { zpid } })
         if (zpidExist) {
-            throw new ConflictException("User with this ZPID already exist")
+            throw new ConflictException("Property with this ZPID already exist")
         }
 
         // Create a new instance of PropertyListing (make sure this matches your entity)

@@ -246,8 +246,8 @@ export class OnMarketService {
             console.log("This zpid already exist: " + zpid)
             continue;
           } 
-          await this.propertyListingRepository.createProperty(propertyListingDto)
-          //await this.listingsLARepository.createProperty(propertyListingDto)
+          //await this.propertyListingRepository.createProperty(propertyListingDto)
+          await this.listingsLARepository.createProperty(propertyListingDto)
         };
         return { message: "Successfully processed the job" };
       } else {
