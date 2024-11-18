@@ -170,12 +170,12 @@ export class EmailService {
                 <h1>Welcome!</h1>
             </div>
             <div class="content">
-               ${passcode ? `<p>Your password is: <strong>${passcode}</strong></p>` : ''}
-                 <p>Please verify your email by clicking on the button below:</p>
+               ${passcode ? `<p>Your passcode is: <strong>${passcode}</strong></p>` : ''}
+                 <p>Please verify your account by clicking on the button below:</p>
                 <a href="${verifyUrl}" class="button">Verify Email</a>
             </div>
             <div class="footer">
-                <p>&copy; ${new Date().getFullYear()} Your Company. All rights reserved.</p>
+                <p>&copy; ${new Date().getFullYear()} SubRosa Hub. All rights reserved.</p>
             </div>
         </div>
     </body>
@@ -185,7 +185,7 @@ export class EmailService {
       to, // Recipient's email address
       from: 'milo@vanexpressmoving.com', // Your verified SendGrid sender email
       subject: 'Welcome to Our Service!',
-      text: `Welcome! Your password is: ${passcode}. Please verify your email by clicking on this link: ${verifyUrl}`,
+      text: `Welcome! Your passcode is: ${passcode}. Please verify your email by clicking on this link: ${verifyUrl}`,
       html: htmlContent  };
 
     try {

@@ -48,10 +48,11 @@ export class ListingsLARepository{
             
             console.log("ZPID Exist Status: " + zpidExist.current_status)
             console.log("ZPID Exist Status Date: " + zpidExist.current_status_date)
-          throw new ConflictException("Property with this ZPID already exists");
+          //throw new ConflictException("Property with this ZPID already exists");
+          return { message: "Property with this ZPID already exists" };
         }
         
-        const initial_scrapping = true
+        const initial_scrapping = false
 
         // Create a new instance of PropertyListing document
         const property = new this.listingsLAModel({
@@ -81,7 +82,7 @@ export class ListingsLARepository{
           llisting_provided_by_phone_number: lpb_phone_number,
           isNonOwnerOccupied,
           additionalInfo, // If additionalInfo is provided
-          initial_scrapping: true,
+          initial_scrapping: false,
           verified: null
         });
     

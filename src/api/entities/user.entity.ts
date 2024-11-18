@@ -39,6 +39,15 @@ export class User{
     @Column({nullable:true})
     password?: string
 
+    
+    @ApiProperty({required:false})
+    @IsStrongPassword()
+    @IsString()
+    @IsOptional()
+    @Column({nullable:true})
+    passcode?: string
+
+
     @ApiProperty({required: true})
     @IsBoolean()
     @IsNotEmpty()

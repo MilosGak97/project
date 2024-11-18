@@ -6,7 +6,7 @@ import { Type } from "class-transformer";
 import { IsOptional, IsString } from "class-validator";
 export type ListingsLADocument = ListingsLA & Document;
 
-@Schema({timestamps:true})
+@Schema({timestamps:true, collection: 'djallal_listings'})
 export class ListingsLA{ 
  
 

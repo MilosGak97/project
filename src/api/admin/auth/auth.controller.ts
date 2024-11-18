@@ -25,17 +25,20 @@ export class AuthController {
 
         const { accessToken, refreshToken } = await this.authService.verifyEmail(token)
 
+      
+        // Set the HTTP-only cookie for the access token
         res.cookie('accessToken', accessToken, {
             httpOnly: true,
-            secure: process.env.NODE_ENV === 'production', // Use secure cookies in production
-            sameSite: 'lax',
+            secure: true, // Use secure cookies in production
+            sameSite: 'none', // Adjust as necessary
             maxAge: 60 * 60 * 1000 // 1 hour for access token
         });
 
+        // Set the HTTP-only cookie for the refresh token
         res.cookie('refreshToken', refreshToken, {
             httpOnly: true,
-            secure: process.env.NODE_ENV === 'production', // Use secure cookies in production
-            sameSite: 'lax',
+            secure: true, // Use secure cookies in production
+            sameSite: 'none', // Adjust as necessary
             maxAge: 30 * 24 * 60 * 60 * 1000 // 30 days for refresh token
         });
 

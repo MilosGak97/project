@@ -3,6 +3,7 @@ import { IsBoolean, IsDate, IsEnum, IsNotEmpty, IsOptional, IsString } from "cla
 import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { User } from "./user.entity";
 import { TokenType } from "../enums/token-type.enum";
+import { TokenStatus } from "../enums/token-status.enum";
 
 @Entity('tokens')
 export class Token{
@@ -25,10 +26,10 @@ export class Token{
     type: TokenType
 
     @ApiProperty({required:true})
-    @IsBoolean()
+    @IsEnum(TokenStatus)
     @IsNotEmpty()
     @Column()
-    expired: boolean
+    status: TokenStatus
 
     @ApiProperty({required:true})
     @IsDate()

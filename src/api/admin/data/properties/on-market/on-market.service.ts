@@ -32,7 +32,6 @@ export class OnMarketService {
     private readonly filteringRepository: FilteringRepository,
     private readonly brightdataSnapshotRepository: BrightdataSnapshotRepository,
     private readonly httpService: HttpService,
-
   ) { }
 
   // -------------- PRIVATE FUNCTIONs  ----------------------------------------------------------------------------------------------

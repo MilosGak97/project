@@ -24,7 +24,7 @@ export class AuthRepository extends Repository<Admin>{
         accessToken: string
     }> {
         // Verify the token and extract the payload
-        const payload = await this.jwtService.verify(token);
+        const payload = await this.jwtService.verify(token, {secret: process.env.ADMIN_JWT_SECRET});
     
         // Find the user based on the userId from the payload
         const user = await this.findOne({ where: { id: payload.userId } });
@@ -106,7 +106,7 @@ export class AuthRepository extends Repository<Admin>{
         
         } catch (error) {
             throw new UnauthorizedException('Invalid or expired token');
-            return false
+           
         }
     }
 
