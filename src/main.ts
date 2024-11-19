@@ -75,10 +75,11 @@ async function bootstrap() {
   });
 
   app.enableCors({
-    origin: 'https://localhost:5174',  // Only allow this origin
+    origin: ['https://localhost:5174', 'https://localhost:5173'], // Allow multiple origins
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
     credentials: true,
 });
+
 
 
   const PORT = process.env.PORT || 3000;
