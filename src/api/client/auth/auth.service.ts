@@ -132,7 +132,7 @@ export class AuthService {
             return { message: "Reset password url has been successfully sent if we've found matching email in our database." }
         }
         await this.tokenRepository.saveToken(user, forgotPasswordToken,TokenType.FORGOT_PASSWORD,'7d')
-        const forgotPasswordUrl =  `${process.env.BASE_URL}client/auth/forgot-password?${encodeURIComponent(forgotPasswordToken)}`
+        const forgotPasswordUrl =  `${process.env.BASE_URL}client/auth/forgot-password/${encodeURIComponent(forgotPasswordToken)}`
         await this.emailService.forgotPasswordEmail(user.email,forgotPasswordUrl,forgotPasswordToken)
 
         return {
