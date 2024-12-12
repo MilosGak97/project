@@ -48,7 +48,7 @@ export class AuthService {
 
         await this.tokenRepository.saveToken(user, jwtToken,tokenType, expireIn)
 
-        const verifyUrl = `${process.env.BASE_URL}client/auth/email-verification?${encodeURIComponent(jwtToken)}`
+        const verifyUrl = `${process.env.BASE_URL}client/auth/email-verification/${encodeURIComponent(jwtToken)}`
 
         await this.emailService.userSignUp(user.email,verifyUrl, passcode )
 
