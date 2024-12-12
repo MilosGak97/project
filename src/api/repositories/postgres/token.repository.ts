@@ -1,4 +1,4 @@
-import { ConflictException, Injectable, NotFoundException } from "@nestjs/common";
+import { BadRequestException, ConflictException, Injectable, NotFoundException } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import { AuthRepository } from "src/api/client/auth/auth.repository";
 import { RegisterTokenResponseDto } from "src/api/client/auth/dto/register-token-exist.dto";
@@ -20,8 +20,7 @@ export class TokenRepository extends Repository<Token>{
     async registerTokenValidation(token: string):Promise<RegisterTokenResponseDto> {
 
         if (!token) {
-            console.log("No token provided");
-            return { message: "Token is not provided", registerTokenExist: false, userId: null}; // No token provided, return false
+            throw new BadRequestException("No token provided")
         } 
 
 
@@ -37,9 +36,9 @@ export class TokenRepository extends Repository<Token>{
          }
 
          
-         const payload = await this.clientAuthRepository.verifyJwtToken(token) 
+         const user = await this.clientAuthRepository.verifyJwtToken(token) 
          //console.log("PAYLOAD: " + JSON.stringify(payload, null, 2)); // Pretty print the object
-         const userId = payload.userId
+         const userId = user.id
         return {message: "Register token exist", registerTokenExist: true, userId  }
     }
 
@@ -75,5 +74,24 @@ export class TokenRepository extends Repository<Token>{
         );
         
         return true
+    }
+
+    async setInactive(token: string):Promise<boolean>{
+        const tokenRecord = await this.findOne({where: {token}})
+        if(!tokenRecord){
+            throw new NotFoundException("Could not find requested token")
+        }
+        tokenRecord.status = TokenStatus.INACTIVE
+        await this.save(tokenRecord)
+        return true
+    }
+
+    async checkStatus(token: string):Promise<TokenStatus>{
+        const tokenRecord = await this. findOne({where: {token}})
+        if(!tokenRecord){
+            throw new NotFoundException("Could not find requested token")
+        }
+
+        return tokenRecord.status
     }
 }

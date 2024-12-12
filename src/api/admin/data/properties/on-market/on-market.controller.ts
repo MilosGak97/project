@@ -14,6 +14,7 @@ import { RolesGuard } from 'src/api/admin/auth/roles.guard';
 import { Roles } from 'src/api/admin/auth/roles.decorator';
 import { AdminRole } from 'src/api/enums/admin-role.enum';
 import { StatesAbbreviation } from 'src/api/enums/states-abbreviation.enum';
+import { AdminAuthGuard } from 'src/api/admin/auth/admin-auth.guard';
 
 
 @ApiTags('Data/Properties/ On-Market')
@@ -26,7 +27,7 @@ export class OnMarketController {
 
 
     //new endpoint
-    @UseGuards(AuthGuard(), RolesGuard)
+    @UseGuards(AdminAuthGuard, RolesGuard)
     @Roles(AdminRole.HEAD, AdminRole.FILTERING)
     @ApiOperation({ summary: "List all states that need to be filtered" })
     @Get('filter/states')
@@ -38,7 +39,7 @@ export class OnMarketController {
 
     //new endpoint
 
-    @UseGuards(AuthGuard(), RolesGuard)
+    @UseGuards(AdminAuthGuard, RolesGuard)
     @Roles(AdminRole.HEAD, AdminRole.FILTERING)
     @ApiOperation({ summary: "Filter properties by states" })
     @Get('filter/states/:stateAbbreviation')
@@ -55,7 +56,7 @@ export class OnMarketController {
 
     //new endpoint
 
-    @UseGuards(AuthGuard(), RolesGuard)
+    @UseGuards(AdminAuthGuard, RolesGuard)
     @Roles(AdminRole.HEAD, AdminRole.FILTERING)
     @ApiOperation({ summary: "Show logs of filtering actions taken by admins" })
     @Get('filter/logs')
@@ -66,7 +67,7 @@ export class OnMarketController {
 
     //new endpoint
 
-    @UseGuards(AuthGuard(), RolesGuard)
+    @UseGuards(AdminAuthGuard, RolesGuard)
     @Roles(AdminRole.HEAD, AdminRole.FILTERING)
     @ApiOperation({ summary: "Log and update filtering action to property" })
     @Patch('filter/:propertyId') // was post, test it
@@ -89,7 +90,7 @@ export class OnMarketController {
         return this.onMarketService.notificationBrightdata(payload)
     }
 
-    @UseGuards(AuthGuard(), RolesGuard)
+    @UseGuards(AdminAuthGuard, RolesGuard)
     @Roles(AdminRole.HEAD, AdminRole.SCRAPPING)
     @Get('brightdata/snapshots')
     @ApiOperation({ summary: "List Snapshots logs" })
@@ -97,7 +98,7 @@ export class OnMarketController {
         return await this.onMarketService.listSnapshots(listSnapshotsDto)
     }
 
-    @UseGuards(AuthGuard(), RolesGuard)
+    @UseGuards(AdminAuthGuard, RolesGuard)
     @Roles(AdminRole.HEAD, AdminRole.SCRAPPING)
     @Post('brightdata/snapshots/:snapshotId') //
     @ApiOperation({ summary: "Re-run snapshot import function manually" })
@@ -108,7 +109,7 @@ export class OnMarketController {
     }
 
 
-    @UseGuards(AuthGuard(), RolesGuard)
+    @UseGuards(AdminAuthGuard, RolesGuard)
     @Roles(AdminRole.HEAD, AdminRole.SCRAPPING)
     @Post('brightdata/states/:stateAbbrevation')
     @ApiOperation({ summary: "Run manually scrapper for this state (24hrs)" })

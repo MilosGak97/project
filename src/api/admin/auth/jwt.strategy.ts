@@ -7,7 +7,7 @@ import { Admin } from "src/api/entities/admin.entity";
 import { UserType } from "src/api/enums/user-type.enum";
 
 @Injectable()
-export class JwtStrategy extends PassportStrategy(Strategy){
+export class JwtStrategy extends PassportStrategy(Strategy, 'admin-jwt'){
     
     private readonly logger = new Logger(AuthRepository.name);
 

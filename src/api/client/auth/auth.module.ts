@@ -9,6 +9,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from 'src/api/entities/user.entity';
 import { Token } from 'src/api/entities/token.entity';
 import { EmailService } from 'src/api/email/email.service';
+import { JwtUserStrategy } from './jwtUser.strategy';
 
 @Module({
   imports: [
@@ -22,7 +23,9 @@ import { EmailService } from 'src/api/email/email.service';
     AuthRepository,
     TokenRepository,
     EmailService,
-
-  ]
+    JwtUserStrategy,
+  ],
+  
+exports: [JwtUserStrategy, PassportModule],
 })
-export class AuthModule {}
+export class AuthModule {} 

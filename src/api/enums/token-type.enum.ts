@@ -3,4 +3,5 @@ export enum TokenType{
     ACCESS = 'access_token',
     REGISTER = 'register_token',
     EMAIL_VERIFICATION = 'email_verification',
+    FORGOT_PASSWORD = 'forgot_password',
 }

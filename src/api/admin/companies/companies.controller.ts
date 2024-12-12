@@ -4,18 +4,18 @@ import { ListAllCompaniesDto } from './dto/list-all-companies.dto';
 import { UpdateCompanyDataDto } from './dto/update-company-data.dto';
 import { ListAllUsersDto } from './dto/list-all-users.dto'; 
 import { User } from 'src/api/entities/user.entity';
-import { UpdateUserDto } from './dto/updateUser.dto';
-import { AuthGuard } from '@nestjs/passport';
+import { UpdateUserDto } from './dto/updateUser.dto'; 
 import { RolesGuard } from '../auth/roles.guard';
 import { Roles } from '../auth/roles.decorator';
 import { AdminRole } from 'src/api/enums/admin-role.enum';
 import { Company } from 'src/api/entities/company.entity';
 import { CompaniesService } from './companies.service';
+import { AdminAuthGuard } from '../auth/admin-auth.guard';
 
 
 @ApiTags('Companies')
 @Controller('admin')
-@UseGuards(AuthGuard(), RolesGuard)
+@UseGuards(AdminAuthGuard, RolesGuard)
 @Roles(AdminRole.HEAD, AdminRole.SUPPORT)
 export class CompaniesController {
     constructor(private readonly companiesService: CompaniesService) { }

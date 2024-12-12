@@ -4,11 +4,10 @@ import { AuthService } from './auth.service';
 import { SignInDto } from './dto/sign-in-admin.dto';
 import { Request, Response } from 'express';
 import { PasswordResetDto } from './dto/password-reset.dto';
-import { GetAdmin } from './get-admin.decorator';
-import { AuthGuard } from '@nestjs/passport';
+import { GetAdmin } from './get-admin.decorator'; 
 import { Admin } from 'src/api/entities/admin.entity'; 
-import {  MessageResponseDto } from 'src/api/responses/message-response.dto';
-import { Message } from '@aws-sdk/client-ses';
+import {  MessageResponseDto } from 'src/api/responses/message-response.dto'; 
+import { AdminAuthGuard } from './admin-auth.guard';
 
 @ApiTags('Auth')
 @Controller('admin/auth')
@@ -85,7 +84,7 @@ export class AuthController {
     @Delete()
     @ApiOperation({ summary: "Logout user and delete refresh and access token" })
     @ApiOkResponse({type: MessageResponseDto})
-    @UseGuards(AuthGuard())
+    @UseGuards(AdminAuthGuard)
     async logout(@Req() req: Request, @Res() res: Response): Promise<Response<MessageResponseDto>> {
         const token = req.cookies['accessToken']
         const removedRefreshToken = await this.authService.logout(token)
@@ -115,7 +114,7 @@ export class AuthController {
     @Post('password')
     @ApiOperation({ summary: "Change logged admin password, no old password needed for the initial " })
     @ApiOkResponse({type: MessageResponseDto})
-    @UseGuards(AuthGuard())
+    @UseGuards(AdminAuthGuard)
     async passwordReset(@Body() passwordResetDto: PasswordResetDto, @GetAdmin() admin: Admin): Promise<MessageResponseDto> {
         return this.authService.passwordReset(passwordResetDto, admin)
     }
