@@ -21,6 +21,8 @@ import { State } from 'src/api/entities/state.entity';
 import { County } from 'src/api/entities/county.entity';
 import { ListingsLA, ListingsLASchema } from 'src/api/schemas/listingsLA.schema'; 
 import { ListingsLARepository } from 'src/api/repositories/mongodb/listingsLA.repository';
+import { User } from '../../../entities/user.entity';
+import { Company } from '../../../entities/company.entity';
 
 @Module({ 
   controllers: [

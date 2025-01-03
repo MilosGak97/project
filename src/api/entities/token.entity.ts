@@ -1,7 +1,7 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsBoolean, IsDate, IsEnum, IsNotEmpty, IsOptional, IsString } from "class-validator";
+import { IsDate, IsEnum, IsNotEmpty, IsString } from "class-validator";
 import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
-import { User } from "./user.entity";
+import { User } from './user.entity';
 import { TokenType } from "../enums/token-type.enum";
 import { TokenStatus } from "../enums/token-status.enum";
 
@@ -34,13 +34,13 @@ export class Token{
     @ApiProperty({required:true})
     @IsDate()
     @IsNotEmpty()
+    @Column()
     expires_at: Date
 
     @ApiProperty({required:true})
     @IsNotEmpty()
     @ManyToOne(() => User, (user) => user.tokens, {eager:true})
     user: User
-
 
     @ApiProperty({required:true})
     @CreateDateColumn()

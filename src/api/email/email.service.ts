@@ -63,7 +63,7 @@ export class EmailService {
                 font-size: 12px;
                 color: #777;
             }
-        </style>
+        </style><title>Title</title>
     </head>
     <body>
         <div class="container">
@@ -92,7 +92,7 @@ export class EmailService {
     try {
         await sgMail.send(msg);
         return {
-            message: "Email has been sent succesfully."
+            message: "Email has been sent successfully."
         }
       } catch (error) {
         console.error('Error sending email:', error.response.body); // Log the full error response
@@ -162,7 +162,7 @@ export class EmailService {
                 font-size: 12px;
                 color: #777;
             }
-        </style>
+        </style><title>Title</title>
     </head>
     <body>
         <div class="container">
@@ -191,7 +191,7 @@ export class EmailService {
     try {
         await sgMail.send(msg);
         return {
-            message: "Email has been sent succesfully."
+            message: "Email has been sent successfully."
         }
       } catch (error) {
         console.error('Error sending email:', error.response.body); // Log the full error response
@@ -206,7 +206,7 @@ export class EmailService {
   }
 
 
-  async forgotPasswordEmail(to: string, resetUrl: string, token: string) {
+  async forgotPasswordEmail(to: string, resetUrl: string) {
     const htmlContent = `
     <!DOCTYPE html>
     <html lang="en">
@@ -260,7 +260,7 @@ export class EmailService {
                 font-size: 12px;
                 color: #777;
             }
-        </style>
+        </style><title>Title</title>
     </head>
     <body>
         <div class="container">

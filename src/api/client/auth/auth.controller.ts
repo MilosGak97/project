@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, Delete, Get, Param, Post, Query, Req, Res, UseGuards } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Delete, Get, Param, Post, Req, Res, UseGuards } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { SignUpDto } from './dto/sign-up.dto';
 import { AuthService } from './auth.service';
@@ -12,7 +12,6 @@ import { SignInDto } from './dto/sign-in.dto';
 import { UserAuthGuard } from './user-auth.guard'; 
 import { PasscodeDto } from './dto/passcode-dto';
 import { ForgotPasswordDto } from './dto/forgot-password-dto';
-import { Message } from '@aws-sdk/client-ses';
 
 @ApiTags('Auth')
 @Controller('client/auth')

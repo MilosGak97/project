@@ -12,6 +12,7 @@ import { JwtService } from "@nestjs/jwt";
 import { UpdateAdminDto } from 'src/api/admin/admins/dto/update-admin.dto';
 import { UserType } from 'src/api/enums/user-type.enum';
 import { GetAdminsResponseDto } from 'src/api/admin/admins/dto/get-admins-response.dto';
+import { GetAdminsTypeDto } from '../../admin/admins/dto/get-admins-type.dto';
 
 
 @Injectable()
@@ -90,7 +91,16 @@ export class AdminRepository extends Repository<Admin> {
         query.take(limitNumber)
         query.skip(offsetNumber)
 
-        const [result, totalRecords ] = await query.getManyAndCount() 
+        const [unfilteredResult, totalRecords ] = await query.getManyAndCount()
+        const result: GetAdminsTypeDto[]  = unfilteredResult.map(({ id, name, email, role, status, phone_number }) => ({
+            id,
+            name,
+            email,
+            role,
+            status,
+            phone_number
+        }));
+
         const currentPage = Math.floor(offset/limitNumber) + 1
         const totalPages = Math.ceil(totalRecords / limitNumber);
 

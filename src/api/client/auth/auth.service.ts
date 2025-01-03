@@ -11,7 +11,6 @@ import { User } from 'src/api/entities/user.entity';
 import { MessageResponseDto } from 'src/api/responses/message-response.dto';
 import { SignInDto } from './dto/sign-in.dto';
 import { TokenStatus } from 'src/api/enums/token-status.enum';
-import { register } from 'module';
 import { PasscodeDto } from './dto/passcode-dto';
 import { ForgotPasswordDto } from './dto/forgot-password-dto';
 
@@ -133,7 +132,7 @@ export class AuthService {
         }
         await this.tokenRepository.saveToken(user, forgotPasswordToken,TokenType.FORGOT_PASSWORD,'7d')
         const forgotPasswordUrl =  `${process.env.BASE_URL}client/auth/forgot-password/${encodeURIComponent(forgotPasswordToken)}`
-        await this.emailService.forgotPasswordEmail(user.email,forgotPasswordUrl,forgotPasswordToken)
+        await this.emailService.forgotPasswordEmail(user.email, forgotPasswordUrl)
 
         return {
             message: "Reset password url has been successfully sent if we've found matching email in our database." 

@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Query, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Post, Query, Req, UseGuards } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { GetAdmin } from 'src/api/admin/auth/get-admin.decorator';
 import { FilterStatesDto } from 'src/api/admin/data/properties/on-market/dto/filter-states.dto';
@@ -9,7 +9,6 @@ import { FilteredStatus } from 'src/api/enums/filtered-status.enum';
 import { Filtering } from 'src/api/schemas/filtering-logs.schema';
 import { OnMarketService } from './on-market.service';
 import { ListSnapshotsDto } from 'src/api/admin/data/properties/on-market/dto/list-snapshots.dto';
-import { AuthGuard } from '@nestjs/passport';
 import { RolesGuard } from 'src/api/admin/auth/roles.guard';
 import { Roles } from 'src/api/admin/auth/roles.decorator';
 import { AdminRole } from 'src/api/enums/admin-role.enum';

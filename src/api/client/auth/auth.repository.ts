@@ -1,18 +1,17 @@
 import { BadRequestException, ConflictException, ForbiddenException, Injectable, InternalServerErrorException, NotFoundException, UnauthorizedException } from "@nestjs/common";
 import { User } from "src/api/entities/user.entity";
-import { DataSource, IsNull, Repository } from "typeorm";
+import { DataSource, Repository } from "typeorm";
 import { SignUpDto } from "./dto/sign-up.dto";
 import { UserStatus } from "src/api/enums/user-status.enum";
-import { UserType } from "src/api/enums/user-type.enum"; 
+import { UserType } from "src/api/enums/user-type.enum";
 import { JwtService } from "@nestjs/jwt";
 import { JwtPayload } from "./dto/jwt-payload.interface";
 import { UserRole } from "src/api/enums/user-role.enum";
 import {  randomInt } from "crypto";
-import * as bcrypt from 'bcrypt' 
+import * as bcrypt from 'bcrypt'
 import { SetPasswordDto } from "./dto/set-password.dto";
 import { MessageResponseDto } from "src/api/responses/message-response.dto";
 import { SignInDto } from "./dto/sign-in.dto";
-import { TokenResponseDto } from "./dto/token-response.dto";
 import { PasscodeDto } from "./dto/passcode-dto";
 import { ForgotPasswordDto } from "./dto/forgot-password-dto";
 
@@ -20,7 +19,7 @@ import { ForgotPasswordDto } from "./dto/forgot-password-dto";
 export class AuthRepository extends Repository<User> {
     constructor(
         private readonly jwtService: JwtService,
-        private readonly dataSource: DataSource, 
+        private readonly dataSource: DataSource,
     ) {
         super(User, dataSource.createEntityManager())
     }
@@ -32,8 +31,8 @@ export class AuthRepository extends Repository<User> {
     }> {
         const { email } = signUpDto
 
-        const userExist:User = await this.findOne({where: {email}}) 
-        
+        const userExist:User = await this.findOne({where: {email}})
+
         if(userExist){
             throw new ConflictException("User already exist")
         }
@@ -41,7 +40,7 @@ export class AuthRepository extends Repository<User> {
         const passcode = randomInt(100000, 999999).toString()
         console.log("Passcode signup: " + passcode)
         const hashedPasscode = await bcrypt.hash(passcode, 10)
-    
+
         const user = new User()
         user.email = email
         user.email_verified = false
@@ -50,15 +49,15 @@ export class AuthRepository extends Repository<User> {
         user.role = UserRole.HEAD
         user.passcode = hashedPasscode
         const savedUser = await this.save(user)
-        
+
         const payload: JwtPayload = { userId: savedUser.id }
         const registerToken = await this.jwtService.sign(payload,  { expiresIn: '24h', secret: process.env.CLIENT_JWT_SECRET })
-        
+
         return { user , registerToken, passcode }
-    } 
+    }
 
     async getUser(token:string):Promise<User>{
-        const user = await this.verifyJwtToken(token) 
+        const user = await this.verifyJwtToken(token)
         return user
     }
 
@@ -88,15 +87,15 @@ export class AuthRepository extends Repository<User> {
             refreshToken,
             user
         }
-    } 
+    }
 
     async passcodeVerification(passcodeDto:PasscodeDto, userId: string):Promise<{accessToken: string, refreshToken: string, user: User}>{
 
         const user = await this.findOne({where: {id: userId}})
         if(!user){
             throw new NotFoundException("User is not found with provided register token")
-        }    
-        const { passcode } = passcodeDto 
+        }
+        const { passcode } = passcodeDto
         console.log("Passcode for verification: " + passcode)
         const passcodeValid = await bcrypt.compare(passcode,user.passcode)
         if(!passcodeValid){
@@ -119,8 +118,8 @@ export class AuthRepository extends Repository<User> {
     }
 
     async emailVerification(token:string):Promise<{accessToken: string, refreshToken: string, user: User }>{
-        const user = await this.verifyJwtToken(token)        
-         
+        const user = await this.verifyJwtToken(token)
+
         if(user.email_verified == true){
             throw new BadRequestException("User email is already verified.")
         }
@@ -129,26 +128,26 @@ export class AuthRepository extends Repository<User> {
             user.status = UserStatus.NO_PASSWORD
             user.status_updated_at = new Date()
             user.passcode = null
-    
+
             await this.save(user)
-    
+
             const accessToken = await this.signJwtToken(user.id, '1h')
             const refreshToken = await this.signJwtToken(user.id, '30d')
 
-            
+
             return {
-                accessToken, 
+                accessToken,
                 refreshToken,
                 user
             }
-       
 
-       
+
+
     }
 
     async setPassword(setPasswordDto: SetPasswordDto, user: User):Promise<MessageResponseDto>{
         const { password, repeatPassword } = setPasswordDto
-        
+
         if(user.password !== null){
             throw new BadRequestException("Password is already set up")
         }
@@ -173,16 +172,16 @@ export class AuthRepository extends Repository<User> {
         forgotPasswordToken: string,
         user: User
     }>{
-        const { email } = forgotPasswordDto 
+        const { email } = forgotPasswordDto
         let forgotPasswordToken
         const user = await this.findOne({where: {email}})
 
-        if(!user){ 
+        if(!user){
             forgotPasswordToken = null
-            return { 
+            return {
                 forgotPasswordToken,
                 user
-            } 
+            }
         }
 
         forgotPasswordToken = await this.signJwtToken(user.id, '7d')
@@ -191,12 +190,12 @@ export class AuthRepository extends Repository<User> {
             user
         }
 
-         
+
     }
 
     async forgotPasswordVerification(token:string){
         const user = await this.verifyJwtToken(token)
-        
+
         user.password = null
         user.status = UserStatus.NO_PASSWORD
         user.status_updated_at = new Date()
@@ -204,20 +203,20 @@ export class AuthRepository extends Repository<User> {
 
         const accessToken = await this.signJwtToken(user.id, '1hr')
         const refreshToken = await this.signJwtToken(user.id, '30d')
-        
 
-        return {accessToken, refreshToken} 
+
+        return {accessToken, refreshToken}
 
 
     }
 
     async signJwtToken(userId: string, expireIn: string):Promise<string>{
         try {
-            const payload = {userId, expireIn } 
+            const payload = {userId, expireIn }
             const jwtToken = await this.jwtService.sign(payload, {secret: process.env.CLIENT_JWT_SECRET})
-    
+
             return jwtToken
-    
+
         } catch (error) {
             console.error('Error signing JWT token:', error);
             throw new InternalServerErrorException('Failed to generate token');
@@ -248,8 +247,8 @@ export class AuthRepository extends Repository<User> {
             if(!user){
                 throw new NotFoundException("User with provided ID through token does not exist.")
             }
-          
- 
+
+
 
             // Return the decoded payload if valid
             return user;

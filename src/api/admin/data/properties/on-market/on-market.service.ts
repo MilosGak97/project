@@ -17,7 +17,6 @@ import { BrightdataSnapshotRepository } from 'src/api/repositories/postgres/brig
 import { BrightdataSnapshot } from 'src/api/entities/brightdata-snapshot.entity';
 import { StatesAbbreviation } from 'src/api/enums/states-abbreviation.enum';
 import { StateRepository } from 'src/api/repositories/postgres/state.repository';
-import { ListingsLA } from 'src/api/schemas/listingsLA.schema';
 import { ListingsLARepository } from 'src/api/repositories/mongodb/listingsLA.repository';
 import { FilterActionDto } from './dto/filter-action.dto';
 
@@ -81,7 +80,7 @@ export class OnMarketService {
     }
   }
 
-  private async pullData(snapshot_id) {
+  private async pullData(snapshot_id:string) {
     // Fetch the snapshot data from BrightData API snapshot_id
     const url = `https://api.brightdata.com/datasets/v3/snapshot/${snapshot_id}?compress=true&format=json`;
     const headers = { Authorization: `Bearer ${process.env.BRIGHTDATA_API_TOKEN}` };
@@ -316,25 +315,31 @@ export class OnMarketService {
   // ---------------  PUBLIC ROUTES /filter  ----------------------------------------------------------------------------------------------
 
   async filterStatesList(): Promise<{
-    response: any[]
+    response: {
+      state:string,
+      state_abbreviation: string,
+      countUnfiltered: number
+    }[]
 
   }> {
     const states = await this.stateRepository.statesDaily()
-    let response = []
+    const response = []
     for (const state of states) {
-      const countUnfiltered = await this.propertyListingRepository.countUnfiltered(state.abbreviation)
+      const countUnfiltered =
+        await this.propertyListingRepository.countUnfiltered(
+          state.abbreviation,
+        );
       //if(countUnfiltered>0){
 
       response.push({
         state: state.id,
         state_abbreviation: state.abbreviation,
-        countUnfiltered: countUnfiltered
-      })
+        countUnfiltered: countUnfiltered,
+      });
       // }
     }
 
-    return { response }
-    // return await this.propertyListingRepository.countUnfiltered()
+    return { response}
   }
   //active
   async filterStates(state: StatesAbbreviation, filterStateDto: FilterStatesDto): Promise<{
@@ -353,13 +358,13 @@ export class OnMarketService {
   async filteringAction(propertyId: string, admin: Admin, action: FilteredStatus):Promise<{
     message:string
   }> {
-    this.filteringRepository.createFilteringLog(propertyId, admin, action)
+    await this.filteringRepository.createFilteringLog(propertyId, admin, action)
     const filterActionDto = new FilterActionDto()
     filterActionDto.propertyId = propertyId
     filterActionDto.action = action
     
-    this.propertyListingRepository.filterAction(filterActionDto)
-    return { message: "Successfull filtered"} 
+    await this.propertyListingRepository.filterAction(filterActionDto)
+    return { message: "Successfully filtered"}
   }
 
 

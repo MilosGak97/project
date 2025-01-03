@@ -15,15 +15,7 @@ export class RegisterGuard implements CanActivate {
         if (!registerToken) {
             throw new ForbiddenException('Verification token is required');
         }
-/*
-        // Validate the registerToken with AuthService
-        const isValidToken = await this.authService.registerTokenValidation(registerToken);
 
-        // If the token is invalid, throw an error
-        if (!isValidToken) {
-            throw new ForbiddenException('Invalid or expired verification token');
-        }
-*/
         return true; // Allow access if token is valid
     }
 }

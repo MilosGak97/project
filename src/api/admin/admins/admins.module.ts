@@ -7,6 +7,8 @@ import { JwtModule } from '@nestjs/jwt';
 import { Admin } from 'src/api/entities/admin.entity';
 import { AdminsService } from './admins.service';
 import { AdminsController } from './admins.controller';
+import { User } from '../../entities/user.entity';
+import { Company } from '../../entities/company.entity';
 
 @Module({
   imports:[

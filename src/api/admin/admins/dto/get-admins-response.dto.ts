@@ -1,9 +1,10 @@
 import { ApiProperty } from "@nestjs/swagger"
-import { Admin } from "src/api/entities/admin.entity"
+import { GetAdminsTypeDto } from './get-admins-type.dto';
 
 export class GetAdminsResponseDto{
     @ApiProperty()
-    result: Admin[]
+    result: GetAdminsTypeDto[]
+
     @ApiProperty()
     totalRecords: number
 

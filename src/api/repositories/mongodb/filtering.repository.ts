@@ -22,8 +22,8 @@ export class FilteringRepository{
         console.log("Property ID: " + propertyId)
         console.log("Action: " + action)
         const filtering = new this.filteringModel({ adminId, propertyId, action });
-        filtering.save()
-        return {message: "Filtering log is succesfully created."}
+        await filtering.save()
+        return {message: "Filtering log is successfully created."}
       }
       
       //active

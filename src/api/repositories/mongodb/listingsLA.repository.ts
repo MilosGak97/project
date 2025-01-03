@@ -1,8 +1,7 @@
-import { ConflictException, Injectable } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
 import { CreatePropertyListingDto } from "src/api/admin/data/properties/on-market/dto/create-property-listing.dto";
-import { PropertyListing } from "src/api/entities/property-listing.entity";
 import { ListingsLA } from "src/api/schemas/listingsLA.schema";
 
 @Injectable()
@@ -33,7 +32,6 @@ export class ListingsLARepository{
           photos,
           county,
           additionalInfo,
-          snapshot,
           lpb_name,
           lpb_company,
           lpb_email,
@@ -51,10 +49,7 @@ export class ListingsLARepository{
           //throw new ConflictException("Property with this ZPID already exists");
           return { message: "Property with this ZPID already exists" };
         }
-        
-        const initial_scrapping = false
-
-        // Create a new instance of PropertyListing document
+// Create a new instance of PropertyListing document
         const property = new this.listingsLAModel({
           zpid,
           homeStatus: home_status,
@@ -79,7 +74,7 @@ export class ListingsLARepository{
           listing_provided_by__name: lpb_name,
           listing_provided_by__company: lpb_company,
           listing_provided_by_email: lpb_email,
-          llisting_provided_by_phone_number: lpb_phone_number,
+          listing_provided_by_phone_number: lpb_phone_number,
           isNonOwnerOccupied,
           additionalInfo, // If additionalInfo is provided
           initial_scrapping: false,
@@ -87,9 +82,8 @@ export class ListingsLARepository{
         });
     
         // Save the document in MongoDB
-        const savedProperty = await property.save();
-    
-        return { message: "Property created successfully"  };
+      await property.save();
+      return { message: "Property created successfully"  };
       }
 
 }
