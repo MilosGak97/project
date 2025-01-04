@@ -11,6 +11,7 @@ import { Admin } from 'src/api/entities/admin.entity';
 import { GetAdminsResponseDto } from './dto/get-admins-response.dto';
 import { MessageResponseDto } from 'src/api/responses/message-response.dto';
 import { AdminAuthGuard } from '../auth/admin-auth.guard';
+import { GetAdminsTypeDto } from './dto/get-admins-type.dto';
 
  
 
@@ -24,8 +25,9 @@ export class AdminsController {
 
 // GET - end point to get all admins
     @Get('admins')
-    @ApiOperation({ summary: 'Retrieve all Admin Users that matches Query' })  
-    @ApiOkResponse({type: GetAdminsResponseDto})
+    @ApiOperation({ summary: 'Retrieve all Admin Users that matches Query' })
+    @ApiOkResponse({ type: GetAdminsTypeDto, description: 'Admin user details' })
+    @ApiOkResponse({ type: GetAdminsResponseDto, description: 'Paginated list of admin users' })
     @ApiResponse({ status: 401, description: 'Not authorized'}) 
     @ApiResponse({ status: 403, description: 'You do not have access to this resource'}) 
     @ApiResponse({ status: 500, description: 'Internal Server Error: Something went wrong on the server.' })
