@@ -1,23 +1,25 @@
-import { ApiProperty } from '@nestjs/swagger';
+
+import { ApiExtraModels, ApiProperty } from '@nestjs/swagger';
 import { AdminRole } from '../../../enums/admin-role.enum';
 import { AdminStatus } from '../../../enums/admin-status.enum';
 
-export class GetAdminsTypeDto{
+@ApiExtraModels(GetAdminsTypeDto)
+export class GetAdminsTypeDto {
   @ApiProperty()
-  id: string
+  id: string;
 
   @ApiProperty()
-  name:string
+  name: string;
 
   @ApiProperty()
-  email:string
+  email: string;
+
+  @ApiProperty({ enum: AdminRole })
+  role: AdminRole;
+
+  @ApiProperty({ enum: AdminStatus })
+  status: AdminStatus;
 
   @ApiProperty()
-  role: AdminRole
-
-  @ApiProperty()
-  status: AdminStatus
-
-  @ApiProperty()
-  phone_number: string
+  phone_number: string;
 }

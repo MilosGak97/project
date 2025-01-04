@@ -1,22 +1,24 @@
-import { ApiProperty } from "@nestjs/swagger"
+import { ApiExtraModels, ApiProperty } from '@nestjs/swagger';
 import { GetAdminsTypeDto } from './get-admins-type.dto';
 
-export class GetAdminsResponseDto{
-    @ApiProperty()
-    result: GetAdminsTypeDto[]
+
+@ApiExtraModels(GetAdminsTypeDto) // Register the nested DTO
+export class GetAdminsResponseDto {
+    @ApiProperty({ type: [GetAdminsTypeDto] }) // Reference the nested DTO
+    result: GetAdminsTypeDto[];
 
     @ApiProperty()
-    totalRecords: number
+    totalRecords: number;
 
     @ApiProperty()
-    currentPage: number
+    currentPage: number;
 
     @ApiProperty()
-    totalPages: number
+    totalPages: number;
 
     @ApiProperty()
-    limitNumber: number
+    limitNumber: number;
 
     @ApiProperty()
-    offsetNumber: number
+    offsetNumber: number;
 }
