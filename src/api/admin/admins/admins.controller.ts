@@ -7,11 +7,10 @@ import { Roles } from '../auth/roles.decorator';
 import { AdminRole } from '../../enums/admin-role.enum';
 import { AdminsService } from './admins.service';
 import { UpdateAdminDto } from './dto/update-admin.dto';
-import { Admin } from 'src/api/entities/admin.entity';
 import { GetAdminsResponseDto } from './dto/get-admins-response.dto';
 import { MessageResponseDto } from 'src/api/responses/message-response.dto';
 import { AdminAuthGuard } from '../auth/admin-auth.guard';
-import { GetAdminsTypeDto } from './dto/get-admins-type.dto';
+import { AdminDto } from './dto/admin.dto';
 
  
 
@@ -52,8 +51,8 @@ export class AdminsController {
 // GET - end point to show information of single admin    
     @Get('admins/:id')
     @ApiOperation({summary: "Show information of single admin"})
-    @ApiOkResponse({type:Admin})
-    showAdminData(@Param('id') id:string):Promise<Admin>{
+    @ApiOkResponse({type:AdminDto})
+    showAdminData(@Param('id') id:string):Promise<AdminDto>{
         return this.adminsService.showAdminData(id)
     }
 

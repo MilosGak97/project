@@ -4,6 +4,8 @@ import { ListAllCompaniesDto } from "../../admin/companies/dto/list-all-companie
 import { ConflictException, Injectable, NotFoundException } from "@nestjs/common";
 import { UpdateCompanyDataDto } from "../../admin/companies/dto/update-company-data.dto";
 import { CompanyStatus } from "src/api/enums/company-status.enum";
+import { ListAllCompaniesResponseDto } from '../../admin/companies/dto/list-all-companies-response.dto';
+import { CompaniesTypeDto } from '../../admin/companies/dto/companies-type.dto';
 
 @Injectable()
 export class CompanyRepository extends Repository<Company> {
@@ -12,14 +14,7 @@ export class CompanyRepository extends Repository<Company> {
     }
 
 // method to list all companies    
-    async listAllCompanies(listAllCompaniesDto: ListAllCompaniesDto): Promise<{
-        result: Company[],
-        totalRecords: number,
-        totalPages: number,
-        currentPage: number,
-        numLimit: number,
-        numOffset: number
-    }> {
+    async listAllCompanies(listAllCompaniesDto: ListAllCompaniesDto): Promise<ListAllCompaniesResponseDto> {
         const { searchQuery, limit, offset } = listAllCompaniesDto
 
         const numLimit = Number(limit)
@@ -34,7 +29,21 @@ export class CompanyRepository extends Repository<Company> {
         }
         query.take(limit)
         query.skip(offset)
-        const [result, totalRecords] = await query.getManyAndCount() 
+        const [companies, totalRecords] = await query.getManyAndCount()
+        const result = companies.map(({ id, name, website, phone_number, email, logo_url, status, address}) => ({
+            id: id ?? '/',
+            name:name  ?? '/',
+            website:website ?? '/',
+            phone_number:phone_number ?? '/',
+            email: email ?? '/',
+            logo_url:logo_url ?? '/',
+            status:status,
+            address1: address.address1 ?? '/',
+            address2: address.address2 ?? '/',
+            city: address.city ?? '/',
+            state: address.state ?? '/',
+            zipcode: address.zipcode ?? '/',
+        }))
         const totalPages = Math.ceil(totalRecords / numLimit)
         const currentPage = Math.floor(numOffset / numLimit) + 1
 
@@ -49,15 +58,13 @@ export class CompanyRepository extends Repository<Company> {
     }
 
 // method to list single company data
-    async companyData(id: string): Promise<{ 
-        companyData: Company 
-    }> {
+    async companyData(id: string): Promise<Company> {
         const companyData = await this.findOne({ where: { id } })
-        if (!companyData) {
+        if (!companyData.id) {
             throw new NotFoundException('Company with this ID is not found.')
         }
 
-        return { companyData };
+        return companyData ;
     }
 
 // method to update single company data

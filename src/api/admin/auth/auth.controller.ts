@@ -8,6 +8,7 @@ import { GetAdmin } from './get-admin.decorator';
 import { Admin } from 'src/api/entities/admin.entity'; 
 import {  MessageResponseDto } from 'src/api/responses/message-response.dto'; 
 import { AdminAuthGuard } from './admin-auth.guard';
+import { WhoAmIDto } from './dto/who-am-i.dto';
 
 @ApiTags('Auth')
 @Controller('admin/auth')
@@ -122,8 +123,8 @@ export class AuthController {
     // new end point    
     @Get('who-am-i')
     @ApiOperation({ summary: 'Get information about logged user' })
-    @ApiOkResponse({ type: Admin })
-    async whoAmI(@Req() req: Request): Promise<Admin> {
+    @ApiOkResponse({ type: WhoAmIDto })
+    async whoAmI(@Req() req: Request): Promise<WhoAmIDto> {
         const token = req.cookies['accessToken']
         return await this.authService.whoAmI(token);
 

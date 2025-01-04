@@ -8,6 +8,10 @@ import { JwtPayload } from "../dto/jwt-payload.interface";
 import { PasswordResetDto } from "../dto/password-reset.dto";
 import { Admin } from "src/api/entities/admin.entity";
 import { MessageResponseDto } from "src/api/responses/message-response.dto";
+import { WhoAmIDto } from '../dto/who-am-i.dto';
+import { ApiProperty } from '@nestjs/swagger';
+import { AdminRole } from '../../../enums/admin-role.enum';
+import { UserType } from '../../../enums/user-type.enum';
 
 @Injectable()
 export class AuthRepository extends Repository<Admin>{
@@ -150,7 +154,7 @@ export class AuthRepository extends Repository<Admin>{
     }
 
 // new method
-    async whoAmI(token):Promise<Admin>{
+    async whoAmI(token):Promise<WhoAmIDto>{
 
         try{
             
@@ -162,15 +166,24 @@ export class AuthRepository extends Repository<Admin>{
 
             const adminId = payload.adminId
     
-            const adminProfile = this.findOne({where: {id : adminId}} )
-    
-            
-      
+            const adminProfile = await this.findOne({where: {id : adminId}} )
+
         if(!adminProfile) {
             throw new NotFoundException('Not found admin with provided admin id')
         }
 
-        return adminProfile;
+        return {
+            id: adminProfile.id,
+            name: adminProfile.name,
+            email: adminProfile.email,
+            email_verified: adminProfile.email_verified,
+            phone_number: adminProfile.phone_number,
+            role: adminProfile.role,
+            user_type: adminProfile.user_type,
+            status: adminProfile.status,
+            refreshToken: adminProfile.refreshToken,
+            initial_password: adminProfile.initial_password
+        };
         
     }catch(error){
         throw new UnauthorizedException(error)

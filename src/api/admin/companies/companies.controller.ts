@@ -1,5 +1,5 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ListAllCompaniesDto } from './dto/list-all-companies.dto'; 
 import { UpdateCompanyDataDto } from './dto/update-company-data.dto';
 import { ListAllUsersDto } from './dto/list-all-users.dto'; 
@@ -11,6 +11,7 @@ import { AdminRole } from 'src/api/enums/admin-role.enum';
 import { Company } from 'src/api/entities/company.entity';
 import { CompaniesService } from './companies.service';
 import { AdminAuthGuard } from '../auth/admin-auth.guard';
+import { ListAllCompaniesResponseDto } from './dto/list-all-companies-response.dto';
 
 
 @ApiTags('Companies')
@@ -22,22 +23,17 @@ export class CompaniesController {
 
 // GET - endpoint to list all companies    
     @Get('companies')
-    @ApiOperation({ summary: 'List all companies and filter with query' }) 
-    async listAllCompanies(@Query() listAllCompaniesDto: ListAllCompaniesDto): Promise<{
-        result: Company[],
-        totalRecords: number,
-        totalPages: number,
-        currentPage: number,
-        numLimit: number,
-        numOffset: number
-    }> {
+    @ApiOperation({ summary: 'List all companies and filter with query' })
+    @ApiOkResponse({type: ListAllCompaniesResponseDto})
+    async listAllCompanies(@Query() listAllCompaniesDto: ListAllCompaniesDto): Promise<ListAllCompaniesResponseDto> {
         return this.companiesService.listAllCompanies(listAllCompaniesDto)
     }
 
 // GET - endpoint to show single company data
     @Get('companies/:id')
-    @ApiOperation({ summary: "Show data of single company" }) 
-    async showCompanyData(@Param('id') id: string): Promise<{ companyData: Company }> {
+    @ApiOperation({ summary: "Show data of single company" })
+    @ApiOkResponse({type: Company})
+    async showCompanyData(@Param('id') id: string): Promise<Company> {
         return this.companiesService.companyData(id)
     }
 

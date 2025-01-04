@@ -7,6 +7,7 @@ import { ListAllUsersDto } from './dto/list-all-users.dto';
 import { User } from 'src/api/entities/user.entity';
 import { UpdateUserDto } from './dto/updateUser.dto';
 import { Company } from 'src/api/entities/company.entity';
+import { ListAllCompaniesResponseDto } from './dto/list-all-companies-response.dto';
 
 @Injectable()
 export class CompaniesService {
@@ -16,25 +17,16 @@ export class CompaniesService {
     ){}
 
 // method to list all companies    
-    async listAllCompanies(listAllCompaniesDto:ListAllCompaniesDto):Promise<{
-        result: Company[],
-        totalRecords: number,
-        totalPages: number,
-        currentPage: number,
-        numLimit: number,
-        numOffset: number
-    }>{
+    async listAllCompanies(listAllCompaniesDto:ListAllCompaniesDto):Promise<ListAllCompaniesResponseDto>{
         return this.companyRepository.listAllCompanies(listAllCompaniesDto)
     }
 
 // method to list single company data    
-    companyData(id:string):Promise<{ 
-        companyData: Company 
-    }>{
+    companyData(id:string):Promise<Company>{
         return this.companyRepository.companyData(id)
     }
 
-// method to update single comapny data    
+// method to update single company data
     async updateCompanyData(id:string, updateCompanyDataDto: UpdateCompanyDataDto):Promise<{
         message:string
     }> {

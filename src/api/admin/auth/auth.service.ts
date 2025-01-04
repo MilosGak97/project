@@ -4,6 +4,7 @@ import { SignInDto } from './dto/sign-in-admin.dto';
 import { PasswordResetDto } from './dto/password-reset.dto'; 
 import { Admin } from 'src/api/entities/admin.entity';
 import { MessageResponseDto } from 'src/api/responses/message-response.dto';
+import { WhoAmIDto } from './dto/who-am-i.dto';
 
 @Injectable()
 export class AuthService {
@@ -12,7 +13,7 @@ export class AuthService {
     ){}
 
 // new method    
-    async verifyEmail(token):Promise<{
+    async verifyEmail(token:string):Promise<{
         refreshToken:string,
         accessToken: string
     }>{
@@ -30,7 +31,7 @@ export class AuthService {
 
 
 // new method
-    async logout(token):Promise<boolean>{
+    async logout(token:string):Promise<boolean>{
         return await this.authRepository.logout(token)
     }
 
@@ -42,13 +43,13 @@ export class AuthService {
 
 
 // new method
-    async whoAmI(token):Promise<Admin>{
+    async whoAmI(token:string):Promise<WhoAmIDto>{
         return await this.authRepository.whoAmI(token)
     }
      
 
 // new method
-    async refreshAccessToken(refreshToken):Promise<{
+    async refreshAccessToken(refreshToken:string):Promise<{
         newAccessToken: string
     }>{
         return await this.authRepository.refreshAccessToken(refreshToken)
