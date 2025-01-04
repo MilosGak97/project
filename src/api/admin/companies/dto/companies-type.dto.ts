@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { CompanyStatus } from '../../../enums/company-status.enum';
 
-export class CompaniesTypeDto{
+export class SingleCompanyDto{
   @ApiProperty({required:true})
   id: string
 

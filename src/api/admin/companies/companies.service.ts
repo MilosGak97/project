@@ -1,13 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { CompanyRepository } from '../../repositories/postgres/company.repository';
 import { UserRepository } from '../../repositories/postgres/users.repository';
-import { ListAllCompaniesDto } from './dto/list-all-companies.dto';
-import { UpdateCompanyDataDto } from './dto/update-company-data.dto';
-import { ListAllUsersDto } from './dto/list-all-users.dto'; 
+import { UpdateCompanyDto } from './dto/update-company.dto';
+import { GetCompaniesUsersDto } from './dto/get-companies-users.dto';
 import { User } from 'src/api/entities/user.entity';
-import { UpdateUserDto } from './dto/updateUser.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 import { Company } from 'src/api/entities/company.entity';
-import { ListAllCompaniesResponseDto } from './dto/list-all-companies-response.dto';
+import { GetCompaniesResponseDto } from './dto/get-companies-response.dto';
+import { GetCompaniesDto } from './dto/get-companies.dto';
+import { GetCompaniesUsersResponseDto } from './dto/get-companies-users-response.dto';
 
 @Injectable()
 export class CompaniesService {
@@ -17,20 +18,20 @@ export class CompaniesService {
     ){}
 
 // method to list all companies    
-    async listAllCompanies(listAllCompaniesDto:ListAllCompaniesDto):Promise<ListAllCompaniesResponseDto>{
-        return this.companyRepository.listAllCompanies(listAllCompaniesDto)
+    async getCompanies(getCompaniesDto:GetCompaniesDto):Promise<GetCompaniesResponseDto>{
+        return this.companyRepository.getCompanies(getCompaniesDto)
     }
 
 // method to list single company data    
-    companyData(id:string):Promise<Company>{
-        return this.companyRepository.companyData(id)
+    getCompany(id:string):Promise<Company>{
+        return this.companyRepository.getCompany(id)
     }
 
 // method to update single company data
-    async updateCompanyData(id:string, updateCompanyDataDto: UpdateCompanyDataDto):Promise<{
+    async updateCompany(id:string, updateCompanyDataDto: UpdateCompanyDto):Promise<{
         message:string
     }> {
-        return this.companyRepository.updateCompanyData(id, updateCompanyDataDto)
+        return this.companyRepository.updateCompany(id, updateCompanyDataDto)
     }
 
 // method to delete company     
@@ -41,16 +42,8 @@ export class CompaniesService {
     }
 
 // method to list all users    
-    async listAllUsers(companyId:string, listAllUsersDto: ListAllUsersDto):Promise<{
-        result: User[],
-        totalRecords: number,
-        totalPages: number,
-        currentPage: number,
-        
-        numOffset: number,
-        numLimit: number
-    }>{
-        return this.userRepository.listAllUsers(companyId, listAllUsersDto)
+    async getCompaniesUsers(companyId:string, getCompaniesUsersDto: GetCompaniesUsersDto):Promise<GetCompaniesUsersResponseDto>{
+        return this.userRepository.getCompaniesUsers(companyId, getCompaniesUsersDto)
     }
 
 // method to show user data    

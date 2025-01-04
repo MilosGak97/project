@@ -2,7 +2,7 @@ import { ApiProperty } from "@nestjs/swagger";
 import { IsOptional, IsString } from "class-validator";
 import { AddressDto } from "./address.dto";
 
-export class UpdateCompanyDataDto{
+export class UpdateCompanyDto {
     
     @ApiProperty({required:false})
     @IsOptional()

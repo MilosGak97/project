@@ -1,17 +1,18 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { ListAllCompaniesDto } from './dto/list-all-companies.dto'; 
-import { UpdateCompanyDataDto } from './dto/update-company-data.dto';
-import { ListAllUsersDto } from './dto/list-all-users.dto'; 
+import { GetCompaniesDto } from './dto/get-companies.dto';
+import { UpdateCompanyDto } from './dto/update-company.dto';
+import { GetCompaniesUsersDto } from './dto/get-companies-users.dto';
 import { User } from 'src/api/entities/user.entity';
-import { UpdateUserDto } from './dto/updateUser.dto'; 
+import { UpdateUserDto } from './dto/update-user.dto';
 import { RolesGuard } from '../auth/roles.guard';
 import { Roles } from '../auth/roles.decorator';
 import { AdminRole } from 'src/api/enums/admin-role.enum';
 import { Company } from 'src/api/entities/company.entity';
 import { CompaniesService } from './companies.service';
 import { AdminAuthGuard } from '../auth/admin-auth.guard';
-import { ListAllCompaniesResponseDto } from './dto/list-all-companies-response.dto';
+import { GetCompaniesResponseDto } from './dto/get-companies-response.dto';
+import { GetCompaniesUsersResponseDto } from './dto/get-companies-users-response.dto';
 
 
 @ApiTags('Companies')
@@ -24,28 +25,28 @@ export class CompaniesController {
 // GET - endpoint to list all companies    
     @Get('companies')
     @ApiOperation({ summary: 'List all companies and filter with query' })
-    @ApiOkResponse({type: ListAllCompaniesResponseDto})
-    async listAllCompanies(@Query() listAllCompaniesDto: ListAllCompaniesDto): Promise<ListAllCompaniesResponseDto> {
-        return this.companiesService.listAllCompanies(listAllCompaniesDto)
+    @ApiOkResponse({type: GetCompaniesResponseDto})
+    async listAllCompanies(@Query() getCompaniesDto: GetCompaniesDto): Promise<GetCompaniesResponseDto> {
+        return this.companiesService.getCompanies(getCompaniesDto)
     }
 
 // GET - endpoint to show single company data
     @Get('companies/:id')
     @ApiOperation({ summary: "Show data of single company" })
     @ApiOkResponse({type: Company})
-    async showCompanyData(@Param('id') id: string): Promise<Company> {
-        return this.companiesService.companyData(id)
+    async getCompany(@Param('id') id: string): Promise<Company> {
+        return this.companiesService.getCompany(id)
     }
 
 // PATCH - endpoint to update single company data    
     @Patch('companies/:id')
     @ApiOperation({ summary: "Update single company data" }) 
-    async updateCompanyData(@Param('id') id: string,
-        @Body() updateCompanyDataDto: UpdateCompanyDataDto
+    async updateCompany(@Param('id') id: string,
+        @Body() updateCompanyDataDto: UpdateCompanyDto
     ):Promise<{
         message:string
     }>  {
-        return this.companiesService.updateCompanyData(id, updateCompanyDataDto)
+        return this.companiesService.updateCompany(id, updateCompanyDataDto)
     }
 
 // DELETE - endpoint to delete single company    
@@ -61,16 +62,8 @@ export class CompaniesController {
 // GET - endpoint to list all users of specific company  
     @Get('companies/:id/users')
     @ApiOperation({ summary: 'List all users that belong to this company and match filter parameters' })
-    async listAllUsers(@Param('id') id: string, @Query() listAllUsersDto: ListAllUsersDto):Promise<{
-        result: User[],
-        totalRecords: number,
-        totalPages: number,
-        currentPage: number,
-        
-        numOffset: number,
-        numLimit: number
-    }> {
-        return this.companiesService.listAllUsers(id, listAllUsersDto)
+    async getCompaniesUsers(@Param('id') id: string, @Query() getCompaniesUsersDto: GetCompaniesUsersDto):Promise<GetCompaniesUsersResponseDto> {
+        return this.companiesService.getCompaniesUsers(id, getCompaniesUsersDto)
     }
 
 

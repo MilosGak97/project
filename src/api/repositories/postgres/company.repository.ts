@@ -1,11 +1,10 @@
 import { Company } from "src/api/entities/company.entity";
 import { DataSource, Repository } from "typeorm";
-import { ListAllCompaniesDto } from "../../admin/companies/dto/list-all-companies.dto";
+import { GetCompaniesDto } from '../../admin/companies/dto/get-companies.dto';
 import { ConflictException, Injectable, NotFoundException } from "@nestjs/common";
-import { UpdateCompanyDataDto } from "../../admin/companies/dto/update-company-data.dto";
+import { UpdateCompanyDto } from "../../admin/companies/dto/update-company.dto";
 import { CompanyStatus } from "src/api/enums/company-status.enum";
-import { ListAllCompaniesResponseDto } from '../../admin/companies/dto/list-all-companies-response.dto';
-import { CompaniesTypeDto } from '../../admin/companies/dto/companies-type.dto';
+import { GetCompaniesResponseDto }  from '../../admin/companies/dto/get-companies-response.dto';
 
 @Injectable()
 export class CompanyRepository extends Repository<Company> {
@@ -14,8 +13,8 @@ export class CompanyRepository extends Repository<Company> {
     }
 
 // method to list all companies    
-    async listAllCompanies(listAllCompaniesDto: ListAllCompaniesDto): Promise<ListAllCompaniesResponseDto> {
-        const { searchQuery, limit, offset } = listAllCompaniesDto
+    async getCompanies(getCompaniesDto: GetCompaniesDto): Promise<GetCompaniesResponseDto> {
+        const { searchQuery, limit, offset } = getCompaniesDto
 
         const numLimit = Number(limit)
         const numOffset = Number(offset)
@@ -58,7 +57,7 @@ export class CompanyRepository extends Repository<Company> {
     }
 
 // method to list single company data
-    async companyData(id: string): Promise<Company> {
+    async getCompany(id: string): Promise<Company> {
         const companyData = await this.findOne({ where: { id } })
         if (!companyData.id) {
             throw new NotFoundException('Company with this ID is not found.')
@@ -68,7 +67,7 @@ export class CompanyRepository extends Repository<Company> {
     }
 
 // method to update single company data
-    async updateCompanyData(id: string, updateCompanyDataDto: UpdateCompanyDataDto):Promise<{
+    async updateCompany(id: string, updateCompanyDataDto: UpdateCompanyDto):Promise<{
         message:string
     }> {
         const companyData = await this.findOne({ where: { id } })

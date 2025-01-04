@@ -2,12 +2,13 @@ import { ConflictException, Injectable, NotFoundException } from "@nestjs/common
 import { User } from "src/api/entities/user.entity";
 import { UserStatus } from "src/api/enums/user-status.enum";
 import { DataSource, Repository } from "typeorm";
-import { ListAllUsersDto } from "../../admin/companies/dto/list-all-users.dto";
+import { GetCompaniesUsersDto } from "../../admin/companies/dto/get-companies-users.dto";
 import { Company } from "src/api/entities/company.entity";
-import { UpdateUserDto } from "../../admin/companies/dto/updateUser.dto";
+import { UpdateUserDto } from "../../admin/companies/dto/update-user.dto";
 import { EmailService } from "src/api/email/email.service";
 import { JwtService } from "@nestjs/jwt"; 
-import * as bcrypt from "bcrypt" 
+import * as bcrypt from "bcrypt"
+import { GetCompaniesUsersResponseDto } from '../../admin/companies/dto/get-companies-users-response.dto';
 
 @Injectable()
 export class UserRepository extends Repository<User>{
@@ -26,8 +27,7 @@ export class UserRepository extends Repository<User>{
         message:string
     }>{
         const jwtPayload = { userId: userId, expireIn: '3600' };
-        const jwtToken = await this.jwtService.sign(jwtPayload)
-        const verifyUrl = `${process.env.BASE_URL}admin/auth/email?jwtToken=${encodeURIComponent(jwtToken)}`;
+        const verifyUrl = `${process.env.BASE_URL}admin/auth/email?jwtToken=${encodeURIComponent(this.jwtService.sign(jwtPayload))}`;
        return await this.emailService.authEmail(email, verifyUrl, randomPassword || '' );
     }
 // method to generate random string (password)
@@ -46,18 +46,10 @@ export class UserRepository extends Repository<User>{
 /* -------------- PUBLIC METHODS --------------- */
 
 // method to list all users
-    async listAllUsers(companyId:string, listAllUsersDto:ListAllUsersDto):Promise<{
-        result: User[],
-        totalRecords: number,
-        totalPages: number,
-        currentPage: number,
-        
-        numOffset: number,
-        numLimit: number
-    }>{
+    async getCompaniesUsers(companyId:string, getCompaniesUsersDto:GetCompaniesUsersDto):Promise<GetCompaniesUsersResponseDto>{
 
-        const {searchQuery, limit, offset, status , role, initial_password, email_verified} = listAllUsersDto 
-        const query = await this.createQueryBuilder('user')
+        const {searchQuery, limit, offset, status , role, initial_password, email_verified} = getCompaniesUsersDto
+        const query = this.createQueryBuilder('user')
 
         const numLimit = Number(limit)
         const numOffset = Number(offset) 
@@ -96,7 +88,18 @@ export class UserRepository extends Repository<User>{
         query.skip(numOffset)
         query.take(numLimit)
 
-        const [result, totalRecords ] = await query.getManyAndCount() 
+        const [companiesUsers, totalRecords ] = await query.getManyAndCount()
+
+        const result = companiesUsers.map(({ id, name, email, phone_number, email_verified, role, status}) => ({
+            id: id ?? '/',
+            name: name ?? '/',
+            email: email ?? '/',
+            phone_number: phone_number ?? '/',
+            email_verified: email_verified,
+            role: role,
+            status: status
+
+        }))
         const totalPages = Math.ceil(totalRecords/numLimit)
         const currentPage = Math.floor(numOffset/numLimit) + 1
         return {
@@ -107,8 +110,6 @@ export class UserRepository extends Repository<User>{
             numLimit,
             numOffset
         }
-
-
     }
 
 // method to show single user data
