@@ -26,7 +26,6 @@ export class AdminsController {
 // GET - end point to get all admins
     @Get('admins')
     @ApiOperation({ summary: 'Retrieve all Admin Users that matches Query' })
-    @ApiOkResponse({ type: GetAdminsTypeDto, description: 'Admin user details' })
     @ApiOkResponse({ type: GetAdminsResponseDto, description: 'Paginated list of admin users' })
     @ApiResponse({ status: 401, description: 'Not authorized'}) 
     @ApiResponse({ status: 403, description: 'You do not have access to this resource'}) 
