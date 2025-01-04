@@ -92,14 +92,15 @@ export class AdminRepository extends Repository<Admin> {
         query.skip(offsetNumber)
 
         const [unfilteredResult, totalRecords ] = await query.getManyAndCount()
-        const result: GetAdminsTypeDto[]  = unfilteredResult.map(({ id, name, email, role, status, phone_number }) => ({
-            id,
-            name,
-            email,
-            role,
-            status,
-            phone_number
+        const result: GetAdminsTypeDto[] = unfilteredResult.map(({ id, name, email, role, status, phone_number }) => ({
+            id: id ?? "/",
+            name: name ?? "/",
+            email: email ?? "/",
+            role: role ?? "/",
+            status: status ?? "/",
+            phone_number: phone_number ?? "/"
         }));
+
 
         const currentPage = Math.floor(offset/limitNumber) + 1
         const totalPages = Math.ceil(totalRecords / limitNumber);
