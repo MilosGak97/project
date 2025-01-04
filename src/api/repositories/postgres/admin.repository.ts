@@ -96,8 +96,8 @@ export class AdminRepository extends Repository<Admin> {
             id: id ?? "/",
             name: name ?? "/",
             email: email ?? "/",
-            role: role ?? "/",
-            status: status ?? "/",
+            role: role,
+            status: status,
             phone_number: phone_number ?? "/"
         }));
 
