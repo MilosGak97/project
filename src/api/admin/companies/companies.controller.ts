@@ -3,7 +3,6 @@ import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { GetCompaniesDto } from './dto/get-companies.dto';
 import { UpdateCompanyDto } from './dto/update-company.dto';
 import { GetCompaniesUsersDto } from './dto/get-companies-users.dto';
-import { User } from 'src/api/entities/user.entity';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { RolesGuard } from '../auth/roles.guard';
 import { Roles } from '../auth/roles.decorator';
@@ -13,6 +12,8 @@ import { CompaniesService } from './companies.service';
 import { AdminAuthGuard } from '../auth/admin-auth.guard';
 import { GetCompaniesResponseDto } from './dto/get-companies-response.dto';
 import { GetCompaniesUsersResponseDto } from './dto/get-companies-users-response.dto';
+import { GetCompaniesUserResponseDto } from './dto/get-companies-user.response.dto';
+import { MessageResponseDto } from '../../responses/message-response.dto';
 
 
 @ApiTags('Companies')
@@ -40,21 +41,19 @@ export class CompaniesController {
 
 // PATCH - endpoint to update single company data    
     @Patch('companies/:id')
-    @ApiOperation({ summary: "Update single company data" }) 
+    @ApiOperation({ summary: "Update single company data" })
+    @ApiOkResponse({type: MessageResponseDto})
     async updateCompany(@Param('id') id: string,
         @Body() updateCompanyDataDto: UpdateCompanyDto
-    ):Promise<{
-        message:string
-    }>  {
+    ):Promise<MessageResponseDto>  {
         return this.companiesService.updateCompany(id, updateCompanyDataDto)
     }
 
 // DELETE - endpoint to delete single company    
     @Delete('companies/:id')
     @ApiOperation({ summary: "Delete company, change status to deleted" })
-    async deleteCompany(@Param('id') id: string): Promise<{
-        message: string
-    }> {
+    @ApiOkResponse({type:MessageResponseDto})
+    async deleteCompany(@Param('id') id: string): Promise<MessageResponseDto> {
         return this.companiesService.deleteCompany(id)
     }
 
@@ -62,6 +61,7 @@ export class CompaniesController {
 // GET - endpoint to list all users of specific company  
     @Get('companies/:id/users')
     @ApiOperation({ summary: 'List all users that belong to this company and match filter parameters' })
+    @ApiOkResponse({type: GetCompaniesUsersResponseDto})
     async getCompaniesUsers(@Param('id') id: string, @Query() getCompaniesUsersDto: GetCompaniesUsersDto):Promise<GetCompaniesUsersResponseDto> {
         return this.companiesService.getCompaniesUsers(id, getCompaniesUsersDto)
     }
@@ -70,24 +70,21 @@ export class CompaniesController {
 // GET - endpoint to show single user data    
     @Get('companies/:companyId/users/:id')
     @ApiOperation({summary: "Show user data including company information"})
-    async showUserData(@Param('companyId') companyId:string, @Param('id') userId:string):Promise<{
-        userData: User,
-        companyData: Company
-    }>{
-        return this.companiesService.showUserData(companyId, userId)
+    @ApiOkResponse({type: GetCompaniesUserResponseDto})
+    async getCompaniesUser(@Param('companyId') companyId:string, @Param('id') userId:string):Promise<GetCompaniesUserResponseDto>{
+        return this.companiesService.getCompaniesUser(companyId, userId)
     }
 
 
 // PATCH - endpoint to update single user    
     @Patch('companies/:companyId/users/:id')
     @ApiOperation({summary: 'Update user fields'})
+    @ApiOkResponse({type:MessageResponseDto})
     async updateUser(
         @Param('companyId') companyId: string, 
         @Param('id') userId:string,
         @Body() updateUserDto: UpdateUserDto
-    ):Promise<{
-        message: string
-    }>{
+    ):Promise<MessageResponseDto>{
         return this.companiesService.updateUser(companyId,userId,updateUserDto)
     }
 
@@ -95,21 +92,19 @@ export class CompaniesController {
 // DELETE - endpoint to delete single user    
     @Delete('companies/:companyId/users/:id')
     @ApiOperation({summary: "Delete user (change UserStatus to deleted)"})
+    @ApiOkResponse({type:MessageResponseDto})
     async userDelete(
         @Param('companyId') companyId:string,
         @Param('id') userId:string
-):Promise<{
-    message:string
-}>{
+):Promise<MessageResponseDto>{
         return this.companiesService.deleteUser(companyId,userId)
     }
 
 // POST - endpoint to reset password for single user    
     @Post('companies/:companyId/users/:id/password')
     @ApiOperation({summary: "Reset client password"})
-    async resetPassword(@Param('companyId') companyId:string, @Param('id') userId:string):Promise<{
-        message:string
-    }>{
+    @ApiOkResponse({type:MessageResponseDto})
+    async resetPassword(@Param('companyId') companyId:string, @Param('id') userId:string):Promise<MessageResponseDto>{
         return this.companiesService.resetPassword(companyId,userId)
     }
 

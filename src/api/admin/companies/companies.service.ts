@@ -9,6 +9,7 @@ import { Company } from 'src/api/entities/company.entity';
 import { GetCompaniesResponseDto } from './dto/get-companies-response.dto';
 import { GetCompaniesDto } from './dto/get-companies.dto';
 import { GetCompaniesUsersResponseDto } from './dto/get-companies-users-response.dto';
+import { GetCompaniesUserResponseDto } from './dto/get-companies-user.response.dto';
 
 @Injectable()
 export class CompaniesService {
@@ -47,11 +48,8 @@ export class CompaniesService {
     }
 
 // method to show user data    
-    async showUserData(companyId:string, userId:string):Promise<{
-        userData: User,
-        companyData: Company
-    }>{
-        return this.userRepository.showUserData(companyId, userId)
+    async getCompaniesUser(companyId:string, userId:string):Promise<GetCompaniesUserResponseDto>{
+        return this.userRepository.getCompaniesUser(companyId, userId)
     }
 
 // method to update single user     

@@ -3,12 +3,14 @@ import { User } from "src/api/entities/user.entity";
 import { UserStatus } from "src/api/enums/user-status.enum";
 import { DataSource, Repository } from "typeorm";
 import { GetCompaniesUsersDto } from "../../admin/companies/dto/get-companies-users.dto";
-import { Company } from "src/api/entities/company.entity";
 import { UpdateUserDto } from "../../admin/companies/dto/update-user.dto";
 import { EmailService } from "src/api/email/email.service";
 import { JwtService } from "@nestjs/jwt"; 
 import * as bcrypt from "bcrypt"
 import { GetCompaniesUsersResponseDto } from '../../admin/companies/dto/get-companies-users-response.dto';
+import {
+    GetCompaniesUserResponseDto,
+} from '../../admin/companies/dto/get-companies-user.response.dto';
 
 @Injectable()
 export class UserRepository extends Repository<User>{
@@ -113,10 +115,7 @@ export class UserRepository extends Repository<User>{
     }
 
 // method to show single user data
-    async showUserData(companyId:string, userId: string):Promise<{
-        userData: User,
-        companyData: Company
-    }>{
+    async getCompaniesUser(companyId:string, userId: string):Promise<GetCompaniesUserResponseDto>{
         
         const userData = await this.createQueryBuilder('user')
         .leftJoinAndSelect('user.company', 'company')
@@ -124,14 +123,17 @@ export class UserRepository extends Repository<User>{
         .getOne()
 
         if(!userData){
-            throw new NotFoundException('User with this ID does not exist.')
+            throw new NotFoundException('User with this ID does not exist in provided Company.')
         }
 
-        const companyData = userData.company || null
-
         return {
-            userData,
-            companyData
+            name: userData.name ?? '-',
+            id: userData.id,
+            email: userData.email ?? '-',
+            phone_number: userData.phone_number ?? '-',
+            email_verified: userData.email_verified ?? false,
+            role: userData.role,
+            status: userData.status
         }
     }
 
