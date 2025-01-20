@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { PropertyListingRepository } from 'src/api/repositories/postgres/property-listing.repository';
 import { FilteredStatus } from 'src/api/enums/filtered-status.enum';
 import { FilteringRepository } from 'src/api/repositories/mongodb/filtering.repository';
-import { Admin } from 'src/api/entities/admin.entity';
+import { Admin } from 'src/api/entities/admin-entities/admin.entity';
 import { Filtering } from 'src/api/schemas/filtering-logs.schema';
 import { FilterStatesDto } from 'src/api/admin/data/properties/on-market/dto/filter-states.dto';
 import { PropertyListing } from 'src/api/entities/property-listing.entity';

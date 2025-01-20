@@ -1,4 +1,4 @@
-import { Company } from "src/api/entities/company.entity";
+import { Company } from "src/api/entities/company-entities/company.entity";
 import { DataSource, Repository } from "typeorm";
 import { GetCompaniesDto } from '../../admin/companies/dto/get-companies.dto';
 import { ConflictException, Injectable, NotFoundException } from "@nestjs/common";

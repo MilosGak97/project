@@ -3,7 +3,7 @@ import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { GetAdmin } from 'src/api/admin/auth/get-admin.decorator';
 import { FilterStatesDto } from 'src/api/admin/data/properties/on-market/dto/filter-states.dto';
 import { ListLogsDto } from 'src/api/admin/data/properties/on-market/dto/list-logs.dto';
-import { Admin } from 'src/api/entities/admin.entity';
+import { Admin } from 'src/api/entities/admin-entities/admin.entity';
 import { PropertyListing } from 'src/api/entities/property-listing.entity';
 import { FilteredStatus } from 'src/api/enums/filtered-status.enum';
 import { Filtering } from 'src/api/schemas/filtering-logs.schema';

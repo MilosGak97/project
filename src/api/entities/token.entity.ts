@@ -1,7 +1,7 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { IsDate, IsEnum, IsNotEmpty, IsString } from "class-validator";
 import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
-import { User } from './user.entity';
+import { User } from './company-entities/user.entity';
 import { TokenType } from "../enums/token-type.enum";
 import { TokenStatus } from "../enums/token-status.enum";
 

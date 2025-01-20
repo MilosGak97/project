@@ -52,8 +52,8 @@ export class AdminsController {
     @Get('admins/:id')
     @ApiOperation({summary: "Show information of single admin"})
     @ApiOkResponse({type:AdminDto})
-    showAdminData(@Param('id') id:string):Promise<AdminDto>{
-        return this.adminsService.showAdminData(id)
+    getAdmin(@Param('id') id:string):Promise<AdminDto>{
+        return this.adminsService.getAdmin(id)
     }
 
 

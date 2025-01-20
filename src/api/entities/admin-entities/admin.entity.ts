@@ -1,9 +1,9 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from "typeorm";
 import { IsEmail, IsOptional, IsString, IsPhoneNumber, IsEnum, IsBoolean, IsNotEmpty, IsDate } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
-import { AdminStatus } from "../enums/admin-status.enum";
-import { AdminRole } from "../enums/admin-role.enum";
-import { UserType } from "../enums/user-type.enum";
+import { AdminStatus } from "../../enums/admin-status.enum";
+import { AdminRole } from "../../enums/admin-role.enum";
+import { UserType } from "../../enums/user-type.enum";
 
 @Entity('admins')   
 export class Admin {

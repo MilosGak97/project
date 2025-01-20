@@ -5,7 +5,7 @@ import { SignInDto } from './dto/sign-in-admin.dto';
 import { Request, Response } from 'express';
 import { PasswordResetDto } from './dto/password-reset.dto';
 import { GetAdmin } from './get-admin.decorator'; 
-import { Admin } from 'src/api/entities/admin.entity'; 
+import { Admin } from 'src/api/entities/admin-entities/admin.entity';
 import {  MessageResponseDto } from 'src/api/responses/message-response.dto'; 
 import { AdminAuthGuard } from './admin-auth.guard';
 import { WhoAmIDto } from './dto/who-am-i.dto';

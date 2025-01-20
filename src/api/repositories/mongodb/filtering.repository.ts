@@ -1,7 +1,7 @@
 import { Injectable, InternalServerErrorException } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
-import { Admin } from "src/api/entities/admin.entity";
+import { Admin } from "src/api/entities/admin-entities/admin.entity";
 import { FilteredStatus } from "src/api/enums/filtered-status.enum";
 import { Filtering } from "src/api/schemas/filtering-logs.schema";
 import { ListLogsDto } from "../../admin/data/properties/on-market/dto/list-logs.dto";

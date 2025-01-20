@@ -4,8 +4,8 @@ import { ApiProperty } from "@nestjs/swagger";
 import { IsBoolean, IsDate, IsEmail, IsEnum, IsNotEmpty, IsOptional, IsPhoneNumber, IsString, IsStrongPassword } from "class-validator"; 
 import { UserRole } from "src/api/enums/user-role.enum";
 import { UserStatus } from "src/api/enums/user-status.enum";
-import { UserType } from "../enums/user-type.enum";
-import { Token } from "./token.entity";
+import { UserType } from "../../enums/user-type.enum";
+import { Token } from "../token.entity";
 
 @Entity('users')
 export class User{

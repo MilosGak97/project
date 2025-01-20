@@ -1,4 +1,4 @@
-import { Admin } from 'src/api/entities/admin.entity';
+import { Admin } from 'src/api/entities/admin-entities/admin.entity';
 import { DataSource, Repository } from 'typeorm';
 import { CreateAdminDto } from 'src/api/admin/admins/dto/create-admin.dto';
 import {
@@ -51,20 +51,23 @@ export class AdminRepository extends Repository<Admin> {
     userId: string,
     email: string,
     randomPassword?: string,
-  ): Promise<{
-    message: string;
-  }> {
+  ):Promise<boolean> {
     const jwtPayload = { userId: userId, expireIn: '3600' };
-    const jwtToken = await this.jwtService.sign(jwtPayload, {
-      secret: process.env.ADMIN_JWT_SECRET,
-    });
-
-    const verifyUrl = `${process.env.BASE_URL}admin/auth/email?jwtToken=${encodeURIComponent(jwtToken)}`;
-    return await this.emailService.authEmail(
+    const verifyUrl = `${process.env.BASE_URL}admin/auth/email?jwtToken=${encodeURIComponent(this.jwtService.sign(jwtPayload, { secret: process.env.ADMIN_JWT_SECRET, }))}`;
+    const emailSent = await this.emailService.authEmail(
       email,
       verifyUrl,
       randomPassword || '',
     );
+    if(!emailSent){
+      throw new HttpException({
+        success:false,
+        message: "Verification email was not send"
+      },
+        HttpStatus.INTERNAL_SERVER_ERROR
+      )
+    }
+    return true
   }
 
   /* ---------- PUBLIC METHOD ------------- */
@@ -145,64 +148,38 @@ export class AdminRepository extends Repository<Admin> {
   async createAdmin(createAdminDto: CreateAdminDto): Promise<{
     message: string;
   }> {
-    //this.logger.log('Creating admin user...'); // Log the start of the process
-
     const { name, email, phone_number, role, created_by } = createAdminDto;
 
-    // 1. Check if an admin user with this email already exists
-    const existingEmailUser = await this.findOne({
-      where: { email: email },
+    const existingUser = await this.findOne({
+      where: [
+        { email: email },
+        //{ phone_number: phone_number || null },
+      ],
     });
 
-    if (existingEmailUser) {
-      this.logger.warn(`Email conflict for email: ${email}`);
-      throw new HttpException(
-        {
-          success: false,
-          message:
-            'This email address is already associated with an existing user.',
-        },
-        HttpStatus.CONFLICT,
-      );
-    }
-
-    let cleanedPhoneNumber;
-    if (phone_number) {
-      // 2. Trim any whitespace from the phone number
-      cleanedPhoneNumber = phone_number.replace(/\s+/g, '');
-
-      // 3. Validate if phone number contains exactly 10 digits
-      if (!/^\d{10}$/.test(cleanedPhoneNumber)) {
-        this.logger.warn(`Invalid phone number: ${cleanedPhoneNumber}`);
+    if (existingUser) {
+      if (existingUser.email === email) {
         throw new HttpException(
           {
             success: false,
             message:
-              'Phone number format is not valid. Ensure it has 10 digits.',
+              'An admin user with this email already exists',
           },
           HttpStatus.BAD_REQUEST,
         );
       }
-
-      // 4. Check if an admin user with this phone number already exists
-      const existingPhoneUser = await this.findOne({
-        where: { phone_number: cleanedPhoneNumber },
-      });
-
-      if (existingPhoneUser) {
-        this.logger.warn(
-          `Phone number conflict for phone: ${cleanedPhoneNumber}`,
-        );
+      if (phone_number && existingUser.phone_number === phone_number) {
         throw new HttpException(
           {
             success: false,
             message:
-              'This phone number is already associated with an existing user.',
+              'An admin user with this phone number already exists',
           },
-          HttpStatus.CONFLICT,
+          HttpStatus.BAD_REQUEST,
         );
       }
     }
+
 
     try {
       // Generate random password
@@ -212,8 +189,8 @@ export class AdminRepository extends Repository<Admin> {
       const newAdminUser = new Admin();
       newAdminUser.name = name;
       newAdminUser.email = email;
-      newAdminUser.phone_number = cleanedPhoneNumber
-        ? cleanedPhoneNumber
+      newAdminUser.phone_number = phone_number
+        ? phone_number
         : null;
       newAdminUser.role = role as AdminRole;
       newAdminUser.password = hashedPassword;
@@ -226,7 +203,6 @@ export class AdminRepository extends Repository<Admin> {
 
       // Save the new admin user to the database
       await this.save(newAdminUser);
-      this.logger.log(`Admin user created with ID: ${newAdminUser.id}`);
 
       // verify email method  newAdminUser.id
       await this.verifyEmail(newAdminUser.id, email, randomPassword);
@@ -248,7 +224,7 @@ export class AdminRepository extends Repository<Admin> {
   }
 
   // method to show single admin data
-  async showAdminData(id: string): Promise<AdminDto> {
+  async getAdmin(id: string): Promise<AdminDto> {
     const admin = await this.findOne({ where: { id } });
 
     if (!admin) {

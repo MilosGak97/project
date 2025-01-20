@@ -6,10 +6,7 @@ export class EmailService {
   constructor() {
     sgMail.setApiKey(process.env.SENDGRID_API_KEY); // Ensure your SENDGRID_API_KEY is set in the environment variables
   }
-
-  async authEmail(to: string, verifyUrl: string, password: string):Promise<{
-    message:string
-  }> { 
+  async authEmail(to: string, verifyUrl: string, password: string):Promise<boolean> {
     const htmlContent = `
     <!DOCTYPE html>
     <html lang="en">
@@ -88,23 +85,8 @@ export class EmailService {
       subject: 'Welcome to Our Service!',
       text: `Welcome! Your password is: ${password}. Please verify your email by clicking on this link: ${verifyUrl}`,
       html: htmlContent  };
-
-    try {
-        await sgMail.send(msg);
-        return {
-            message: "Email has been sent successfully."
-        }
-      } catch (error) {
-        console.error('Error sending email:', error.response.body); // Log the full error response
-        throw new HttpException(
-          {
-            success: false,
-            message: 'Failed to send email',
-          },
-          HttpStatus.INTERNAL_SERVER_ERROR,
-        );
-      }
-      
+    await sgMail.send(msg);
+    return true
   }
 
 

@@ -1,5 +1,5 @@
 import { BadRequestException, ConflictException, ForbiddenException, Injectable, InternalServerErrorException, NotFoundException, UnauthorizedException } from "@nestjs/common";
-import { User } from "src/api/entities/user.entity";
+import { User } from "src/api/entities/company-entities/user.entity";
 import { DataSource, Repository } from "typeorm";
 import { SignUpDto } from "./dto/sign-up.dto";
 import { UserStatus } from "src/api/enums/user-status.enum";

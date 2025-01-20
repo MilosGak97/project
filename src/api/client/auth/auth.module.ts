@@ -6,11 +6,11 @@ import { PassportModule } from '@nestjs/passport';
 import { AuthRepository } from './auth.repository';
 import { TokenRepository } from 'src/api/repositories/postgres/token.repository';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { User } from 'src/api/entities/user.entity';
+import { User } from 'src/api/entities/company-entities/user.entity';
 import { Token } from 'src/api/entities/token.entity';
 import { EmailService } from 'src/api/email/email.service';
 import { JwtUserStrategy } from './jwtUser.strategy';
-import { Company } from '../../entities/company.entity';
+import { Company } from '../../entities/company-entities/company.entity';
 
 @Module({
   imports: [

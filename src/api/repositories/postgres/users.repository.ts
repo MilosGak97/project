@@ -1,5 +1,5 @@
-import { ConflictException, Injectable, NotFoundException } from "@nestjs/common"; 
-import { User } from "src/api/entities/user.entity";
+import { ConflictException, HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
+import { User } from "src/api/entities/company-entities/user.entity";
 import { UserStatus } from "src/api/enums/user-status.enum";
 import { DataSource, Repository } from "typeorm";
 import { GetCompaniesUsersDto } from "../../admin/companies/dto/get-companies-users.dto";
@@ -25,12 +25,21 @@ export class UserRepository extends Repository<User>{
 /* -------- PRIVATE METHODS ---------- */
 
 // method to verify email
-    private async verifyEmail(userId: string, email: string, randomPassword?:string ):Promise<{
-        message:string
-    }>{
+    private async verifyEmail(userId: string, email: string, randomPassword?:string ):Promise<boolean>{
         const jwtPayload = { userId: userId, expireIn: '3600' };
         const verifyUrl = `${process.env.BASE_URL}admin/auth/email?jwtToken=${encodeURIComponent(this.jwtService.sign(jwtPayload))}`;
-       return await this.emailService.authEmail(email, verifyUrl, randomPassword || '' );
+        const emailSent = await this.emailService.authEmail(email, verifyUrl, randomPassword || '' );
+        if(!emailSent){
+            throw new HttpException(
+              {
+                  success: false,
+                  message: "Verification email was not send"
+              },
+              HttpStatus.INTERNAL_SERVER_ERROR
+
+            )
+        }
+        return true
     }
 // method to generate random string (password)
     private async generateRandomPassword(length: number = 8):Promise<{

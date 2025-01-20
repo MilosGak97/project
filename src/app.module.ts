@@ -8,8 +8,8 @@ import { ConfigModule } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { DataModule } from './api/admin/data/data.module';
 import { Token } from './api/entities/token.entity';
-import { User } from './api/entities/user.entity';
-import { Company } from './api/entities/company.entity';
+import { User } from './api/entities/company-entities/user.entity';
+import { Company } from './api/entities/company-entities/company.entity';
 
 
 
@@ -32,6 +32,12 @@ import { Company } from './api/entities/company.entity';
       entities: [Token, User, Company ],
       autoLoadEntities: true,
       synchronize: true,
+      // Connection Pooling
+      extra: {
+        max: 1000,       // Maximum number of connections in the pool
+        min: 2,        // Minimum number of idle connections in the pool
+        idleTimeoutMillis: 30000, // How long a connection can be idle before being closed
+      },
     }), 
     EmailModule,
     AdminModule,
