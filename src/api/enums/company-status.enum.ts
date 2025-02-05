@@ -1,7 +1,7 @@
 export enum CompanyStatus{
-    SUBSCRIBED = 'subscribed',
-    NOT_SUBSCRIBED = 'not_subscribed',
-    SUSPENDED = 'suspended',
-    DELETED = 'deleted'
+    SUBSCRIBED = 'SUBSCRIBED',
+    NOT_SUBSCRIBED = 'NOT_SUBSCRIBED',
+    SUSPENDED = 'SUSPENDED',
+    DELETED = 'DELETED',
 
 }

@@ -1,7 +1,7 @@
 import { Injectable, CanActivate, ExecutionContext, ForbiddenException, UnauthorizedException } from '@nestjs/common';
 import { Reflector } from '@nestjs/core'; 
 import { AdminRole } from '../../enums/admin-role.enum';
-import { Admin } from 'src/api/entities/admin-entities/admin.entity';
+import { Admin } from 'src/api/entities/admin.entity';
 import { UserType } from 'src/api/enums/user-type.enum';
 
 @Injectable()
@@ -26,7 +26,7 @@ export class RolesGuard implements CanActivate {
             throw new UnauthorizedException('User not authenticated');
         }
 
-        if(user.user_type !== UserType.EMPLOYEE){
+        if(user.userType !== UserType.EMPLOYEE){
             throw new ForbiddenException("User type is not " + UserType.EMPLOYEE)
         }
 
@@ -39,7 +39,7 @@ export class RolesGuard implements CanActivate {
         }
 
         // Check if the user still has the initial password set
-        if (user.initial_password) {
+        if (user.initialPassword) {
             throw new UnauthorizedException('Initial password is true. Please change your password.');
         }
 

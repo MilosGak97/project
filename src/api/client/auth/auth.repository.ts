@@ -1,5 +1,5 @@
 import { BadRequestException, ConflictException, ForbiddenException, Injectable, InternalServerErrorException, NotFoundException, UnauthorizedException } from "@nestjs/common";
-import { User } from "src/api/entities/company-entities/user.entity";
+import { User } from "src/api/entities/user.entity";
 import { DataSource, Repository } from "typeorm";
 import { SignUpDto } from "./dto/sign-up.dto";
 import { UserStatus } from "src/api/enums/user-status.enum";
@@ -43,9 +43,9 @@ export class AuthRepository extends Repository<User> {
 
         const user = new User()
         user.email = email
-        user.email_verified = false
+        user.emailVerified = false
         user.status = UserStatus.NEW_REGISTER
-        user.user_type = UserType.USER
+        user.userType = UserType.USER
         user.role = UserRole.HEAD
         user.passcode = hashedPasscode
         const savedUser = await this.save(user)
@@ -104,8 +104,8 @@ export class AuthRepository extends Repository<User> {
         }
 
         user.status = UserStatus.NO_PASSWORD
-        user.status_updated_at = new Date()
-        user.email_verified = true
+        user.statusUpdatedAt = new Date()
+        user.emailVerified = true
         user.passcode = null
 
         await this.save(user)
@@ -120,13 +120,13 @@ export class AuthRepository extends Repository<User> {
     async emailVerification(token:string):Promise<{accessToken: string, refreshToken: string, user: User }>{
         const user = await this.verifyJwtToken(token)
 
-        if(user.email_verified == true){
+        if(user.emailVerified == true){
             throw new BadRequestException("User email is already verified.")
         }
 
-            user.email_verified = true
+            user.emailVerified = true
             user.status = UserStatus.NO_PASSWORD
-            user.status_updated_at = new Date()
+            user.statusUpdatedAt = new Date()
             user.passcode = null
 
             await this.save(user)
@@ -161,7 +161,7 @@ export class AuthRepository extends Repository<User> {
         user.password = await bcrypt.hash(password, salt)
 
         user.status = UserStatus.ACTIVE
-        user.status_updated_at = new Date()
+        user.statusUpdatedAt = new Date()
         await this.save(user)
         return {
             message: "Password is saved."
@@ -198,7 +198,7 @@ export class AuthRepository extends Repository<User> {
 
         user.password = null
         user.status = UserStatus.NO_PASSWORD
-        user.status_updated_at = new Date()
+        user.statusUpdatedAt = new Date()
         await this.save(user)
 
         const accessToken = await this.signJwtToken(user.id, '1hr')

@@ -1,6 +1,6 @@
 export enum CountyStatus{
-    ACTIVE='active',
-    INACTIVE='inactive',
-    DELETED = 'deleted'
+    ACTIVE='ACTIVE',
+    INACTIVE='INACTIVE',
+    DELETED = 'DELETED'
 
 }

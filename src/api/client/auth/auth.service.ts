@@ -7,7 +7,7 @@ import { TokenType } from 'src/api/enums/token-type.enum';
 import { RegisterTokenResponseDto } from './dto/register-token-exist.dto';
 import { TokenResponseDto } from './dto/token-response.dto';
 import { SetPasswordDto } from './dto/set-password.dto';
-import { User } from 'src/api/entities/company-entities/user.entity';
+import { User } from 'src/api/entities/user.entity';
 import { MessageResponseDto } from 'src/api/responses/message-response.dto';
 import { SignInDto } from './dto/sign-in.dto';
 import { TokenStatus } from 'src/api/enums/token-status.enum';

@@ -5,7 +5,7 @@ import { SignInDto } from './dto/sign-in-admin.dto';
 import { Request, Response } from 'express';
 import { PasswordResetDto } from './dto/password-reset.dto';
 import { GetAdmin } from './get-admin.decorator'; 
-import { Admin } from 'src/api/entities/admin-entities/admin.entity';
+import { Admin } from 'src/api/entities/admin.entity';
 import {  MessageResponseDto } from 'src/api/responses/message-response.dto'; 
 import { AdminAuthGuard } from './admin-auth.guard';
 import { WhoAmIDto } from './dto/who-am-i.dto';
@@ -61,7 +61,7 @@ export class AuthController {
         // Set the HTTP-only cookie for the access token
         res.cookie('accessToken', accessToken, {
             httpOnly: true,
-            secure: true, // Use secure cookies in production
+            secure: true, // Use secure cdeokies in production
             sameSite: 'none', // Adjust as necessary
             maxAge: 60 * 60 * 1000 // 1 hour for access token
         });
@@ -127,7 +127,6 @@ export class AuthController {
     async whoAmI(@Req() req: Request): Promise<WhoAmIDto> {
         const token = req.cookies['accessToken']
         return await this.authService.whoAmI(token);
-
     }
 
 

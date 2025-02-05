@@ -1,5 +1,7 @@
 import {
   BadRequestException,
+  HttpException,
+  HttpStatus,
   Injectable,
   Logger,
   NotFoundException,
@@ -12,7 +14,7 @@ import { SignInDto } from '../dto/sign-in-admin.dto';
 import * as bcrypt from 'bcrypt';
 import { JwtPayload } from '../dto/jwt-payload.interface';
 import { PasswordResetDto } from '../dto/password-reset.dto';
-import { Admin } from 'src/api/entities/admin-entities/admin.entity';
+import { Admin } from 'src/api/entities/admin.entity';
 import { MessageResponseDto } from 'src/api/responses/message-response.dto';
 import { WhoAmIDto } from '../dto/who-am-i.dto';
 
@@ -54,7 +56,7 @@ export class AuthRepository extends Repository<Admin> {
     }
 
     // Update user's email verification status and set them to active
-    user.email_verified = true;
+    user.emailVerified = true;
     user.status = AdminStatus.ACTIVE;
     await this.save(user);
 
@@ -159,8 +161,8 @@ export class AuthRepository extends Repository<Admin> {
     const salt = await bcrypt.genSalt(10);
     user.password = await bcrypt.hash(newPassword, salt);
 
-    if (user.initial_password) {
-      user.initial_password = false;
+    if (user.initialPassword) {
+      user.initialPassword = false;
     }
 
     await this.save(user);
@@ -174,7 +176,7 @@ export class AuthRepository extends Repository<Admin> {
   async whoAmI(token: string): Promise<WhoAmIDto> {
     try {
       if (!token) {
-        throw new UnauthorizedException('No Token Found');
+        throw new HttpException('Token is missing', HttpStatus.BAD_REQUEST);
       }
 
       const payload: JwtPayload = await this.jwtService.verify(token, {
@@ -193,13 +195,13 @@ export class AuthRepository extends Repository<Admin> {
         id: adminProfile.id,
         name: adminProfile.name,
         email: adminProfile.email,
-        email_verified: adminProfile.email_verified,
-        phone_number: adminProfile.phone_number,
+        emailVerified: adminProfile.emailVerified,
+        phoneNumber: adminProfile.phoneNumber,
         role: adminProfile.role,
-        user_type: adminProfile.user_type,
+        userType: adminProfile.userType,
         status: adminProfile.status,
         refreshToken: adminProfile.refreshToken,
-        initial_password: adminProfile.initial_password,
+        initialPassword: adminProfile.initialPassword,
       };
     } catch (error) {
       throw new UnauthorizedException(error);

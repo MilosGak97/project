@@ -2,7 +2,7 @@ import { Injectable, Res } from '@nestjs/common';
 import { AuthRepository } from './repository/auth.repository';
 import { SignInDto } from './dto/sign-in-admin.dto';  
 import { PasswordResetDto } from './dto/password-reset.dto'; 
-import { Admin } from 'src/api/entities/admin-entities/admin.entity';
+import { Admin } from 'src/api/entities/admin.entity';
 import { MessageResponseDto } from 'src/api/responses/message-response.dto';
 import { WhoAmIDto } from './dto/who-am-i.dto';
 

@@ -27,7 +27,7 @@ export class UpdateCompanyDto {
     @ApiProperty({required:false})
     @IsOptional()
     @IsString()
-    logo_url?:string
+    logoUrl?:string
 
     @ApiProperty({required:false})
     @IsOptional()

@@ -17,7 +17,7 @@ export class UpdateUserDto{
     @ApiProperty({required:false})
     @IsOptional()
     @IsPhoneNumber('US')
-    phone_number?: string
+    phoneNumber?: string
 
 
     @ApiProperty({required:false})

@@ -1,7 +1,7 @@
 export enum AdminRole {
-    HEAD = 'head',
-    FILTERING = 'filtering',
-    SCRAPPING = 'scrapping',
-    SALES = 'sales',
-    SUPPORT = 'support'
+    HEAD = 'HEAD',
+    FILTERING = 'FILTERING',
+    SCRAPPING = 'SCRAPPING',
+    SALES = 'SALES',
+    SUPPORT = 'SUPPORT'
 }

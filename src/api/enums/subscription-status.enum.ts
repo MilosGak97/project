@@ -1,8 +1,8 @@
 export enum SubscriptionStatus {
-    ACTIVE = 'active',
-    PENDING = 'pending',
-    SCHEDULED = 'scheduled',
-    EXPIRED = 'expired',
-    CANCELED = 'canceled',
-    SUSPENDED = 'suspended',
+    ACTIVE = 'ACTIVE',
+    PENDING = 'PENDING',
+    SCHEDULED = 'SCHEDULED',
+    EXPIRED = 'EXPIRED',
+    CANCELED = 'CANCELED',
+    SUSPENDED = 'SUSPENDED',
 }

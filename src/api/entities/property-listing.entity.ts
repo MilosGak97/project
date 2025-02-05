@@ -1,187 +1,175 @@
-import { ApiProperty } from "@nestjs/swagger";
-import { Type } from "class-transformer";
-import { IsOptional, IsString } from "class-validator";
-import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";  
-import { BrightdataSnapshot } from "./brightdata-snapshot.entity";
+import { ApiProperty } from '@nestjs/swagger';
+import { Type } from 'class-transformer';
+import { IsOptional, IsString } from 'class-validator';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 
 @Entity('property-listings')
-export class PropertyListing{
-    @ApiProperty()
-    @PrimaryGeneratedColumn('uuid')
-    id:string
+export class PropertyListing {
+  @ApiProperty()
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @Type(() => String)
+  @Column({ nullable: true })
+  zpid?: string; // zpid
 
-    @ApiProperty({required:false})
-    @IsOptional()
-    @Type(() => String)
-    @Column({nullable:true})
-    zpid?: string // zpid
-    
-    @ApiProperty({required:false})
-    @IsOptional()
-    @Type(() => String)
-    @Column({nullable:true})
-    homeStatus?: string // homeStatus
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @Type(() => String)
+  @Column({ name: 'home_status', nullable: true })
+  homeStatus?: string; // homeStatus
 
-    @ApiProperty({required:false})
-    @IsOptional()
-    @Type(() => String)
-    @Column({nullable:true})
-    streetAddress?: string // address.streetAddress
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @Type(() => String)
+  @Column({ name: 'street_address', nullable: true })
+  streetAddress?: string; // address.streetAddress
 
-    @ApiProperty({required:false})
-    @IsOptional()
-    @Type(() => String)
-    @Column({nullable:true})
-    city?: string // address.city
-    
-    @ApiProperty({required:false})
-    @IsOptional()
-    @Type(() => String)
-    @Column({nullable:true})
-    zipcode?: string // address.zipcode
-    
-    @ApiProperty({required:false})
-    @IsOptional()
-    @Type(() => String)
-    @Column({nullable:true})
-    state?: string // address.state
-    
-    @ApiProperty({required:false})
-    @IsOptional()
-    @Type(() => Number) 
-    @Column({ type: 'integer' , nullable:true})
-    bedrooms?: number;
-    
-    @ApiProperty({required:false})
-    @IsOptional()
-    @Type(() => Number)
-    @Column({ type: 'integer' , nullable:true})
-    bathrooms?: number // bathrooms
-    
-    @ApiProperty({required:false})
-    @IsOptional()
-    @Type(() => Number)
-    @Column({ type: 'integer', nullable:true })
-    price?: number // price
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @Type(() => String)
+  @Column({ nullable: true })
+  city?: string; // address.city
 
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @Type(() => String)
+  @Column({ nullable: true })
+  zipcode?: string; // address.zipcode
 
-    @ApiProperty({required:false})
-    @IsOptional()
-    @Type(() => String)
-    @Column({nullable:true})
-    longitude?: string // longitude
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @Type(() => String)
+  @Column({ nullable: true })
+  state?: string; // address.state
 
-    
-    @ApiProperty({required:false})
-    @IsOptional()
-    @Type(() => String)
-    @Column({nullable:true})
-    latitude?: string // latitude
- 
-    @ApiProperty({required:false})
-    @IsOptional()
-    @Type(() => Number)
-    @Column({nullable:true})
-    livingArea?: number // livingArea
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @Type(() => Number)
+  @Column({ type: 'integer', nullable: true })
+  bedrooms?: number;
 
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @Type(() => Number)
+  @Column({ type: 'integer', nullable: true })
+  bathrooms?: number; // bathrooms
 
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @Type(() => Number)
+  @Column({ type: 'integer', nullable: true })
+  price?: number; // price
 
-    @ApiProperty({required:false})
-    @IsOptional()
-    @Type(() => String)
-    @Column({nullable:true})
-    livingAreaUnitsShort?: string // livingAreaUnitsShort
-  
- 
-    @ApiProperty({required:false})
-    @IsOptional()
-    @Type(() => String)
-    @Column({nullable:true})
-    homeType?: string // homeType
- 
-    @ApiProperty({required:false})
-    @IsOptional()
-    @Type(() => String)
-    @Column({nullable:true})
-    parcelId?: string // parcelId
- 
-    @ApiProperty({required:false})
-    @IsOptional()
-    @Type(() => String)
-    @Column({nullable:true})
-    hdpTypeDimension?: string // hdpTypeDimension
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @Type(() => String)
+  @Column({ nullable: true })
+  longitude?: string; // longitude
 
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @Type(() => String)
+  @Column({ nullable: true })
+  latitude?: string; // latitude
 
-    @ApiProperty({required:false})
-    @IsOptional()
-    @Type(() => Number)
-    @Column({nullable:true})
-    photoCount?: number // photoCount
-    
-    @ApiProperty({required:false})
-    @IsOptional() 
-    @Column({type: 'json',nullable:true})
-    photos?: any[] // photos
-    
-    @ApiProperty({required:false})
-    @IsOptional()
-    @Type(() => String)
-    @Column({nullable:true})
-    county?: string // county
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @Type(() => Number)
+  @Column({ name: 'living_area', nullable: true })
+  livingArea?: number; // livingArea
 
-    @ApiProperty({required:false})
-    @IsOptional()
-    @Column({ type: 'json', nullable:true }) // or 'json' if you prefer
-    additionalInfo?: any
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @Type(() => String)
+  @Column({ name: 'living_area_units_short', nullable: true })
+  livingAreaUnitsShort?: string; // livingAreaUnitsShort
 
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @Type(() => String)
+  @Column({ name: 'home_type', nullable: true })
+  homeType?: string; // homeType
 
-    
-    @IsOptional()
-    @IsString()
-    @Column({nullable:true})
-    lpb_name?: string
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @Type(() => String)
+  @Column({ name: 'parcel_id', nullable: true })
+  parcelId?: string; // parcelId
 
-    
-    @IsOptional()
-    @IsString()
-    @Column({nullable:true})
-    lpb_email?: string
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @Type(() => String)
+  @Column({ name: 'hdp_type_dimension', nullable: true })
+  hdpTypeDimension?: string; // hdpTypeDimension
 
-    
-    @IsOptional()
-    @IsString()
-    @Column({nullable:true})
-    lpb_company?: string
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @Type(() => Number)
+  @Column({ name: 'photo_count', nullable: true })
+  photoCount?: number; // photoCount
 
-    
-    @IsOptional()
-    @IsString()
-    @Column({nullable:true})
-    lpb_phone_number?: string
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @Column({ type: 'json', nullable: true })
+  photos?: any[]; // photos
 
-    @IsOptional()
-    @IsString()
-    @Column({nullable:true})
-    isNonOwnerOccupied?:string
- 
-    @ApiProperty({required:false})
-    @ManyToOne(()=> BrightdataSnapshot, (snapshot) => snapshot.properties)
-    snapshot: BrightdataSnapshot
- 
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @Type(() => String)
+  @Column({ nullable: true })
+  county?: string; // county
 
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @Column({ name: 'additional_info', type: 'json', nullable: true }) // or 'json' if you prefer
+  additionalInfo?: any;
 
-    @ApiProperty({required:false})
-    @Column({nullable:true})
-    filtered_status: string
- 
-    @ApiProperty()
-    @CreateDateColumn()
-    created_at: Date;
-     
-    @ApiProperty()
-    @UpdateDateColumn()
-    updated_at: Date;
+  @IsOptional()
+  @IsString()
+  @Column({ name: 'lpb_name', nullable: true })
+  lpbName?: string;
+
+  @IsOptional()
+  @IsString()
+  @Column({ name: 'lpb_email', nullable: true })
+  lpbEmail?: string;
+
+  @IsOptional()
+  @IsString()
+  @Column({ name: 'lpb_company', nullable: true })
+  lpbCompany?: string;
+
+  @IsOptional()
+  @IsString()
+  @Column({ name: 'lpb_phone_number', nullable: true })
+  lpbPhoneNumber?: string;
+
+  @IsOptional()
+  @IsString()
+  @Column({ name: 'is_non_owner_occupied', nullable: true })
+  isNonOwnerOccupied?: string;
+
+  @ApiProperty({ required: false })
+  @Column({ name: 'filtered_status', nullable: true })
+  filtered_status: string;
+
+  @ApiProperty()
+  @CreateDateColumn()
+  created_at: Date;
+
+  @ApiProperty()
+  @UpdateDateColumn()
+  updated_at: Date;
 }
 
 /* 

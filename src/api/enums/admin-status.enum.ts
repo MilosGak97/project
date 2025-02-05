@@ -1,7 +1,7 @@
 export enum AdminStatus {
-    ACTIVE = 'active',
-    PAUSED = 'paused',
-    SUSPENDED = 'suspended',
-    UNVERIFIED = 'unverified',
-    DELETED = 'deleted'
+    ACTIVE = 'ACTIVE',
+    PAUSED = 'PAUSED',
+    SUSPENDED = 'SUSPENDED',
+    UNVERIFIED = 'UNVERIFIED',
+    DELETED = 'DELETED'
 }

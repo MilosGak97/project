@@ -1,7 +1,7 @@
 export enum TokenType{
-    REFRESH = 'refresh_token',
-    ACCESS = 'access_token',
-    REGISTER = 'register_token',
-    EMAIL_VERIFICATION = 'email_verification',
-    FORGOT_PASSWORD = 'forgot_password',
+    REFRESH = 'REFRESH',
+    ACCESS = 'ACCESS',
+    REGISTER = 'REGISTER',
+    EMAIL_VERIFICATION = 'EMAIL_VERIFICATION',
+    FORGOT_PASSWORD = 'FORGOT_PASSWORD',
 }

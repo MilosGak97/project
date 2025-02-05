@@ -13,10 +13,10 @@ export class CompaniesUsersTypeDto{
   email: string
 
   @ApiProperty()
-  phone_number?: string
+  phoneNumber?: string
 
   @ApiProperty()
-  email_verified: boolean
+  emailVerified: boolean
 
   @ApiProperty()
   role: UserRole

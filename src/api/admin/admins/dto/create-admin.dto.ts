@@ -1,48 +1,49 @@
 // src/admin_users/dto/create-admin-user.dto.ts
-import { IsNotEmpty, IsString, IsOptional, IsEmail, IsPhoneNumber, IsEnum } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsString,
+  IsOptional,
+  IsEmail,
+  IsPhoneNumber,
+  IsEnum,
+} from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { AdminRole } from '../../../enums/admin-role.enum';
 
 export class CreateAdminDto {
-
-  @ApiProperty({ 
-    required: true // Indicates this field is required
+  @ApiProperty({
+    required: true, // Indicates this field is required
   })
   @IsNotEmpty()
   @IsString()
   name: string;
 
-  @ApiProperty({ 
-    required: true
+  @ApiProperty({
+    required: true,
   })
   @IsNotEmpty()
   @IsEmail()
   email: string;
 
-  @ApiProperty({ 
-    required: false
+  @ApiProperty({
+    required: false,
   })
   @IsOptional()
   @IsPhoneNumber('US') // Optional field for phone number
-  phone_number?: string;
+  phoneNumber?: string;
 
-  @ApiProperty({ 
+  @ApiProperty({
     enum: AdminRole, // Enum for available roles
-    required: true
+    required: true,
   })
   @IsNotEmpty()
   @IsEnum(AdminRole)
   role: AdminRole;
 
-  @ApiProperty({ 
-    description: 'admin_user.id, id of the admin user that is creating the account (logged in admin user)',
-    example: 'fa882578-8795-46f5-b70d-f8f8e2f9d2bf', // Example UUID for created_by
-    required: true
+  @ApiProperty({
+    required: true,
   })
   @IsNotEmpty()
   @IsString()
-  created_by: string;
+  createdBy: string;
 }
-
-
-

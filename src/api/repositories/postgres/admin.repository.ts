@@ -1,4 +1,4 @@
-import { Admin } from 'src/api/entities/admin-entities/admin.entity';
+import { Admin } from 'src/api/entities/admin.entity';
 import { DataSource, Repository } from 'typeorm';
 import { CreateAdminDto } from 'src/api/admin/admins/dto/create-admin.dto';
 import {
@@ -19,11 +19,12 @@ import { UpdateAdminDto } from 'src/api/admin/admins/dto/update-admin.dto';
 import { UserType } from 'src/api/enums/user-type.enum';
 import { GetAdminsResponseDto } from 'src/api/admin/admins/dto/get-admins-response.dto';
 import { GetAdminsTypeDto } from '../../admin/admins/dto/get-admins-type.dto';
-import { AdminDto } from '../../admin/admins/dto/admin.dto';
+import { AdminResponseDto } from '../../admin/admins/dto/admin-response.dto';
 
 @Injectable()
 export class AdminRepository extends Repository<Admin> {
   private readonly logger = new Logger(AdminRepository.name);
+
   constructor(
     private readonly dataSource: DataSource,
     private readonly jwtService: JwtService,
@@ -51,23 +52,24 @@ export class AdminRepository extends Repository<Admin> {
     userId: string,
     email: string,
     randomPassword?: string,
-  ):Promise<boolean> {
+  ): Promise<boolean> {
     const jwtPayload = { userId: userId, expireIn: '3600' };
-    const verifyUrl = `${process.env.BASE_URL}admin/auth/email?jwtToken=${encodeURIComponent(this.jwtService.sign(jwtPayload, { secret: process.env.ADMIN_JWT_SECRET, }))}`;
+    const verifyUrl = `${process.env.BASE_URL}admin/auth/email?jwtToken=${encodeURIComponent(this.jwtService.sign(jwtPayload, { secret: process.env.ADMIN_JWT_SECRET }))}`;
     const emailSent = await this.emailService.authEmail(
       email,
       verifyUrl,
       randomPassword || '',
     );
-    if(!emailSent){
-      throw new HttpException({
-        success:false,
-        message: "Verification email was not send"
-      },
-        HttpStatus.INTERNAL_SERVER_ERROR
-      )
+    if (!emailSent) {
+      throw new HttpException(
+        {
+          success: false,
+          message: 'Verification email was not send',
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
-    return true
+    return true;
   }
 
   /* ---------- PUBLIC METHOD ------------- */
@@ -78,8 +80,8 @@ export class AdminRepository extends Repository<Admin> {
       searchQuery,
       role,
       status,
-      email_verified,
-      initial_password,
+      emailVerified,
+      initialPassword,
       limit,
       offset,
     } = getAdminsDto;
@@ -104,15 +106,15 @@ export class AdminRepository extends Repository<Admin> {
       query.andWhere('(adminUser.status = :status)', { status });
     }
 
-    if (initial_password) {
+    if (initialPassword) {
       query.andWhere('(adminUser.initial_password = :initial_password)', {
-        initial_password,
+        initialPassword,
       });
     }
 
-    if (email_verified) {
+    if (emailVerified) {
       query.andWhere('(adminUser.email_verified = :email_verified)', {
-        email_verified,
+        emailVerified,
       });
     }
 
@@ -121,13 +123,13 @@ export class AdminRepository extends Repository<Admin> {
 
     const [admins, totalRecords] = await query.getManyAndCount();
     const result: GetAdminsTypeDto[] = admins.map(
-      ({ id, name, email, role, status, phone_number }) => ({
+      ({ id, name, email, role, status, phoneNumber }) => ({
         id: id ?? '/',
         name: name ?? '/',
         email: email ?? '/',
         role: role,
         status: status,
-        phone_number: phone_number ?? '/',
+        phoneNumber: phoneNumber ?? '/',
       }),
     );
 
@@ -148,7 +150,7 @@ export class AdminRepository extends Repository<Admin> {
   async createAdmin(createAdminDto: CreateAdminDto): Promise<{
     message: string;
   }> {
-    const { name, email, phone_number, role, created_by } = createAdminDto;
+    const { name, email, phoneNumber, role, createdBy } = createAdminDto;
 
     const existingUser = await this.findOne({
       where: [
@@ -162,24 +164,21 @@ export class AdminRepository extends Repository<Admin> {
         throw new HttpException(
           {
             success: false,
-            message:
-              'An admin user with this email already exists',
+            message: 'An admin user with this email already exists',
           },
           HttpStatus.BAD_REQUEST,
         );
       }
-      if (phone_number && existingUser.phone_number === phone_number) {
+      if (phoneNumber && existingUser.phoneNumber === phoneNumber) {
         throw new HttpException(
           {
             success: false,
-            message:
-              'An admin user with this phone number already exists',
+            message: 'An admin user with this phone number already exists',
           },
           HttpStatus.BAD_REQUEST,
         );
       }
     }
-
 
     try {
       // Generate random password
@@ -189,17 +188,15 @@ export class AdminRepository extends Repository<Admin> {
       const newAdminUser = new Admin();
       newAdminUser.name = name;
       newAdminUser.email = email;
-      newAdminUser.phone_number = phone_number
-        ? phone_number
-        : null;
+      newAdminUser.phoneNumber = phoneNumber ? phoneNumber : null;
       newAdminUser.role = role as AdminRole;
       newAdminUser.password = hashedPassword;
-      newAdminUser.created_by = created_by;
+      newAdminUser.createdBy = createdBy;
       newAdminUser.status = AdminStatus.UNVERIFIED;
-      newAdminUser.email_verified = false;
-      newAdminUser.initial_password = true;
-      newAdminUser.status_changed_at = new Date();
-      newAdminUser.user_type = UserType.EMPLOYEE;
+      newAdminUser.emailVerified = false;
+      newAdminUser.initialPassword = true;
+      newAdminUser.statusChangedAt = new Date();
+      newAdminUser.userType = UserType.EMPLOYEE;
 
       // Save the new admin user to the database
       await this.save(newAdminUser);
@@ -224,7 +221,7 @@ export class AdminRepository extends Repository<Admin> {
   }
 
   // method to show single admin data
-  async getAdmin(id: string): Promise<AdminDto> {
+  async getAdmin(id: string): Promise<AdminResponseDto> {
     const admin = await this.findOne({ where: { id } });
 
     if (!admin) {
@@ -235,7 +232,7 @@ export class AdminRepository extends Repository<Admin> {
       id: admin.id,
       name: admin.name,
       email: admin.email,
-      phone_number: admin.phone_number,
+      phoneNumber: admin.phoneNumber,
       role: admin.role,
       status: admin.status,
     };
@@ -248,7 +245,7 @@ export class AdminRepository extends Repository<Admin> {
   ): Promise<{
     message: string;
   }> {
-    const { name, email, phone_number, status, role } = updateAdminDto;
+    const { name, email, phoneNumber, status, role } = updateAdminDto;
 
     const adminData = await this.findOne({ where: { id: id } });
 
@@ -269,24 +266,24 @@ export class AdminRepository extends Repository<Admin> {
       }
       adminData.email = email;
       await this.verifyEmail(adminData.id, email);
-      adminData.email_verified = false;
+      adminData.emailVerified = false;
     }
 
-    if (phone_number) {
+    if (phoneNumber) {
       const phoneExist = await this.findOne({
-        where: { phone_number: phone_number },
+        where: { phoneNumber: phoneNumber },
       });
       if (phoneExist && phoneExist.id !== id) {
         throw new ConflictException(
           'This phone number is already associated with an existing user.',
         );
       }
-      adminData.phone_number = phone_number;
+      adminData.phoneNumber = phoneNumber;
     }
 
     if (status) {
       adminData.status = status;
-      adminData.status_changed_at = new Date();
+      adminData.statusChangedAt = new Date();
     }
 
     if (role) {
@@ -306,7 +303,7 @@ export class AdminRepository extends Repository<Admin> {
     if (!adminData) {
       throw new NotFoundException('No user found with this ID.');
     }
-    if (adminData.email_verified === true) {
+    if (adminData.emailVerified === true) {
       throw new ConflictException("User's email is already verified");
     }
     await this.verifyEmail(id, adminData.email);
@@ -326,10 +323,8 @@ export class AdminRepository extends Repository<Admin> {
 
     await this.verifyEmail(id, adminData.email, randomPassword);
 
-    const hashedPassword = await bcrypt.hash(randomPassword, 10);
-
-    adminData.password = hashedPassword;
-    adminData.initial_password = true;
+    adminData.password = await bcrypt.hash(randomPassword, 10);
+    adminData.initialPassword = true;
 
     await this.save(adminData);
 

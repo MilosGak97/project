@@ -1,4 +1,4 @@
-import { Company } from "src/api/entities/company-entities/company.entity";
+import { Company } from "src/api/entities/company.entity";
 import { DataSource, Repository } from "typeorm";
 import { GetCompaniesDto } from '../../admin/companies/dto/get-companies.dto';
 import { ConflictException, Injectable, NotFoundException } from "@nestjs/common";
@@ -29,13 +29,13 @@ export class CompanyRepository extends Repository<Company> {
         query.take(limit)
         query.skip(offset)
         const [companies, totalRecords] = await query.getManyAndCount()
-        const result = companies.map(({ id, name, website, phone_number, email, logo_url, status, address}) => ({
+        const result = companies.map(({ id, name, website, phoneNumber, email, logoUrl, status, address}) => ({
             id: id ?? '/',
             name:name  ?? '/',
             website:website ?? '/',
-            phone_number:phone_number ?? '/',
+            phoneNumber:phoneNumber ?? '/',
             email: email ?? '/',
-            logo_url:logo_url ?? '/',
+            logoUrl:logoUrl ?? '/',
             status:status,
             address1: address.address1 ?? '/',
             address2: address.address2 ?? '/',
@@ -76,7 +76,7 @@ export class CompanyRepository extends Repository<Company> {
             throw new NotFoundException('Company with this ID does not exist.')
         }
 
-        const { name, address, phone, email, website, logo_url } = updateCompanyDataDto
+        const { name, address, phone, email, website, logoUrl } = updateCompanyDataDto
 
         if (name) {
             const exist = await this.findOne({ where: { name } })
@@ -90,11 +90,11 @@ export class CompanyRepository extends Repository<Company> {
             companyData.address = address
         }
         if (phone) {
-            const exist = await this.findOne({ where: { phone_number: phone } })
+            const exist = await this.findOne({ where: { phoneNumber: phone } })
             if (exist && exist.id !== id) {
                 throw new ConflictException('Company with this phone number already exist')
             }
-            companyData.phone_number = phone
+            companyData.phoneNumber = phone
         }
 
         if (email) {
@@ -114,8 +114,8 @@ export class CompanyRepository extends Repository<Company> {
             companyData.website = website
         }
 
-        if (logo_url) {
-            companyData.logo_url = logo_url
+        if (logoUrl) {
+            companyData.logoUrl = logoUrl
         }
 
 

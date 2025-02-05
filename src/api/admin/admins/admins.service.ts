@@ -4,7 +4,7 @@ import { CreateAdminDto } from './dto/create-admin.dto';
 import { GetAdminsDto } from './dto/get-admins.dto';  
 import { UpdateAdminDto } from './dto/update-admin.dto';
 import { GetAdminsResponseDto } from './dto/get-admins-response.dto';
-import { AdminDto } from './dto/admin.dto';
+import { AdminResponseDto } from './dto/admin-response.dto';
 
 @Injectable()
 export class AdminsService { 
@@ -28,7 +28,7 @@ export class AdminsService {
 
 
 // method to show single admin data
-    async getAdmin(id:string):Promise<AdminDto>{
+    async getAdmin(id:string):Promise<AdminResponseDto>{
         return this.adminRepository.getAdmin(id)
     }
 

@@ -3,7 +3,7 @@ import { PassportStrategy } from "@nestjs/passport";
 import { Strategy } from "passport-jwt"; 
 import { JwtPayload } from "./dto/jwt-payload.interface"; 
 import { AuthRepository } from "./repository/auth.repository"; 
-import { Admin } from "src/api/entities/admin-entities/admin.entity";
+import { Admin } from "src/api/entities/admin.entity";
 import { UserType } from "src/api/enums/user-type.enum";
 
 @Injectable()
@@ -25,7 +25,7 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'admin-jwt'){
     async validate(payload: JwtPayload): Promise<Admin> {
         const { adminId } = payload; 
 
-        const user: Admin = await this.authRepository.findOne({ where: { id: adminId , user_type: UserType.EMPLOYEE} });
+        const user: Admin = await this.authRepository.findOne({ where: { id: adminId , userType: UserType.EMPLOYEE} });
 
         if (!user) {
             this.logger.warn(`Unauthorized access attempt for userId: ${adminId}`);

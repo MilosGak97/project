@@ -14,16 +14,16 @@ export class WhoAmIDto{
   email: string
 
   @ApiProperty()
-  email_verified: boolean
+  emailVerified: boolean
 
   @ApiProperty()
-  phone_number: string
+  phoneNumber: string
 
   @ApiProperty({type: 'enum', enum: AdminRole})
   role: AdminRole
 
   @ApiProperty({type:'enum', enum: UserType})
-  user_type: UserType
+  userType: UserType
 
   @ApiProperty({type:'enum', enum: AdminStatus})
   status: AdminStatus
@@ -32,7 +32,7 @@ export class WhoAmIDto{
   refreshToken: string
 
   @ApiProperty()
-  initial_password: boolean
+  initialPassword: boolean
 
 
 }
