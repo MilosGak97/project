@@ -4,8 +4,9 @@ import {
   IsString,
   IsOptional,
   IsEmail,
-  IsPhoneNumber,
   IsEnum,
+  Length,
+  IsNumberString,
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { AdminRole } from '../../../enums/admin-role.enum';
@@ -29,8 +30,9 @@ export class CreateAdminDto {
     required: false,
   })
   @IsOptional()
-  @IsPhoneNumber('US') // Optional field for phone number
-  phoneNumber?: string;
+  @IsNumberString()
+  @Length(4, 15) // Enforces min length of 4 and max of 15
+  phoneNumber?: number;
 
   @ApiProperty({
     enum: AdminRole, // Enum for available roles
@@ -39,5 +41,4 @@ export class CreateAdminDto {
   @IsNotEmpty()
   @IsEnum(AdminRole)
   role: AdminRole;
-
 }
