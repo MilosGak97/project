@@ -1,7 +1,8 @@
-import { ApiProperty } from "@nestjs/swagger";
+import { ApiExtraModels, ApiProperty } from '@nestjs/swagger';
 import { IsOptional, IsString } from "class-validator";
 import { AddressDto } from "./address.dto";
 
+@ApiExtraModels(AddressDto)
 export class UpdateCompanyDto {
     
     @ApiProperty({required:false})
@@ -29,7 +30,7 @@ export class UpdateCompanyDto {
     @IsString()
     logoUrl?:string
 
-    @ApiProperty({required:false})
+    @ApiProperty({required:false, enum:AddressDto})
     @IsOptional()
     @IsString()
     address?:AddressDto

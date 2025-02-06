@@ -1,13 +1,14 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { UserRole } from '../../../enums/user-role.enum';
 import { UserStatus } from '../../../enums/user-status.enum';
+import { IsEnum } from 'class-validator';
 
-export class GetCompaniesUserResponseDto{
+export class GetCompaniesUserResponseDto {
   @ApiProperty()
-  name:string;
+  name: string;
 
   @ApiProperty()
-  id:string;
+  id: string;
 
   @ApiProperty()
   email: string;
@@ -18,9 +19,11 @@ export class GetCompaniesUserResponseDto{
   @ApiProperty()
   emailVerified: boolean;
 
-  @ApiProperty()
-  role: UserRole
+  @ApiProperty({ enum: UserRole })
+  @IsEnum(UserRole)
+  role: UserRole;
 
-  @ApiProperty()
-  status: UserStatus
+  @ApiProperty({ enum: UserStatus })
+  @IsEnum(UserStatus)
+  status: UserStatus;
 }
