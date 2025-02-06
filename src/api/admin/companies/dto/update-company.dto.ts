@@ -12,7 +12,7 @@ export class UpdateCompanyDto {
     @ApiProperty({required:false})
     @IsOptional()
     @IsString()
-    phone?:string
+    phoneNumber?:string
 
     @ApiProperty({required:false})
     @IsOptional()

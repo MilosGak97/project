@@ -96,7 +96,7 @@ export class CompanyRepository extends Repository<Company> {
       throw new NotFoundException('Company with this ID does not exist.');
     }
 
-    const { name, address, phone, email, website, logoUrl } =
+    const { name, address, phoneNumber, email, website, logoUrl } =
       updateCompanyDataDto;
 
     if (name) {
@@ -110,14 +110,14 @@ export class CompanyRepository extends Repository<Company> {
     if (address) {
       companyData.address = address;
     }
-    if (phone) {
-      const exist = await this.findOne({ where: { phoneNumber: phone } });
+    if (phoneNumber) {
+      const exist = await this.findOne({ where: { phoneNumber } });
       if (exist && exist.id !== id) {
         throw new ConflictException(
           'Company with this phone number already exist',
         );
       }
-      companyData.phoneNumber = phone;
+      companyData.phoneNumber = phoneNumber;
     }
 
     if (email) {

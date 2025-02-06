@@ -80,8 +80,8 @@ export class UserRepository extends Repository<User> {
       offset,
       status,
       role,
-      initial_password,
-      email_verified,
+      initialPassword,
+      emailVerified,
     } = getCompaniesUsersDto;
     const query = this.createQueryBuilder('user');
 
@@ -114,15 +114,15 @@ export class UserRepository extends Repository<User> {
       query.andWhere('(user.role = :role) ', { role });
     }
 
-    if (initial_password) {
+    if (initialPassword) {
       query.andWhere('(user.initial_password = :initial_password) ', {
-        initial_password,
+        initialPassword,
       });
     }
 
-    if (email_verified) {
+    if (emailVerified) {
       query.andWhere('(user.email_verified = :email_verified)', {
-        email_verified,
+        emailVerified,
       });
     }
     query.skip(numOffset);
@@ -148,8 +148,8 @@ export class UserRepository extends Repository<User> {
       totalRecords,
       totalPages,
       currentPage,
-      numLimit,
-      numOffset,
+      limit: numLimit,
+      offset: numOffset,
     };
   }
 
