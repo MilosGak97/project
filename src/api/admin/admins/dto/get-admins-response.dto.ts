@@ -27,10 +27,10 @@ export class GetAdminsResponseDto {
     @ApiProperty()
     @IsNumber()
     @Type((): NumberConstructor=> Number)
-    limitNumber: number;
+    limit: number;
 
     @ApiProperty()
     @IsNumber()
     @Type((): NumberConstructor=> Number)
-    offsetNumber: number;
+    offset: number;
 }
