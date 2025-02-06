@@ -194,7 +194,7 @@ export class UserRepository extends Repository<User> {
     const { name, email, phoneNumber, role, status } = updateUserDto;
 
     const userData = await this.findOne({
-      where: { id: userId, company: { id: companyId } },
+      where: { id: userId },
     });
 
     if (!userData) {
@@ -216,11 +216,11 @@ export class UserRepository extends Repository<User> {
     }
 
     if (phoneNumber) {
-      const exist = await this.findOne({
+      const existPhone = await this.findOne({
         where: { phoneNumber },
       });
 
-      if (exist && exist.id != userId) {
+      if (existPhone && existPhone.id != userId) {
         throw new ConflictException(
           'User with this phone number already exist.',
         );

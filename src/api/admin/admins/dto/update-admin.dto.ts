@@ -23,7 +23,6 @@ export class UpdateAdminDto {
 
   @ApiProperty({ required: false })
   @IsOptional()
-  @IsPhoneNumber('US')
   phoneNumber?: string;
 
   @ApiProperty({

@@ -4,7 +4,6 @@ import {
   IsEnum,
   IsNumberString,
   IsOptional,
-  IsPhoneNumber,
   IsString,
 } from 'class-validator';
 import { UserRole } from 'src/api/enums/user-role.enum';
