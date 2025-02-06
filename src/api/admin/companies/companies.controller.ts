@@ -27,7 +27,7 @@ export class CompaniesController {
     @Get('companies')
     @ApiOperation({ summary: 'List all companies and filter with query' })
     @ApiOkResponse({type: GetCompaniesResponseDto})
-    async listAllCompanies(@Query() getCompaniesDto: GetCompaniesDto): Promise<GetCompaniesResponseDto> {
+    async getCompanies(@Query() getCompaniesDto: GetCompaniesDto): Promise<GetCompaniesResponseDto> {
         return this.companiesService.getCompanies(getCompaniesDto)
     }
 
@@ -36,7 +36,7 @@ export class CompaniesController {
     @ApiOperation({ summary: "Show data of single company" })
     @ApiOkResponse({type: Company})
     async getCompany(@Param('id') id: string): Promise<Company> {
-        return this.companiesService.getCompany(id)
+        return await this.companiesService.getCompany(id)
     }
 
 // PATCH - endpoint to update single company data    
@@ -46,7 +46,7 @@ export class CompaniesController {
     async updateCompany(@Param('id') id: string,
         @Body() updateCompanyDataDto: UpdateCompanyDto
     ):Promise<MessageResponseDto>  {
-        return this.companiesService.updateCompany(id, updateCompanyDataDto)
+        return await this.companiesService.updateCompany(id, updateCompanyDataDto)
     }
 
 // DELETE - endpoint to delete single company    
@@ -54,7 +54,7 @@ export class CompaniesController {
     @ApiOperation({ summary: "Delete company, change status to deleted" })
     @ApiOkResponse({type:MessageResponseDto})
     async deleteCompany(@Param('id') id: string): Promise<MessageResponseDto> {
-        return this.companiesService.deleteCompany(id)
+        return await this.companiesService.deleteCompany(id)
     }
 
 
@@ -63,7 +63,7 @@ export class CompaniesController {
     @ApiOperation({ summary: 'List all users that belong to this company and match filter parameters' })
     @ApiOkResponse({type: GetCompaniesUsersResponseDto})
     async getCompaniesUsers(@Param('id') id: string, @Query() getCompaniesUsersDto: GetCompaniesUsersDto):Promise<GetCompaniesUsersResponseDto> {
-        return this.companiesService.getCompaniesUsers(id, getCompaniesUsersDto)
+        return await this.companiesService.getCompaniesUsers(id, getCompaniesUsersDto)
     }
 
 
@@ -72,7 +72,7 @@ export class CompaniesController {
     @ApiOperation({summary: "Show user data including company information"})
     @ApiOkResponse({type: GetCompaniesUserResponseDto})
     async getCompaniesUser(@Param('companyId') companyId:string, @Param('id') userId:string):Promise<GetCompaniesUserResponseDto>{
-        return this.companiesService.getCompaniesUser(companyId, userId)
+        return await this.companiesService.getCompaniesUser(companyId, userId)
     }
 
 
@@ -85,7 +85,7 @@ export class CompaniesController {
         @Param('id') userId:string,
         @Body() updateUserDto: UpdateUserDto
     ):Promise<MessageResponseDto>{
-        return this.companiesService.updateUser(companyId,userId,updateUserDto)
+        return await this.companiesService.updateUser(companyId,userId,updateUserDto)
     }
 
 
@@ -97,7 +97,7 @@ export class CompaniesController {
         @Param('companyId') companyId:string,
         @Param('id') userId:string
 ):Promise<MessageResponseDto>{
-        return this.companiesService.deleteUser(companyId,userId)
+        return await this.companiesService.deleteUser(companyId,userId)
     }
 
 // POST - endpoint to reset password for single user    
@@ -105,7 +105,7 @@ export class CompaniesController {
     @ApiOperation({summary: "Reset client password"})
     @ApiOkResponse({type:MessageResponseDto})
     async resetPassword(@Param('companyId') companyId:string, @Param('id') userId:string):Promise<MessageResponseDto>{
-        return this.companiesService.resetPassword(companyId,userId)
+        return await this.companiesService.resetPassword(companyId,userId)
     }
 
 }

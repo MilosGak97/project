@@ -20,50 +20,50 @@ export class CompaniesService {
 
 // method to list all companies    
     async getCompanies(getCompaniesDto:GetCompaniesDto):Promise<GetCompaniesResponseDto>{
-        return this.companyRepository.getCompanies(getCompaniesDto)
+        return await this.companyRepository.getCompanies(getCompaniesDto)
     }
 
 // method to list single company data    
-    getCompany(id:string):Promise<Company>{
-        return this.companyRepository.getCompany(id)
+    async getCompany(id:string):Promise<Company>{
+        return await this.companyRepository.getCompany(id)
     }
 
 // method to update single company data
     async updateCompany(id:string, updateCompanyDataDto: UpdateCompanyDto):Promise<{
         message:string
     }> {
-        return this.companyRepository.updateCompany(id, updateCompanyDataDto)
+        return await this.companyRepository.updateCompany(id, updateCompanyDataDto)
     }
 
 // method to delete company     
     async deleteCompany(id:string): Promise<{
         message: string
     }> {
-        return this.companyRepository.deleteCompany(id)
+        return await this.companyRepository.deleteCompany(id)
     }
 
 // method to list all users    
     async getCompaniesUsers(companyId:string, getCompaniesUsersDto: GetCompaniesUsersDto):Promise<GetCompaniesUsersResponseDto>{
-        return this.userRepository.getCompaniesUsers(companyId, getCompaniesUsersDto)
+        return await this.userRepository.getCompaniesUsers(companyId, getCompaniesUsersDto)
     }
 
 // method to show user data    
     async getCompaniesUser(companyId:string, userId:string):Promise<GetCompaniesUserResponseDto>{
-        return this.userRepository.getCompaniesUser(companyId, userId)
+        return await this.userRepository.getCompaniesUser(companyId, userId)
     }
 
 // method to update single user     
     async updateUser(companyId:string, userId:string, updateUserDto:UpdateUserDto):Promise<{
         message:string
     }>{
-        return this.userRepository.updateUser(companyId, userId, updateUserDto)
+        return await this.userRepository.updateUser(companyId, userId, updateUserDto)
     }
 
 // method to update user    
     async deleteUser(companyId:string, userId:string):Promise<{
         message:string
     }>{
-        return this.userRepository.deleteUser(companyId,userId)
+        return await this.userRepository.deleteUser(companyId,userId)
     }
 
 
@@ -71,6 +71,6 @@ export class CompaniesService {
     async resetPassword(companyId:string, userId:string):Promise<{
         message:string
     }>{
-        return this.userRepository.resetPassword(companyId, userId)
+        return await this.userRepository.resetPassword(companyId, userId)
     }
 }

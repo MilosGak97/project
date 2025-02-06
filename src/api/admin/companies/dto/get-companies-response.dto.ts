@@ -1,11 +1,11 @@
 import { ApiExtraModels, ApiProperty } from '@nestjs/swagger';
-import { SingleCompanyDto } from './companies-type.dto';
+import { SingleCompanyResponseDto } from './single-comapny-response';
 
 
-@ApiExtraModels(SingleCompanyDto)
+@ApiExtraModels(SingleCompanyResponseDto)
 export class GetCompaniesResponseDto{
-  @ApiProperty({type:  [SingleCompanyDto]})
-  result: SingleCompanyDto[];
+  @ApiProperty({type:  [SingleCompanyResponseDto]})
+  result: SingleCompanyResponseDto[];
 
   @ApiProperty()
   totalRecords: number;
