@@ -40,10 +40,4 @@ export class CreateAdminDto {
   @IsEnum(AdminRole)
   role: AdminRole;
 
-  @ApiProperty({
-    required: true,
-  })
-  @IsNotEmpty()
-  @IsString()
-  createdBy: string;
 }
