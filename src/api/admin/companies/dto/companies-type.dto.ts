@@ -1,42 +1,42 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { CompanyStatus } from '../../../enums/company-status.enum';
+import { IsEnum } from 'class-validator';
 
-export class SingleCompanyDto{
-  @ApiProperty({required:true})
-  id: string
+export class SingleCompanyDto {
+  @ApiProperty({ required: true })
+  id: string;
 
-  @ApiProperty({required:true})
-  name: string
-
-  @ApiProperty()
-  address1?: string
+  @ApiProperty({ required: true })
+  name: string;
 
   @ApiProperty()
-  address2?: string
-
-
-  @ApiProperty()
-  city?: string
-
+  address1?: string;
 
   @ApiProperty()
-  state?: string
+  address2?: string;
 
   @ApiProperty()
-  zipcode?: string
+  city?: string;
 
   @ApiProperty()
-  website: string
+  state?: string;
 
-  @ApiProperty({required: false })
-  phone_number?: string
+  @ApiProperty()
+  zipcode?: string;
 
-  @ApiProperty({required:false})
-  email: string
+  @ApiProperty()
+  website: string;
 
-  @ApiProperty({required:false})
-  logo_url?: string
+  @ApiProperty({ required: false })
+  phoneNumber?: string;
 
-  @ApiProperty({required:true})
-  status: CompanyStatus
+  @ApiProperty({ required: false })
+  email: string;
+
+  @ApiProperty({ required: false })
+  logoUrl?: string;
+
+  @ApiProperty({ required: true, enum: CompanyStatus })
+  @IsEnum(CompanyStatus)
+  status: CompanyStatus;
 }

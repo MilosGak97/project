@@ -20,12 +20,12 @@ export class GetCompaniesUsersDto {
     @Type(() => Number)
     offset: number
 
-    @ApiProperty({required:false})
+    @ApiProperty({required:false, enum: UserStatus})
     @IsOptional()
     @IsEnum(UserStatus)
     status: UserStatus
 
-    @ApiProperty({required:false})
+    @ApiProperty({required:false, enum: UserRole})
     @IsOptional()
     @IsEnum(UserRole)
     role: UserRole
@@ -33,11 +33,11 @@ export class GetCompaniesUsersDto {
     @ApiProperty({required:false})
     @IsOptional()
     @IsBoolean()
-    initial_password: boolean
+    initialPassword: boolean
 
     @ApiProperty({required:false})
     @IsOptional()
     @IsBoolean()
-    email_verified: boolean
+    emailVerified: boolean
 
 }

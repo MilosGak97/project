@@ -16,8 +16,8 @@ export class GetCompaniesUsersResponseDto{
   currentPage: number
 
   @ApiProperty()
-  numOffset: number
+  offset: number
 
   @ApiProperty()
-  numLimit: number
+  limit: number
 }
