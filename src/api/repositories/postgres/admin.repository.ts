@@ -141,8 +141,8 @@ export class AdminRepository extends Repository<Admin> {
       totalRecords,
       currentPage,
       totalPages,
-      limitNumber,
-      offsetNumber,
+      limit: limitNumber,
+      offset: offsetNumber,
     };
   }
 
@@ -150,7 +150,7 @@ export class AdminRepository extends Repository<Admin> {
   async createAdmin(createAdminDto: CreateAdminDto): Promise<{
     message: string;
   }> {
-    const { name, email, phoneNumber, role, createdBy } = createAdminDto;
+    const { name, email, phoneNumber, role } = createAdminDto;
 
     const existingUser = await this.findOne({
       where: [
@@ -191,7 +191,7 @@ export class AdminRepository extends Repository<Admin> {
       newAdminUser.phoneNumber = phoneNumber ? phoneNumber : null;
       newAdminUser.role = role as AdminRole;
       newAdminUser.password = hashedPassword;
-      newAdminUser.createdBy = createdBy;
+     // newAdminUser.createdBy = createdBy;
       newAdminUser.status = AdminStatus.UNVERIFIED;
       newAdminUser.emailVerified = false;
       newAdminUser.initialPassword = true;

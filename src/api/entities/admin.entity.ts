@@ -74,10 +74,10 @@ export class Admin {
   @Column({ name: 'user_type', nullable: true })
   userType?: UserType.EMPLOYEE;
 
-  @ApiProperty({ required: true })
+  @ApiProperty({ required: false })
   @IsNotEmpty()
   @IsString()
-  @Column({ name: 'created_by' })
+  @Column({ name: 'created_by', nullable: true })
   createdBy: string;
 
   @ApiProperty({

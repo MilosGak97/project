@@ -32,7 +32,7 @@ export class CreateAdminDto {
   @IsOptional()
   @IsNumberString()
   @Length(4, 15) // Enforces min length of 4 and max of 15
-  phoneNumber?: number;
+  phoneNumber?: string;
 
   @ApiProperty({
     enum: AdminRole, // Enum for available roles
