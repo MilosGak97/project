@@ -20,6 +20,7 @@ import { UserType } from 'src/api/enums/user-type.enum';
 import { GetAdminsResponseDto } from 'src/api/admin/admins/dto/get-admins-response.dto';
 import { GetAdminsTypeDto } from '../../admin/admins/dto/get-admins-type.dto';
 import { AdminResponseDto } from '../../admin/admins/dto/admin-response.dto';
+import { UserStatus } from '../../enums/user-status.enum';
 
 @Injectable()
 export class AdminRepository extends Repository<Admin> {
@@ -117,6 +118,10 @@ export class AdminRepository extends Repository<Admin> {
         emailVerified,
       });
     }
+
+    query.andWhere('(adminUser.status != :status )', {
+      status: AdminStatus.DELETED,
+    });
 
     query.take(limitNumber);
     query.skip(offsetNumber);
