@@ -152,7 +152,7 @@ export class AdminRepository extends Repository<Admin> {
   }
 
   // method to create admin
-  async createAdmin(createAdminDto: CreateAdminDto): Promise<{
+  async createAdmin(createAdminDto: CreateAdminDto, admin: Admin): Promise<{
     message: string;
   }> {
     const { name, email, phoneNumber, role } = createAdminDto;
@@ -196,7 +196,7 @@ export class AdminRepository extends Repository<Admin> {
       newAdminUser.phoneNumber = phoneNumber ? phoneNumber : null;
       newAdminUser.role = role as AdminRole;
       newAdminUser.password = hashedPassword;
-      // newAdminUser.createdBy = createdBy;
+      newAdminUser.createdBy = admin.id;
       newAdminUser.status = AdminStatus.UNVERIFIED;
       newAdminUser.emailVerified = false;
       newAdminUser.initialPassword = true;

@@ -21,6 +21,8 @@ import { GetAdminsResponseDto } from './dto/get-admins-response.dto';
 import { MessageResponseDto } from 'src/api/responses/message-response.dto';
 import { AdminAuthGuard } from '../auth/admin-auth.guard';
 import { AdminResponseDto } from './dto/admin-response.dto';
+import { GetAdmin } from '../auth/get-admin.decorator';
+import { Admin } from '../../entities/admin.entity';
 
 @ApiTags('Admins')
 @Controller('admin')
@@ -45,8 +47,9 @@ export class AdminsController {
   @ApiOkResponse({ type: MessageResponseDto })
   async createAdmin(
     @Body() createAdminDto: CreateAdminDto,
+    @GetAdmin() admin: Admin
   ): Promise<MessageResponseDto> {
-    return await this.adminsService.createAdmin(createAdminDto);
+    return await this.adminsService.createAdmin(createAdminDto, admin);
   }
 
   // GET - end point to show information of single admin

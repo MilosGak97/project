@@ -5,6 +5,7 @@ import { GetAdminsDto } from './dto/get-admins.dto';
 import { UpdateAdminDto } from './dto/update-admin.dto';
 import { GetAdminsResponseDto } from './dto/get-admins-response.dto';
 import { AdminResponseDto } from './dto/admin-response.dto';
+import { Admin } from '../../entities/admin.entity';
 
 @Injectable()
 export class AdminsService { 
@@ -20,10 +21,10 @@ export class AdminsService {
     }
 
 // method to create admin
-    async createAdmin(createAdminDto: CreateAdminDto): Promise<{
+    async createAdmin(createAdminDto: CreateAdminDto, admin: Admin): Promise<{
         message: string
     }>{
-        return this.adminRepository.createAdmin(createAdminDto)
+        return this.adminRepository.createAdmin(createAdminDto, admin)
     }
 
 
