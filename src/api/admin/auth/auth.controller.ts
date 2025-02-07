@@ -61,7 +61,7 @@ export class AuthController {
         // Set the HTTP-only cookie for the access token
         res.cookie('accessToken', accessToken, {
             httpOnly: true,
-            secure: true, // Use secure cdeokies in production
+            secure: true, // Use secure cookies in production
             sameSite: 'none', // Adjust as necessary
             maxAge: 60 * 60 * 1000 // 1 hour for access token
         });

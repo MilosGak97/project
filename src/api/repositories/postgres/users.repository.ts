@@ -96,7 +96,7 @@ export class UserRepository extends Repository<User> {
       throw new Error('Offset must be a non-negative number');
     }
 
-    query.where('(user.companyId = :companyId)', { companyId });
+    query.where('(user.company_id  = :companyId)', { companyId });
     query.andWhere('(user.status != :status )', { status: UserStatus.DELETED });
 
     if (searchQuery) {

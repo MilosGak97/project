@@ -19,7 +19,7 @@ export class AdminResponseDto {
 
   @ApiProperty()
   @IsString()
-  @Type(() => String)
+  @Type((): StringConstructor => String)
   phoneNumber: string;
 
   @ApiProperty({ enum: AdminRole })

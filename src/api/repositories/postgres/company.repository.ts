@@ -90,9 +90,9 @@ export class CompanyRepository extends Repository<Company> {
   ): Promise<{
     message: string;
   }> {
-    const companyData = await this.findOne({ where: { id } });
+    const company = await this.findOne({ where: { id } });
 
-    if (!companyData) {
+    if (!company) {
       throw new NotFoundException('Company with this ID does not exist.');
     }
 
@@ -104,47 +104,47 @@ export class CompanyRepository extends Repository<Company> {
       if (exist && exist.id !== id) {
         throw new ConflictException('Company with this name already exist');
       }
-      companyData.name = name;
+      company.name = name;
     }
 
     if (address) {
-      companyData.address = address;
+      company.address = address;
     }
     if (phoneNumber) {
-      const exist = await this.findOne({ where: { phoneNumber } });
+      const exist: Company = await this.findOne({ where: { phoneNumber } });
       if (exist && exist.id !== id) {
         throw new ConflictException(
           'Company with this phone number already exist',
         );
       }
-      companyData.phoneNumber = phoneNumber;
+      company.phoneNumber = phoneNumber;
     }
 
     if (email) {
-      const exist = await this.findOne({ where: { email: email } });
+      const exist: Company = await this.findOne({ where: { email: email } });
       if (exist && exist.id !== id) {
         throw new ConflictException(
           'Company with this email address already exist',
         );
       }
-      companyData.email = email;
+      company.email = email;
     }
 
     if (website) {
-      const exist = await this.findOne({ where: { website: website } });
+      const exist: Company = await this.findOne({ where: { website: website } });
       if (exist && exist.id !== id) {
         throw new ConflictException(
           'Company with this phone number already exist',
         );
       }
-      companyData.website = website;
+      company.website = website;
     }
 
     if (logoUrl) {
-      companyData.logoUrl = logoUrl;
+      company.logoUrl = logoUrl;
     }
 
-    await this.save(companyData);
+    await this.save(company);
     return {
       message: 'The company information has been updated successfully.',
     };

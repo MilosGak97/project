@@ -10,6 +10,7 @@ import { GetCompaniesResponseDto } from './dto/get-companies-response.dto';
 import { GetCompaniesDto } from './dto/get-companies.dto';
 import { GetCompaniesUsersResponseDto } from './dto/get-companies-users-response.dto';
 import { GetCompaniesUserResponseDto } from './dto/get-companies-user.response.dto';
+import { MessageResponseDto } from '../../responses/message-response.dto';
 
 @Injectable()
 export class CompaniesService {
@@ -29,9 +30,7 @@ export class CompaniesService {
     }
 
 // method to update single company data
-    async updateCompany(id:string, updateCompanyDataDto: UpdateCompanyDto):Promise<{
-        message:string
-    }> {
+    async updateCompany(id:string, updateCompanyDataDto: UpdateCompanyDto):Promise<MessageResponseDto> {
         return await this.companyRepository.updateCompany(id, updateCompanyDataDto)
     }
 

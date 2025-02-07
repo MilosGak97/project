@@ -191,7 +191,7 @@ export class AdminRepository extends Repository<Admin> {
       newAdminUser.phoneNumber = phoneNumber ? phoneNumber : null;
       newAdminUser.role = role as AdminRole;
       newAdminUser.password = hashedPassword;
-     // newAdminUser.createdBy = createdBy;
+      // newAdminUser.createdBy = createdBy;
       newAdminUser.status = AdminStatus.UNVERIFIED;
       newAdminUser.emailVerified = false;
       newAdminUser.initialPassword = true;
@@ -222,7 +222,7 @@ export class AdminRepository extends Repository<Admin> {
 
   // method to show single admin data
   async getAdmin(id: string): Promise<AdminResponseDto> {
-    const admin = await this.findOne({ where: { id } });
+    const admin: Admin = await this.findOne({ where: { id } });
 
     if (!admin) {
       throw new NotFoundException('Admin with this ID is not found.');
@@ -247,7 +247,7 @@ export class AdminRepository extends Repository<Admin> {
   }> {
     const { name, email, phoneNumber, status, role } = updateAdminDto;
 
-    const adminData = await this.findOne({ where: { id: id } });
+    const adminData: Admin = await this.findOne({ where: { id: id } });
 
     if (!adminData) {
       throw new NotFoundException('No user found with this ID.');
@@ -258,7 +258,7 @@ export class AdminRepository extends Repository<Admin> {
     }
 
     if (email) {
-      const emailExist = await this.findOne({ where: { email: email } });
+      const emailExist: Admin = await this.findOne({ where: { email: email } });
       if (emailExist && emailExist.id !== id) {
         throw new ConflictException(
           'This email address is already associated with an existing user.',
@@ -270,7 +270,7 @@ export class AdminRepository extends Repository<Admin> {
     }
 
     if (phoneNumber) {
-      const phoneExist = await this.findOne({
+      const phoneExist: Admin = await this.findOne({
         where: { phoneNumber: phoneNumber },
       });
       if (phoneExist && phoneExist.id !== id) {
@@ -299,7 +299,7 @@ export class AdminRepository extends Repository<Admin> {
   async resendEmailVerification(id: string): Promise<{
     message: string;
   }> {
-    const adminData = await this.findOne({ where: { id: id } });
+    const adminData: Admin = await this.findOne({ where: { id: id } });
     if (!adminData) {
       throw new NotFoundException('No user found with this ID.');
     }
@@ -314,12 +314,12 @@ export class AdminRepository extends Repository<Admin> {
   async resetPassword(id: string): Promise<{
     message: string;
   }> {
-    const adminData = await this.findOne({ where: { id: id } });
+    const adminData: Admin = await this.findOne({ where: { id: id } });
     if (!adminData) {
       throw new NotFoundException('No user found with this ID.');
     }
 
-    const randomPassword = await this.generateRandomPassword();
+    const randomPassword: string = await this.generateRandomPassword();
 
     await this.verifyEmail(id, adminData.email, randomPassword);
 
@@ -335,7 +335,7 @@ export class AdminRepository extends Repository<Admin> {
   async deleteAdmin(id: string): Promise<{
     message: string;
   }> {
-    const userData = await this.findOne({ where: { id } });
+    const userData: Admin = await this.findOne({ where: { id } });
 
     if (!userData) {
       throw new NotFoundException('No user found with this ID.');

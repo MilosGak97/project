@@ -19,16 +19,12 @@ export class CreateAdminDto {
   @IsString()
   name: string;
 
-  @ApiProperty({
-    required: true,
-  })
+  @ApiProperty({ required: true })
   @IsNotEmpty()
   @IsEmail()
   email: string;
 
-  @ApiProperty({
-    required: false,
-  })
+  @ApiProperty({ required: false })
   @IsOptional()
   @IsNumberString()
   @Length(4, 15) // Enforces min length of 4 and max of 15
