@@ -173,12 +173,13 @@ export class AuthController {
     const { newAccessToken } =
       await this.authService.refreshAccessToken(refreshToken);
 
+
     // Set the HTTP-only cookie for the access token
     res.cookie('accessToken', newAccessToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production', // Use secure cookies in production
-      sameSite: 'lax', // Adjust as necessary
-      maxAge: 60 * 60 * 1000, // 1 hour for access token
+      secure: true, // Use secure cookies in production
+      sameSite: 'none', // Adjust as necessary
+      maxAge: 60 * 1000, // 1 hour for access token
     });
 
     return res.json({ message: 'Token is refreshed.' });
