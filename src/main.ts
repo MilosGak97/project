@@ -89,7 +89,7 @@ async function bootstrap() {
     credentials: true,
   });
 
-  const PORT = process.env.PORT || 3005;
+  const PORT = process.env.PORT || 3006;
   await app.listen(PORT);
   console.log(`Application is running on: http://localhost:${PORT}`);
 }

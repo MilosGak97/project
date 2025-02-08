@@ -270,7 +270,7 @@ export class AuthRepository extends Repository<Admin> {
 
       // Fetch admin profile
       const adminProfile = await this.findOne({ where: { id: adminId } });
-      console.log('Fetched admin profile:', adminProfile);
+
 
       if (!adminProfile) {
         console.error('Admin profile not found for id:', adminId);
