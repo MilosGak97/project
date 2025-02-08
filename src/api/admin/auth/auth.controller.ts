@@ -93,7 +93,7 @@ export class AuthController {
       httpOnly: true,
       secure: true, // Use secure cookies in production
       sameSite: 'none', // Adjust as necessary
-      maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days for refresh token
+      maxAge: 2 * 60 * 1000, // 30 days for refresh token
     });
 
     const message = 'Login successfull!';
