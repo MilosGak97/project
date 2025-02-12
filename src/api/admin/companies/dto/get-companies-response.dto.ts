@@ -1,5 +1,5 @@
 import { ApiExtraModels, ApiProperty } from '@nestjs/swagger';
-import { SingleCompanyResponseDto } from './single-comapny-response';
+import { SingleCompanyResponseDto } from './single-company-response';
 
 
 @ApiExtraModels(SingleCompanyResponseDto)
