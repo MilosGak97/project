@@ -76,12 +76,25 @@ export class CompanyRepository extends Repository<Company> {
 
   // method to list single company data
   async getCompany(id: string): Promise<SingleCompanyResponseDto> {
-    const companyData = await this.findOne({ where: { id } });
-    if (!companyData.id) {
+    const company = await this.findOne({ where: { id } });
+    if (!company.id) {
       throw new NotFoundException('Company with this ID is not found.');
     }
 
-    return companyData;
+    return {
+      id: company.id,
+      name: company.name,
+      address1: company.address.address1,
+      address2: company.address.address2,
+      city: company.address.city,
+      state: company.address.state,
+      zipcode: company.address.zipcode,
+      website: company.website,
+      phoneNumber: company.phoneNumber,
+      email: company.email,
+      logoUrl: company.logoUrl,
+      status: company.status,
+    };
   }
 
   // method to update single company data
@@ -132,7 +145,9 @@ export class CompanyRepository extends Repository<Company> {
     }
 
     if (website) {
-      const exist: Company = await this.findOne({ where: { website: website } });
+      const exist: Company = await this.findOne({
+        where: { website: website },
+      });
       if (exist && exist.id !== id) {
         throw new ConflictException(
           'Company with this phone number already exist',
