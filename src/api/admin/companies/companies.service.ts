@@ -11,6 +11,7 @@ import { GetCompaniesDto } from './dto/get-companies.dto';
 import { GetCompaniesUsersResponseDto } from './dto/get-companies-users-response.dto';
 import { GetCompaniesUserResponseDto } from './dto/get-companies-user.response.dto';
 import { MessageResponseDto } from '../../responses/message-response.dto';
+import { SingleCompanyResponseDto } from './dto/single-company-response';
 
 @Injectable()
 export class CompaniesService {
@@ -25,7 +26,7 @@ export class CompaniesService {
     }
 
 // method to list single company data    
-    async getCompany(id:string):Promise<Company>{
+    async getCompany(id:string):Promise<SingleCompanyResponseDto>{
         return await this.companyRepository.getCompany(id)
     }
 

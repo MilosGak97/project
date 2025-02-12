@@ -9,6 +9,7 @@ import {
 import { UpdateCompanyDto } from '../../admin/companies/dto/update-company.dto';
 import { CompanyStatus } from 'src/api/enums/company-status.enum';
 import { GetCompaniesResponseDto } from '../../admin/companies/dto/get-companies-response.dto';
+import { SingleCompanyResponseDto } from '../../admin/companies/dto/single-company-response';
 
 @Injectable()
 export class CompanyRepository extends Repository<Company> {
@@ -74,7 +75,7 @@ export class CompanyRepository extends Repository<Company> {
   }
 
   // method to list single company data
-  async getCompany(id: string): Promise<Company> {
+  async getCompany(id: string): Promise<SingleCompanyResponseDto> {
     const companyData = await this.findOne({ where: { id } });
     if (!companyData.id) {
       throw new NotFoundException('Company with this ID is not found.');
