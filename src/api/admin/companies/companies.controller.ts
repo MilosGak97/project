@@ -17,7 +17,6 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { RolesGuard } from '../auth/roles.guard';
 import { Roles } from '../auth/roles.decorator';
 import { AdminRole } from 'src/api/enums/admin-role.enum';
-import { Company } from 'src/api/entities/company.entity';
 import { CompaniesService } from './companies.service';
 import { AdminAuthGuard } from '../auth/admin-auth.guard';
 import { GetCompaniesResponseDto } from './dto/get-companies-response.dto';
