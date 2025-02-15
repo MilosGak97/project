@@ -43,7 +43,6 @@ export class User {
   email: string;
 
   @ApiProperty({ required: false })
-  @IsPhoneNumber('US')
   @IsOptional()
   @Column({ name: 'phone_number', nullable: true })
   phoneNumber?: string;

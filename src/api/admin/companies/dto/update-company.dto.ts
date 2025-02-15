@@ -1,5 +1,5 @@
 import { ApiExtraModels, ApiProperty } from '@nestjs/swagger';
-import { IsOptional, IsString } from 'class-validator';
+import { IsNumberString, IsOptional, IsString } from 'class-validator';
 import { AddressDto } from './address.dto';
 
 @ApiExtraModels(AddressDto)
@@ -11,7 +11,7 @@ export class UpdateCompanyDto {
 
   @ApiProperty({ required: false })
   @IsOptional()
-  @IsString()
+  @IsNumberString()
   phoneNumber?: string;
 
   @ApiProperty({ required: false })

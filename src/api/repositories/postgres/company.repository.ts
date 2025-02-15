@@ -150,7 +150,7 @@ export class CompanyRepository extends Repository<Company> {
       });
       if (exist && exist.id !== id) {
         throw new ConflictException(
-          'Company with this phone number already exist',
+          'Company with this website already exist',
         );
       }
       company.website = website;
@@ -176,7 +176,7 @@ export class CompanyRepository extends Repository<Company> {
     }
     companyData.status = CompanyStatus.DELETED;
     return {
-      message: 'Company has been deleted succesfully.',
+      message: 'Company has been deleted successfully.',
     };
   }
 }

@@ -53,7 +53,6 @@ export class Company {
 
   @ApiProperty({ required: false })
   @IsOptional()
-  @IsPhoneNumber('US')
   @Column({ name: 'phone_number', nullable: true })
   phoneNumber?: string;
 
