@@ -62,6 +62,13 @@ export class CompaniesController {
     return await this.companiesService.updateCompany(id, updateCompanyDataDto);
   }
 
+  @Patch('companies/suspend/:id')
+  @ApiOperation({ summary: 'Suspend user by ID' })
+  @ApiOkResponse({ type: MessageResponseDto })
+  async suspendCompany(@Param('id') id: string): Promise<MessageResponseDto> {
+    return await this.companiesService.suspendCompany(id);
+  }
+
   // DELETE - endpoint to delete single company
   @Delete('companies/:id')
   @ApiOperation({ summary: 'Delete company, change status to deleted' })

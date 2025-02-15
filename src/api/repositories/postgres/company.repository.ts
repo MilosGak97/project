@@ -3,6 +3,8 @@ import { DataSource, Repository } from 'typeorm';
 import { GetCompaniesDto } from '../../admin/companies/dto/get-companies.dto';
 import {
   ConflictException,
+  HttpException,
+  HttpStatus,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -10,6 +12,7 @@ import { UpdateCompanyDto } from '../../admin/companies/dto/update-company.dto';
 import { CompanyStatus } from 'src/api/enums/company-status.enum';
 import { GetCompaniesResponseDto } from '../../admin/companies/dto/get-companies-response.dto';
 import { SingleCompanyResponseDto } from '../../admin/companies/dto/single-company-response';
+import { MessageResponseDto } from '../../responses/message-response.dto';
 
 @Injectable()
 export class CompanyRepository extends Repository<Company> {
@@ -149,9 +152,7 @@ export class CompanyRepository extends Repository<Company> {
         where: { website: website },
       });
       if (exist && exist.id !== id) {
-        throw new ConflictException(
-          'Company with this website already exist',
-        );
+        throw new ConflictException('Company with this website already exist');
       }
       company.website = website;
     }
@@ -166,10 +167,24 @@ export class CompanyRepository extends Repository<Company> {
     };
   }
 
+  // method to suspend single company per id
+  async suspendCompany(id: string): Promise<MessageResponseDto> {
+    const company = await this.findOne({ where: { id } });
+    if (!company) {
+      throw new HttpException(
+        'Company with this ID does not exist.',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+    company.status = CompanyStatus.SUSPENDED;
+    await this.save(company)
+    return {
+      message: 'Company is suspended',
+    }
+  }
+
   // method to delete single company
-  async deleteCompany(id: string): Promise<{
-    message: string;
-  }> {
+  async deleteCompany(id: string): Promise<MessageResponseDto> {
     const companyData = await this.findOne({ where: { id } });
     if (!companyData) {
       throw new NotFoundException('Company with this ID does not exist.');

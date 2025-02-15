@@ -34,11 +34,13 @@ export class CompaniesService {
     async updateCompany(id:string, updateCompanyDataDto: UpdateCompanyDto):Promise<MessageResponseDto> {
         return await this.companyRepository.updateCompany(id, updateCompanyDataDto)
     }
+// method to suspend company per id
+async suspendCompany(id:string):Promise<MessageResponseDto> {
+        return await this.companyRepository.suspendCompany(id);
+}
 
 // method to delete company     
-    async deleteCompany(id:string): Promise<{
-        message: string
-    }> {
+    async deleteCompany(id:string): Promise<MessageResponseDto> {
         return await this.companyRepository.deleteCompany(id)
     }
 
