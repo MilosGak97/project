@@ -203,7 +203,7 @@ export class UserRepository extends Repository<User> {
   ): Promise<{
     message: string;
   }> {
-    const { name, email, phoneNumber, role } = updateUserDto;
+    const { name, email, phoneNumberPrefix, phoneNumber, role } = updateUserDto;
 
     const userData = await this.findOne({
       where: { id: userId },
