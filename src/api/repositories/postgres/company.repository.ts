@@ -230,11 +230,12 @@ export class CompanyRepository extends Repository<Company> {
 
   // method to delete single company
   async deleteCompany(id: string): Promise<MessageResponseDto> {
-    const companyData = await this.findOne({ where: { id } });
-    if (!companyData) {
+    const company = await this.findOne({ where: { id } });
+    if (!company) {
       throw new NotFoundException('Company with this ID does not exist.');
     }
-    companyData.status = CompanyStatus.DELETED;
+    company.status = CompanyStatus.DELETED;
+    await this.save(company)
     return {
       message: 'Company has been deleted successfully.',
     };
