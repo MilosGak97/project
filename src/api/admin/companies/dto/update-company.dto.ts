@@ -54,8 +54,8 @@ export class UpdateCompanyDto {
   @IsEnum(StatesAbbreviation)
   state?: StatesAbbreviation;
 
-  @ApiProperty({ required: true })
+  @ApiProperty({ required: false })
   @IsNumberString()
-  @IsNotEmpty()
-  zipCode: string;
+  @IsOptional()
+  zipCode?: string;
 }
