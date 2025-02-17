@@ -1,12 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
-import {
-  IsEnum,
-  IsNotEmpty,
-  IsNumberString,
-  IsOptional,
-  IsString,
-} from 'class-validator';
+import { IsEnum, IsNumberString, IsOptional, IsString } from 'class-validator';
 import { StatesAbbreviation } from '../../../enums/states-abbreviation.enum';
+import { Transform } from 'class-transformer';
 
 export class UpdateCompanyDto {
   @ApiProperty({ required: false })
@@ -17,7 +12,8 @@ export class UpdateCompanyDto {
   @ApiProperty({ required: false })
   @IsOptional()
   @IsNumberString()
-  phoneNumber?: string;
+  @Transform(({ value }) => (value === '' ? null : value))
+  phoneNumber?: string | null;
 
   @ApiProperty({ required: false })
   @IsOptional()
