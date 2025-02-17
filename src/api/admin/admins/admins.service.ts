@@ -6,6 +6,7 @@ import { UpdateAdminDto } from './dto/update-admin.dto';
 import { GetAdminsResponseDto } from './dto/get-admins-response.dto';
 import { AdminResponseDto } from './dto/admin-response.dto';
 import { Admin } from '../../entities/admin.entity';
+import { MessageResponseDto } from '../../responses/message-response.dto';
 
 @Injectable()
 export class AdminsService { 
@@ -35,10 +36,24 @@ export class AdminsService {
 
 
 // method to update single admin data
-    async updateAdmin( updateAdminDto: UpdateAdminDto, id: string):Promise<{
-        message:string
-    }>{
+    async updateAdmin( updateAdminDto: UpdateAdminDto, id: string):Promise<MessageResponseDto>{
         return this.adminRepository.updateAdmin(updateAdminDto, id);
+    }
+
+
+// method to delete admin
+    async deleteAdmin(id:string):Promise<MessageResponseDto>{
+        return await this.adminRepository.deleteAdmin(id)
+    }
+
+// method to suspend admin
+    async suspendAdmin(id:string):Promise<MessageResponseDto>{
+        return await this.adminRepository.suspendAdmin(id)
+    }
+
+// method to delete admin
+    async reactivateAdmin(id:string):Promise<MessageResponseDto>{
+        return await this.adminRepository.reactivateAdmin(id)
     }
 
 
@@ -56,10 +71,4 @@ export class AdminsService {
         return this.adminRepository.resetPassword(id)
     }
 
-// method to delete admin
-    async deleteAdmin(id:string):Promise<{
-        message:string
-    }>{
-        return await this.adminRepository.deleteAdmin(id)
-    }
 }

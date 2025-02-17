@@ -20,7 +20,7 @@ import { UserType } from 'src/api/enums/user-type.enum';
 import { GetAdminsResponseDto } from 'src/api/admin/admins/dto/get-admins-response.dto';
 import { GetAdminsTypeDto } from '../../admin/admins/dto/get-admins-type.dto';
 import { AdminResponseDto } from '../../admin/admins/dto/admin-response.dto';
-import { UserStatus } from '../../enums/user-status.enum';
+import { MessageResponseDto } from '../../responses/message-response.dto';
 
 @Injectable()
 export class AdminRepository extends Repository<Admin> {
@@ -250,7 +250,7 @@ export class AdminRepository extends Repository<Admin> {
   ): Promise<{
     message: string;
   }> {
-    const { name, email, phoneNumber, status, role } = updateAdminDto;
+    const { name, email, phoneNumber, role } = updateAdminDto;
 
     const adminData: Admin = await this.findOne({ where: { id: id } });
 
@@ -286,11 +286,6 @@ export class AdminRepository extends Repository<Admin> {
       adminData.phoneNumber = phoneNumber;
     }
 
-    if (status) {
-      adminData.status = status;
-      adminData.statusChangedAt = new Date();
-    }
-
     if (role) {
       adminData.role = role;
     }
@@ -319,35 +314,63 @@ export class AdminRepository extends Repository<Admin> {
   async resetPassword(id: string): Promise<{
     message: string;
   }> {
-    const adminData: Admin = await this.findOne({ where: { id: id } });
-    if (!adminData) {
+    const admin: Admin = await this.findOne({ where: { id: id } });
+    if (!admin) {
       throw new NotFoundException('No user found with this ID.');
     }
 
     const randomPassword: string = await this.generateRandomPassword();
 
-    await this.verifyEmail(id, adminData.email, randomPassword);
+    await this.verifyEmail(id, admin.email, randomPassword);
 
-    adminData.password = await bcrypt.hash(randomPassword, 10);
-    adminData.initialPassword = true;
+    admin.password = await bcrypt.hash(randomPassword, 10);
+    admin.initialPassword = true;
 
-    await this.save(adminData);
+    await this.save(admin);
 
-    return { message: 'A new password has been sent to: ' + adminData.email };
+    return { message: 'A new password has been sent to: ' + admin.email };
   }
 
   // method to delete admin
-  async deleteAdmin(id: string): Promise<{
-    message: string;
-  }> {
-    const userData: Admin = await this.findOne({ where: { id } });
+  async deleteAdmin(id: string): Promise<MessageResponseDto> {
+    const admin: Admin = await this.findOne({ where: { id } });
 
-    if (!userData) {
+    if (!admin) {
       throw new NotFoundException('No user found with this ID.');
     }
 
-    userData.status = AdminStatus.DELETED;
-    await this.save(userData);
+    admin.status = AdminStatus.DELETED;
+    await this.save(admin);
     return { message: 'Account has been successfully deleted.' };
+  }
+
+
+  // method to suspend admin
+  async suspendAdmin(id: string): Promise<MessageResponseDto> {
+    const admin: Admin = await this.findOne({ where: { id } });
+
+    if (!admin) {
+      throw new NotFoundException('No user found with this ID.');
+    }
+
+    admin.status = AdminStatus.SUSPENDED;
+    admin.statusChangedAt = new Date();
+    await this.save(admin);
+    return { message: 'Account has been successfully suspended.' };
+  }
+
+
+  // method to delete admin
+  async reactivateAdmin(id: string): Promise<MessageResponseDto> {
+    const admin: Admin = await this.findOne({ where: { id } });
+
+    if (!admin) {
+      throw new NotFoundException('No user found with this ID.');
+    }
+
+    admin.status = AdminStatus.ACTIVE;
+    admin.statusChangedAt = new Date();
+    await this.save(admin);
+    return { message: 'Account has been successfully reactivated.' };
   }
 }

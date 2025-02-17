@@ -35,15 +35,33 @@ export class Company {
 
   @ApiProperty({ required: false })
   @IsOptional()
-  @IsJSON()
-  @Column({ type: 'json', nullable: true })
-  address?: {
-    address1: string;
-    address2?: string;
-    city: string;
-    state: string;
-    zipcode: string;
-  };
+  @IsString()
+  @Column({ nullable: true })
+  address1?: string;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsString()
+  @Column({ nullable: true })
+  address2?: string;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsString()
+  @Column({ nullable: true })
+  city?: string;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsString()
+  @Column({ nullable: true })
+  state?: string;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsString()
+  @Column({ name: 'zip_code', nullable: true })
+  zipCode: string;
 
   @ApiProperty({ required: true })
   @IsString()

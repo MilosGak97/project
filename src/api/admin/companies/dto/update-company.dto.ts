@@ -1,8 +1,13 @@
-import { ApiExtraModels, ApiProperty } from '@nestjs/swagger';
-import { IsNumberString, IsOptional, IsString } from 'class-validator';
-import { AddressDto } from './address.dto';
+import { ApiProperty } from '@nestjs/swagger';
+import {
+  IsEnum,
+  IsNotEmpty,
+  IsNumberString,
+  IsOptional,
+  IsString,
+} from 'class-validator';
+import { StatesAbbreviation } from '../../../enums/states-abbreviation.enum';
 
-@ApiExtraModels(AddressDto)
 export class UpdateCompanyDto {
   @ApiProperty({ required: false })
   @IsOptional()
@@ -29,8 +34,28 @@ export class UpdateCompanyDto {
   @IsString()
   logoUrl?: string;
 
-  @ApiProperty({ required: false, type: AddressDto })
+  @ApiProperty({ required: false })
   @IsOptional()
   @IsString()
-  address?: AddressDto;
+  address1?: string;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsString()
+  address2?: string;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsString()
+  city?: string;
+
+  @ApiProperty({ required: false, enum: StatesAbbreviation })
+  @IsOptional()
+  @IsEnum(StatesAbbreviation)
+  state?: StatesAbbreviation;
+
+  @ApiProperty({ required: true })
+  @IsNumberString()
+  @IsNotEmpty()
+  zipCode: string;
 }

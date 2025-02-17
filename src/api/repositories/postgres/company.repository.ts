@@ -36,6 +36,7 @@ export class CompanyRepository extends Repository<Company> {
         { searchQuery: `%${searchQuery}%` },
       );
     }
+    query.andWhere('(company.status != :status)', { status: 'DELETED' });
     query.take(limit);
     query.skip(offset);
     const [companies, totalRecords] = await query.getManyAndCount();
@@ -48,7 +49,11 @@ export class CompanyRepository extends Repository<Company> {
         email,
         logoUrl,
         status,
-        address,
+        address1,
+        address2,
+        city,
+        state,
+        zipCode,
       }) => ({
         id: id ?? '/',
         name: name ?? '/',
@@ -57,11 +62,11 @@ export class CompanyRepository extends Repository<Company> {
         email: email ?? '/',
         logoUrl: logoUrl ?? '/',
         status: status,
-        address1: address.address1 ?? '/',
-        address2: address.address2 ?? '/',
-        city: address.city ?? '/',
-        state: address.state ?? '/',
-        zipcode: address.zipcode ?? '/',
+        address1: address1 ?? '/',
+        address2: address2 ?? '/',
+        city: city ?? '/',
+        state: state ?? '/',
+        zipCode: zipCode ?? '/',
       }),
     );
     const totalPages = Math.ceil(totalRecords / numLimit);
@@ -87,11 +92,11 @@ export class CompanyRepository extends Repository<Company> {
     return {
       id: company.id,
       name: company.name,
-      address1: company.address.address1,
-      address2: company.address.address2,
-      city: company.address.city,
-      state: company.address.state,
-      zipcode: company.address.zipcode,
+      address1: company.address1,
+      address2: company.address2,
+      city: company.city,
+      state: company.state,
+      zipCode: company.zipCode,
       website: company.website,
       phoneNumber: company.phoneNumber,
       email: company.email,
@@ -113,8 +118,18 @@ export class CompanyRepository extends Repository<Company> {
       throw new NotFoundException('Company with this ID does not exist.');
     }
 
-    const { name, address, phoneNumber, email, website, logoUrl } =
-      updateCompanyDataDto;
+    const {
+      name,
+      address1,
+      address2,
+      city,
+      state,
+      zipCode,
+      phoneNumber,
+      email,
+      website,
+      logoUrl,
+    } = updateCompanyDataDto;
 
     if (name) {
       const exist = await this.findOne({ where: { name } });
@@ -124,9 +139,22 @@ export class CompanyRepository extends Repository<Company> {
       company.name = name;
     }
 
-    if (address) {
-      company.address = address;
+    if (address1) {
+      company.address1 = address1;
     }
+    if (address2) {
+      company.address2 = address2;
+    }
+    if (city) {
+      company.city = city;
+    }
+    if (state) {
+      company.state = state;
+    }
+    if (zipCode) {
+      company.zipCode = zipCode;
+    }
+
     if (phoneNumber) {
       const exist: Company = await this.findOne({ where: { phoneNumber } });
       if (exist && exist.id !== id) {
@@ -177,10 +205,27 @@ export class CompanyRepository extends Repository<Company> {
       );
     }
     company.status = CompanyStatus.SUSPENDED;
-    await this.save(company)
+    await this.save(company);
     return {
       message: 'Company is suspended',
+    };
+  }
+
+
+  // method to suspend single company per id
+  async reactivateCompany(id: string): Promise<MessageResponseDto> {
+    const company = await this.findOne({ where: { id } });
+    if (!company) {
+      throw new HttpException(
+        'Company with this ID does not exist.',
+        HttpStatus.BAD_REQUEST,
+      );
     }
+    company.status = CompanyStatus.ACTIVE;
+    await this.save(company);
+    return {
+      message: 'Company is now active',
+    };
   }
 
   // method to delete single company

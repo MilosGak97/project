@@ -30,8 +30,4 @@ export class UpdateUserDto {
   @IsEnum(UserRole)
   role?: UserRole;
 
-  @ApiProperty({ required: false, enum: UserStatus })
-  @IsOptional()
-  @IsEnum(UserStatus)
-  status?: UserStatus;
 }

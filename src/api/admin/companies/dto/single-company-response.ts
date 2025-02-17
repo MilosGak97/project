@@ -38,7 +38,7 @@ export class SingleCompanyResponseDto {
   @ApiProperty({ required: false })
   @IsOptional()
   @IsNumberString()
-  zipcode?: string;
+  zipCode?: string;
 
   @ApiProperty()
   @IsNotEmpty()

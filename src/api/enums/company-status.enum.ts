@@ -1,5 +1,5 @@
 export enum CompanyStatus{
-    VERIFIED = 'VERIFIED',
+    ACTIVE = 'ACTIVE',
     NOT_VERIFIED = 'NOT_VERIFIED',
     SUSPENDED = 'SUSPENDED',
     DELETED = 'DELETED',

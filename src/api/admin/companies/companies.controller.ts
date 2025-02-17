@@ -61,19 +61,27 @@ export class CompaniesController {
     return await this.companiesService.updateCompany(id, updateCompanyDataDto);
   }
 
-  @Patch('companies/suspend/:id')
-  @ApiOperation({ summary: 'Suspend user by ID' })
-  @ApiOkResponse({ type: MessageResponseDto })
-  async suspendCompany(@Param('id') id: string): Promise<MessageResponseDto> {
-    return await this.companiesService.suspendCompany(id);
-  }
-
   // DELETE - endpoint to delete single company
   @Delete('companies/:id')
   @ApiOperation({ summary: 'Delete company, change status to deleted' })
   @ApiOkResponse({ type: MessageResponseDto })
   async deleteCompany(@Param('id') id: string): Promise<MessageResponseDto> {
     return await this.companiesService.deleteCompany(id);
+  }
+
+
+  @Patch('companies/:id/status-suspended')
+  @ApiOperation({ summary: 'Suspend user by ID' })
+  @ApiOkResponse({ type: MessageResponseDto })
+  async suspendCompany(@Param('id') id: string): Promise<MessageResponseDto> {
+    return await this.companiesService.suspendCompany(id);
+  }
+
+  @Patch('companies/:id/status-active')
+  @ApiOperation({ summary: 'Suspend user by ID' })
+  @ApiOkResponse({ type: MessageResponseDto })
+  async reactivateCompany(@Param('id') id: string): Promise<MessageResponseDto> {
+    return await this.companiesService.reactivateCompany(id);
   }
 
   // GET - endpoint to list all users of specific company
@@ -124,12 +132,37 @@ export class CompaniesController {
   @Delete('companies/:companyId/users/:id')
   @ApiOperation({ summary: 'Delete user (change UserStatus to deleted)' })
   @ApiOkResponse({ type: MessageResponseDto })
-  async userDelete(
+  async deleteUser(
     @Param('companyId') companyId: string,
     @Param('id') userId: string,
   ): Promise<MessageResponseDto> {
     return await this.companiesService.deleteUser(companyId, userId);
   }
+
+
+  // PATCH - endpoint to suspend single user by status
+  @Patch('companies/:companyId/users/:id/status-suspended')
+  @ApiOperation({ summary: 'Suspend user (change UserStatus to suspended)' })
+  @ApiOkResponse({ type: MessageResponseDto })
+  async suspendUser(
+    @Param('companyId') companyId: string,
+    @Param('id') userId: string,
+  ): Promise<MessageResponseDto> {
+    return await this.companiesService.suspendUser(companyId, userId);
+  }
+
+  // PATCH - endpoint to reactivate single user by status
+  @Patch('companies/:companyId/users/:id/status-active')
+  @ApiOperation({ summary: 'Reactivate user (change UserStatus to active)' })
+  @ApiOkResponse({ type: MessageResponseDto })
+  async reactivateUser(
+    @Param('companyId') companyId: string,
+    @Param('id') userId: string,
+  ): Promise<MessageResponseDto> {
+    return await this.companiesService.deleteUser(companyId, userId);
+  }
+
+
 
   // POST - endpoint to reset password for single user
   @Post('companies/:companyId/users/:id/password')

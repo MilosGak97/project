@@ -27,11 +27,4 @@ export class UpdateAdminDto {
   @IsEnum(AdminRole)
   role?: AdminRole;
 
-  @ApiProperty({
-    enum: AdminStatus,
-    required: false,
-  })
-  @IsOptional()
-  @IsEnum(AdminStatus)
-  status?: AdminStatus;
 }

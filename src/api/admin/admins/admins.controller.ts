@@ -71,6 +71,32 @@ export class AdminsController {
     return await this.adminsService.updateAdmin(updateAdminDto, id);
   }
 
+
+  // DELETE - end point to delete admin user
+  @Delete('admins/:id')
+  @ApiOperation({ summary: 'Delete admin, set status to deleted ' })
+  @ApiOkResponse({ type: MessageResponseDto })
+  async deleteAdmin(@Param('id') id: string): Promise<MessageResponseDto> {
+    return await this.adminsService.deleteAdmin(id);
+  }
+
+  // PATCH - end point to suspend user by id
+  @Patch('admins/:id/status-suspended')
+  @ApiOperation({summary: "Suspend admin, set status to suspended"})
+  @ApiOkResponse({ type: MessageResponseDto })
+  async suspendAdmin(@Param('id') id: string){
+    return await this.adminsService.suspendAdmin(id)
+  }
+
+
+  // PATCH - end point to reactivate user by id
+  @Patch('admins/:id/status-active')
+  @ApiOperation({summary: "Reactivate admin, set status to active"})
+  @ApiOkResponse({ type: MessageResponseDto })
+  async reactivateAdmin(@Param('id') id: string){
+    return await this.adminsService.reactivateAdmin(id)
+  }
+
   // POST - end point to resend email for email verification
   @Post('admins/:id/email')
   @ApiOperation({ summary: 'Re-Send email for email verification' })
@@ -89,13 +115,5 @@ export class AdminsController {
   @ApiOkResponse({ type: MessageResponseDto })
   async resetPassword(@Param('id') id: string): Promise<MessageResponseDto> {
     return await this.adminsService.resetPassword(id);
-  }
-
-  // DELETE - end point to delete admin user
-  @Delete('admins/:id')
-  @ApiOperation({ summary: 'Delete admin, set status to deleted ' })
-  @ApiOkResponse({ type: MessageResponseDto })
-  async deleteAdmin(@Param('id') id: string): Promise<MessageResponseDto> {
-    return await this.adminsService.deleteAdmin(id);
   }
 }

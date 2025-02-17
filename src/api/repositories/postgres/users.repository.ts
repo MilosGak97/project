@@ -15,6 +15,7 @@ import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { GetCompaniesUsersResponseDto } from '../../admin/companies/dto/get-companies-users-response.dto';
 import { GetCompaniesUserResponseDto } from '../../admin/companies/dto/get-companies-user.response.dto';
+import { MessageResponseDto } from '../../responses/message-response.dto';
 
 @Injectable()
 export class UserRepository extends Repository<User> {
@@ -191,7 +192,7 @@ export class UserRepository extends Repository<User> {
   ): Promise<{
     message: string;
   }> {
-    const { name, email, phoneNumber, role, status } = updateUserDto;
+    const { name, email, phoneNumber, role } = updateUserDto;
 
     const userData = await this.findOne({
       where: { id: userId },
@@ -232,10 +233,6 @@ export class UserRepository extends Repository<User> {
       userData.role = role;
     }
 
-    if (status) {
-      userData.status = status;
-    }
-
     await this.save(userData);
 
     return {
@@ -250,19 +247,61 @@ export class UserRepository extends Repository<User> {
   ): Promise<{
     message: string;
   }> {
-    const userData = await this.findOne({
+    const user = await this.findOne({
       where: { id: userId, company: { id: companyId } },
     });
 
-    if (!userData) {
+    if (!user) {
       throw new NotFoundException('User with this ID does not exist.');
     }
 
-    userData.status = UserStatus.DELETED;
-    await this.save(userData);
+    user.status = UserStatus.DELETED;
+    await this.save(user);
 
     return {
       message: 'The user has been successfully deleted.',
+    };
+  }
+
+  // method to suspend single company user per id
+  async suspendUser(
+    companyId: string,
+    userId: string,
+  ): Promise<MessageResponseDto> {
+    const user = await this.findOne({
+      where: { id: userId, company: { id: companyId } },
+    });
+    if (!user) {
+      throw new HttpException(
+        'User with this ID does not exist.',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+    user.status = UserStatus.SUSPENDED;
+    await this.save(user);
+    return {
+      message: 'User is now suspended',
+    };
+  }
+
+  // method to activate single company user per id
+  async reactivateUser(
+    companyId: string,
+    userId: string,
+  ): Promise<MessageResponseDto> {
+    const user = await this.findOne({
+      where: { id: userId, company: { id: companyId } },
+    });
+    if (!user) {
+      throw new HttpException(
+        'User with this ID does not exist.',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+    user.status = UserStatus.ACTIVE;
+    await this.save(user);
+    return {
+      message: 'User is now active',
     };
   }
 
