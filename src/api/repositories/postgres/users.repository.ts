@@ -55,9 +55,7 @@ export class UserRepository extends Repository<User> {
   }
 
   // method to generate random string (password)
-  private async generateRandomPassword(length: number = 8): Promise<{
-    password: string;
-  }> {
+  private async generateRandomPassword(length: number = 8): Promise<string> {
     const characters =
       'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     let password: string = '';
@@ -65,7 +63,7 @@ export class UserRepository extends Repository<User> {
       const randomIndex = Math.floor(Math.random() * characters.length);
       password += characters[randomIndex];
     }
-    return { password };
+    return password;
   }
 
   /* -------------- PUBLIC METHODS --------------- */
