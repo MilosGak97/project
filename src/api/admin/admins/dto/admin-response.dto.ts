@@ -19,6 +19,10 @@ export class AdminResponseDto {
 
   @ApiProperty()
   @IsString()
+  phoneNumberPrefix: string;
+
+  @ApiProperty()
+  @IsString()
   @Type((): StringConstructor => String)
   phoneNumber: string;
 

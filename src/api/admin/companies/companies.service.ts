@@ -114,12 +114,12 @@ export class CompaniesService {
   }
 
   // method to reset user password
-  async resetPassword(
+  async resetPasswordUser(
     companyId: string,
     userId: string,
   ): Promise<{
     message: string;
   }> {
-    return await this.userRepository.resetPassword(companyId, userId);
+    return await this.userRepository.resetPasswordUser(companyId, userId);
   }
 }

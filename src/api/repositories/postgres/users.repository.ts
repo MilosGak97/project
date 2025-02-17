@@ -132,10 +132,20 @@ export class UserRepository extends Repository<User> {
     const [companiesUsers, totalRecords] = await query.getManyAndCount();
 
     const result = companiesUsers.map(
-      ({ id, name, email, phoneNumber, emailVerified, role, status }) => ({
+      ({
+        id,
+        name,
+        email,
+        phoneNumberPrefix,
+        phoneNumber,
+        emailVerified,
+        role,
+        status,
+      }) => ({
         id: id ?? '/',
         name: name ?? '/',
         email: email ?? '/',
+        phoneNumberPrefix: phoneNumberPrefix ?? '/',
         phoneNumber: phoneNumber ?? '/',
         emailVerified: emailVerified,
         role: role,
@@ -177,6 +187,7 @@ export class UserRepository extends Repository<User> {
       name: userData.name ?? '-',
       id: userData.id,
       email: userData.email ?? '-',
+      phoneNumberPrefix: userData.phoneNumberPrefix ?? '-',
       phoneNumber: userData.phoneNumber ?? '-',
       emailVerified: userData.emailVerified ?? false,
       role: userData.role,
@@ -226,6 +237,7 @@ export class UserRepository extends Repository<User> {
           'User with this phone number already exist.',
         );
       }
+      userData.phoneNumberPrefix = phoneNumberPrefix;
       userData.phoneNumber = phoneNumber;
     }
 
@@ -306,7 +318,7 @@ export class UserRepository extends Repository<User> {
   }
 
   // method to reset password for user
-  async resetPassword(
+  async resetPasswordUser(
     companyId: string,
     userId: string,
   ): Promise<{

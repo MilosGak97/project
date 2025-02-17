@@ -2,7 +2,7 @@
 import {  ApiProperty } from '@nestjs/swagger';
 import { AdminRole } from '../../../enums/admin-role.enum';
 import { AdminStatus } from '../../../enums/admin-status.enum';
-import { IsEnum, IsString } from 'class-validator';
+import { IsEnum, IsOptional, IsString } from 'class-validator';
 import { Type } from 'class-transformer';
 
 export class GetAdminsTypeDto {
@@ -30,6 +30,12 @@ export class GetAdminsTypeDto {
   status: AdminStatus;
 
   @ApiProperty()
+  @IsString()
+  @IsOptional()
+  phoneNumberPrefix: string;
+
+  @ApiProperty()
+  @IsOptional()
   @IsString()
   @Type(() => String)
   phoneNumber: string;

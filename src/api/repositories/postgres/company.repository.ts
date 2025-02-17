@@ -45,6 +45,7 @@ export class CompanyRepository extends Repository<Company> {
         id,
         name,
         website,
+        phoneNumberPrefix,
         phoneNumber,
         email,
         logoUrl,
@@ -58,6 +59,7 @@ export class CompanyRepository extends Repository<Company> {
         id: id ?? '/',
         name: name ?? '/',
         website: website ?? '/',
+        phoneNumberPrefix: phoneNumberPrefix ?? '/',
         phoneNumber: phoneNumber ?? '/',
         email: email ?? '/',
         logoUrl: logoUrl ?? '/',
@@ -125,6 +127,7 @@ export class CompanyRepository extends Repository<Company> {
       city,
       state,
       zipCode,
+      phoneNumberPrefix,
       phoneNumber,
       email,
       website,
@@ -162,6 +165,7 @@ export class CompanyRepository extends Repository<Company> {
           'Company with this phone number already exist',
         );
       }
+      company.phoneNumberPrefix = phoneNumberPrefix;
       company.phoneNumber = phoneNumber;
     }
 
@@ -211,7 +215,6 @@ export class CompanyRepository extends Repository<Company> {
     };
   }
 
-
   // method to suspend single company per id
   async reactivateCompany(id: string): Promise<MessageResponseDto> {
     const company = await this.findOne({ where: { id } });
@@ -235,7 +238,7 @@ export class CompanyRepository extends Repository<Company> {
       throw new NotFoundException('Company with this ID does not exist.');
     }
     company.status = CompanyStatus.DELETED;
-    await this.save(company)
+    await this.save(company);
     return {
       message: 'Company has been deleted successfully.',
     };

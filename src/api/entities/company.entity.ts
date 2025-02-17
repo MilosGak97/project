@@ -2,7 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import {
   IsEmail,
   IsEnum,
-  IsNotEmpty,
+  IsNotEmpty, IsNumberString,
   IsOptional,
   IsString,
 } from 'class-validator';
@@ -69,6 +69,13 @@ export class Company {
 
   @ApiProperty({ required: false })
   @IsOptional()
+  @IsString()
+  @Column({ name: 'phone_number_prefix', nullable: true })
+  phoneNumberPrefix?: string;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsNumberString()
   @Column({ name: 'phone_number', nullable: true })
   phoneNumber?: string;
 

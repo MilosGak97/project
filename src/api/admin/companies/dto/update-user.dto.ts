@@ -7,7 +7,6 @@ import {
   IsString,
 } from 'class-validator';
 import { UserRole } from 'src/api/enums/user-role.enum';
-import { UserStatus } from 'src/api/enums/user-status.enum';
 
 export class UpdateUserDto {
   @ApiProperty({ required: false })
@@ -19,6 +18,10 @@ export class UpdateUserDto {
   @IsOptional()
   @IsEmail()
   email?: string;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  phoneNumberPrefix?: string;
 
   @ApiProperty({ required: false })
   @IsOptional()

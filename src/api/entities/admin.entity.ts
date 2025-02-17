@@ -56,6 +56,12 @@ export class Admin {
 
   @ApiProperty({ required: false })
   @IsOptional()
+  @IsString()
+  @Column({ name: 'phone_number_prefix', nullable: true })
+  phoneNumberPrefix?: string;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
   @IsPhoneNumber(null)
   @Column({ name: 'phone_number', nullable: true })
   phoneNumber?: string;

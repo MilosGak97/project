@@ -14,6 +14,9 @@ export class CompaniesUsersTypeDto{
   email: string
 
   @ApiProperty()
+  phoneNumberPrefix?: string
+
+  @ApiProperty()
   phoneNumber?: string
 
   @ApiProperty()

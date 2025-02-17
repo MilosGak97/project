@@ -10,6 +10,7 @@ import {
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { AdminRole } from '../../../enums/admin-role.enum';
+import { Column } from 'typeorm';
 
 export class CreateAdminDto {
   @ApiProperty({
@@ -23,6 +24,11 @@ export class CreateAdminDto {
   @IsNotEmpty()
   @IsEmail()
   email: string;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsString()
+  phoneNumberPrefix?: string;
 
   @ApiProperty({ required: false })
   @IsOptional()

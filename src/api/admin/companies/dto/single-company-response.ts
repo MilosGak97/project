@@ -46,6 +46,10 @@ export class SingleCompanyResponseDto {
 
   @ApiProperty({ required: false })
   @IsOptional()
+  phoneNumberPrefix?: string;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
   phoneNumber?: string;
 
   @ApiProperty({ required: false })

@@ -11,6 +11,11 @@ export class UpdateCompanyDto {
 
   @ApiProperty({ required: false })
   @IsOptional()
+  @IsString()
+  phoneNumberPrefix: string;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
   @IsNumberString()
   @Transform(({ value }) => (value === '' ? null : value))
   phoneNumber?: string | null;

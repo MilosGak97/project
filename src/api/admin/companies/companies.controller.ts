@@ -69,7 +69,6 @@ export class CompaniesController {
     return await this.companiesService.deleteCompany(id);
   }
 
-
   @Patch('companies/:id/status-suspended')
   @ApiOperation({ summary: 'Suspend user by ID' })
   @ApiOkResponse({ type: MessageResponseDto })
@@ -80,15 +79,16 @@ export class CompaniesController {
   @Patch('companies/:id/status-active')
   @ApiOperation({ summary: 'Suspend user by ID' })
   @ApiOkResponse({ type: MessageResponseDto })
-  async reactivateCompany(@Param('id') id: string): Promise<MessageResponseDto> {
+  async reactivateCompany(
+    @Param('id') id: string,
+  ): Promise<MessageResponseDto> {
     return await this.companiesService.reactivateCompany(id);
   }
 
   // GET - endpoint to list all users of specific company
   @Get('companies/:id/users')
   @ApiOperation({
-    summary:
-      'List all users that belong to this company and match filter parameters',
+    summary: 'List all users that belong to this company',
   })
   @ApiOkResponse({ type: GetCompaniesUsersResponseDto })
   async getCompaniesUsers(
@@ -139,7 +139,6 @@ export class CompaniesController {
     return await this.companiesService.deleteUser(companyId, userId);
   }
 
-
   // PATCH - endpoint to suspend single user by status
   @Patch('companies/:companyId/users/:id/status-suspended')
   @ApiOperation({ summary: 'Suspend user (change UserStatus to suspended)' })
@@ -162,16 +161,14 @@ export class CompaniesController {
     return await this.companiesService.reactivateUser(companyId, userId);
   }
 
-
-
   // POST - endpoint to reset password for single user
   @Post('companies/:companyId/users/:id/password')
   @ApiOperation({ summary: 'Reset client password' })
   @ApiOkResponse({ type: MessageResponseDto })
-  async resetPassword(
+  async resetPasswordUser(
     @Param('companyId') companyId: string,
     @Param('id') userId: string,
   ): Promise<MessageResponseDto> {
-    return await this.companiesService.resetPassword(companyId, userId);
+    return await this.companiesService.resetPasswordUser(companyId, userId);
   }
 }
