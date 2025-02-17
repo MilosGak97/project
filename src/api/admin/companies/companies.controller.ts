@@ -159,7 +159,7 @@ export class CompaniesController {
     @Param('companyId') companyId: string,
     @Param('id') userId: string,
   ): Promise<MessageResponseDto> {
-    return await this.companiesService.deleteUser(companyId, userId);
+    return await this.companiesService.reactivateUser(companyId, userId);
   }
 
 
