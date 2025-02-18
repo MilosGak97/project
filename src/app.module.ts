@@ -9,6 +9,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { Token } from './api/entities/token.entity';
 import { User } from './api/entities/user.entity';
 import { Company } from './api/entities/company.entity';
+import { State } from './api/entities/state.entity';
 
 
 
@@ -28,7 +29,7 @@ import { Company } from './api/entities/company.entity';
       ssl: {
         rejectUnauthorized: false,
       },
-      entities: [Token, User, Company ],
+      entities: [Token, User, Company],
       autoLoadEntities: true,
       synchronize: true,
       // Connection Pooling

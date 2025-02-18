@@ -84,7 +84,7 @@ async function bootstrap() {
   });
 
   app.enableCors({
-    origin: ['https://localhost:5174', 'https://localhost:5173'], // Allow multiple origins
+    origin: ['https://localhost:5174', 'https://localhost:5173', 'https://dynamic-dragon-7ee9d5.netlify.app'], // Allow multiple origins
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
     credentials: true,
   });
