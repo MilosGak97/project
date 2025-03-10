@@ -14,6 +14,9 @@ export class GetCompaniesUserResponseDto {
   email: string;
 
   @ApiProperty()
+  phoneCountryCode: string;
+
+  @ApiProperty()
   phoneNumberPrefix: string;
 
   @ApiProperty()

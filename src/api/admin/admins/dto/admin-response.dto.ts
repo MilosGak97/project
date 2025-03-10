@@ -19,6 +19,10 @@ export class AdminResponseDto {
 
   @ApiProperty()
   @IsString()
+  phoneCountryCode: string;
+
+  @ApiProperty()
+  @IsString()
   phoneNumberPrefix: string;
 
   @ApiProperty()

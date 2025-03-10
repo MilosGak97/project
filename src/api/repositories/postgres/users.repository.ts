@@ -134,6 +134,7 @@ export class UserRepository extends Repository<User> {
         id,
         name,
         email,
+        phoneCountryCode,
         phoneNumberPrefix,
         phoneNumber,
         emailVerified,
@@ -143,6 +144,7 @@ export class UserRepository extends Repository<User> {
         id: id ?? '/',
         name: name ?? '/',
         email: email ?? '/',
+        phoneCountryCode: phoneCountryCode ?? '/',
         phoneNumberPrefix: phoneNumberPrefix ?? '/',
         phoneNumber: phoneNumber ?? '/',
         emailVerified: emailVerified,
@@ -167,7 +169,7 @@ export class UserRepository extends Repository<User> {
     companyId: string,
     userId: string,
   ): Promise<GetCompaniesUserResponseDto> {
-    const userData = await this.createQueryBuilder('user')
+    const user = await this.createQueryBuilder('user')
       .leftJoinAndSelect('user.company', 'company')
       .where('(user.id = :userId AND company.id = :companyId )', {
         userId,
@@ -175,21 +177,22 @@ export class UserRepository extends Repository<User> {
       })
       .getOne();
 
-    if (!userData) {
+    if (!user) {
       throw new NotFoundException(
         'User with this ID does not exist in provided Company.',
       );
     }
 
     return {
-      name: userData.name ?? '-',
-      id: userData.id,
-      email: userData.email ?? '-',
-      phoneNumberPrefix: userData.phoneNumberPrefix ?? '-',
-      phoneNumber: userData.phoneNumber ?? '-',
-      emailVerified: userData.emailVerified ?? false,
-      role: userData.role,
-      status: userData.status,
+      name: user.name ?? '-',
+      id: user.id,
+      email: user.email ?? '-',
+      phoneCountryCode: user.phoneCountryCode ?? '-',
+      phoneNumberPrefix: user.phoneNumberPrefix ?? '-',
+      phoneNumber: user.phoneNumber ?? '-',
+      emailVerified: user.emailVerified ?? false,
+      role: user.role,
+      status: user.status,
     };
   }
 
@@ -201,18 +204,18 @@ export class UserRepository extends Repository<User> {
   ): Promise<{
     message: string;
   }> {
-    const { name, email, phoneNumberPrefix, phoneNumber, role } = updateUserDto;
+    const { name, email, phoneCountryCode, phoneNumberPrefix, phoneNumber, role } = updateUserDto;
 
-    const userData = await this.findOne({
+    const user = await this.findOne({
       where: { id: userId },
     });
 
-    if (!userData) {
+    if (!user) {
       throw new NotFoundException('User with this ID does not exist.');
     }
 
-    if (name && userData.id != userId) {
-      userData.name = name;
+    if (name && user.id != userId) {
+      user.name = name;
     }
 
     if (email) {
@@ -220,9 +223,9 @@ export class UserRepository extends Repository<User> {
       if (exist && exist.id != userId) {
         throw new ConflictException('User with this email already exist.');
       }
-      userData.email = email;
+      user.email = email;
       await this.verifyEmail(userId, email);
-      userData.emailVerified = false;
+      user.emailVerified = false;
     }
 
     if (phoneNumber) {
@@ -235,15 +238,16 @@ export class UserRepository extends Repository<User> {
           'User with this phone number already exist.',
         );
       }
-      userData.phoneNumberPrefix = phoneNumberPrefix;
-      userData.phoneNumber = phoneNumber;
+      user.phoneCountryCode = phoneCountryCode;
+      user.phoneNumberPrefix = phoneNumberPrefix;
+      user.phoneNumber = phoneNumber;
     }
 
     if (role) {
-      userData.role = role;
+      user.role = role;
     }
 
-    await this.save(userData);
+    await this.save(user);
 
     return {
       message: 'User is updated successfully.',

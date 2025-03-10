@@ -45,6 +45,7 @@ export class CompanyRepository extends Repository<Company> {
         id,
         name,
         website,
+        phoneCountryCode,
         phoneNumberPrefix,
         phoneNumber,
         email,
@@ -59,6 +60,7 @@ export class CompanyRepository extends Repository<Company> {
         id: id ?? '/',
         name: name ?? '/',
         website: website ?? '/',
+        phoneCountryCode: phoneCountryCode ?? '/',
         phoneNumberPrefix: phoneNumberPrefix ?? '/',
         phoneNumber: phoneNumber ?? '/',
         email: email ?? '/',
@@ -100,6 +102,8 @@ export class CompanyRepository extends Repository<Company> {
       state: company.state,
       zipCode: company.zipCode,
       website: company.website,
+      phoneCountryCode: company.phoneCountryCode,
+      phoneNumberPrefix: company.phoneNumberPrefix,
       phoneNumber: company.phoneNumber,
       email: company.email,
       logoUrl: company.logoUrl,
@@ -127,6 +131,7 @@ export class CompanyRepository extends Repository<Company> {
       city,
       state,
       zipCode,
+      phoneCountryCode,
       phoneNumberPrefix,
       phoneNumber,
       email,
@@ -165,6 +170,7 @@ export class CompanyRepository extends Repository<Company> {
           'Company with this phone number already exist',
         );
       }
+      company.phoneCountryCode = phoneCountryCode;
       company.phoneNumberPrefix = phoneNumberPrefix;
       company.phoneNumber = phoneNumber;
     }

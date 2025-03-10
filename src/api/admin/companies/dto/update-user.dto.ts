@@ -21,6 +21,10 @@ export class UpdateUserDto {
 
   @ApiProperty({ required: false })
   @IsOptional()
+  phoneCountryCode?: string;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
   phoneNumberPrefix?: string;
 
   @ApiProperty({ required: false })
@@ -32,5 +36,4 @@ export class UpdateUserDto {
   @IsOptional()
   @IsEnum(UserRole)
   role?: UserRole;
-
 }

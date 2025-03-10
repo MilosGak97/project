@@ -12,6 +12,11 @@ export class UpdateCompanyDto {
   @ApiProperty({ required: false })
   @IsOptional()
   @IsString()
+  phoneCountryCode: string;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsString()
   phoneNumberPrefix: string;
 
   @ApiProperty({ required: false })

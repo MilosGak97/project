@@ -128,12 +128,22 @@ export class AdminRepository extends Repository<Admin> {
 
     const [admins, totalRecords] = await query.getManyAndCount();
     const result: GetAdminsTypeDto[] = admins.map(
-      ({ id, name, email, role, status, phoneNumberPrefix, phoneNumber }) => ({
+      ({
+        id,
+        name,
+        email,
+        role,
+        status,
+        phoneCountryCode,
+        phoneNumberPrefix,
+        phoneNumber,
+      }) => ({
         id: id ?? '/',
         name: name ?? '/',
         email: email ?? '/',
         role: role,
         status: status,
+        phoneCountryCode: phoneCountryCode ?? '/',
         phoneNumberPrefix: phoneNumberPrefix ?? '/',
         phoneNumber: phoneNumber ?? '/',
       }),
@@ -159,8 +169,14 @@ export class AdminRepository extends Repository<Admin> {
   ): Promise<{
     message: string;
   }> {
-    const { name, email, phoneNumberPrefix, phoneNumber, role } =
-      createAdminDto;
+    const {
+      name,
+      email,
+      phoneCountryCode,
+      phoneNumberPrefix,
+      phoneNumber,
+      role,
+    } = createAdminDto;
 
     const existingUser = await this.findOne({
       where: [
@@ -198,6 +214,9 @@ export class AdminRepository extends Repository<Admin> {
       const newAdminUser = new Admin();
       newAdminUser.name = name;
       newAdminUser.email = email;
+      newAdminUser.phoneCountryCode = phoneCountryCode
+        ? phoneCountryCode
+        : null;
       newAdminUser.phoneNumberPrefix = phoneNumberPrefix
         ? phoneNumberPrefix
         : null;
@@ -245,6 +264,7 @@ export class AdminRepository extends Repository<Admin> {
       id: admin.id,
       name: admin.name,
       email: admin.email,
+      phoneCountryCode: admin.phoneCountryCode,
       phoneNumberPrefix: admin.phoneNumberPrefix,
       phoneNumber: admin.phoneNumber,
       role: admin.role,
@@ -259,8 +279,14 @@ export class AdminRepository extends Repository<Admin> {
   ): Promise<{
     message: string;
   }> {
-    const { name, email, phoneNumberPrefix, phoneNumber, role } =
-      updateAdminDto;
+    const {
+      name,
+      email,
+      phoneCountryCode,
+      phoneNumberPrefix,
+      phoneNumber,
+      role,
+    } = updateAdminDto;
 
     const adminData: Admin = await this.findOne({ where: { id: id } });
 
@@ -293,6 +319,7 @@ export class AdminRepository extends Repository<Admin> {
           'This phone number is already associated with an existing user.',
         );
       }
+      adminData.phoneCountryCode = phoneCountryCode;
       adminData.phoneNumberPrefix = phoneNumberPrefix;
       adminData.phoneNumber = phoneNumber;
     }

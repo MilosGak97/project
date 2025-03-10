@@ -1,7 +1,8 @@
 import {
   Column,
   CreateDateColumn,
-  Entity, JoinColumn,
+  Entity,
+  JoinColumn,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
@@ -40,6 +41,12 @@ export class User {
   @IsEmail()
   @Column({ nullable: false })
   email: string;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsString()
+  @Column({ name: 'phone_country_code', nullable: true })
+  phoneCountryCode: string;
 
   @ApiProperty({ required: false })
   @IsOptional()

@@ -32,6 +32,11 @@ export class GetAdminsTypeDto {
   @ApiProperty()
   @IsString()
   @IsOptional()
+  phoneCountryCode: string;
+
+  @ApiProperty()
+  @IsString()
+  @IsOptional()
   phoneNumberPrefix: string;
 
   @ApiProperty()
