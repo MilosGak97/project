@@ -100,7 +100,7 @@ export class UserRepository extends Repository<User> {
 
     if (searchQuery) {
       query.andWhere(
-        '(user.name LIKE :searchQuery OR user.email LIKE :searchQuery OR user.phone_number LIKE :searchQuery)',
+        '(user.name ILIKE :searchQuery OR user.email ILIKE :searchQuery OR user.phone_number ILIKE :searchQuery)',
         { searchQuery: `%${searchQuery}%` },
       );
     }

@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import {
+  IsArray,
   IsBoolean,
-  IsEnum,
   IsNotEmpty,
   IsNumber,
   IsOptional,
@@ -19,19 +19,21 @@ export class GetAdminsDto {
 
   @ApiProperty({
     enum: AdminRole,
+    isArray: true,
     required: false,
   })
   @IsOptional()
-  @IsEnum(AdminRole)
-  role?: AdminRole;
+  @IsArray()
+  role?: AdminRole[];
 
   @ApiProperty({
-    enum: AdminStatus,
+    isArray: true,
     required: false,
+    enum: AdminStatus,
   })
   @IsOptional()
-  @IsEnum(AdminStatus)
-  status?: AdminStatus;
+  @IsArray()
+  status?: AdminStatus[];
 
   @ApiProperty({ required: false })
   @IsOptional()

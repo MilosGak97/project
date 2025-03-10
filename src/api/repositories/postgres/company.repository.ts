@@ -32,7 +32,7 @@ export class CompanyRepository extends Repository<Company> {
     const query = this.createQueryBuilder('company');
     if (searchQuery) {
       query.andWhere(
-        '(company.name LIKE :searchQuery OR company.phone LIKE :searchQuery OR company.email LIKE :searchQuery OR company.website LIKE :searchQuery)',
+        '(company.name ILIKE :searchQuery OR company.phone ILIKE :searchQuery OR company.email ILIKE :searchQuery OR company.website ILIKE :searchQuery)',
         { searchQuery: `%${searchQuery}%` },
       );
     }

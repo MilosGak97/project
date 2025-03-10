@@ -94,7 +94,7 @@ export class AdminRepository extends Repository<Admin> {
 
     if (searchQuery) {
       query.andWhere(
-        '(adminUser.name LIKE :searchQuery OR adminUser.email LIKE :searchQuery OR adminUser.phone_number LIKE :searchQuery)',
+        '(adminUser.name ILIKE :searchQuery OR adminUser.email ILIKE :searchQuery OR adminUser.phone_number ILIKE :searchQuery)',
         { searchQuery: `%${searchQuery}` },
       );
     }
