@@ -1,14 +1,14 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Query } from '@nestjs/common';
 import { CommonService } from './common.service';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { StatesResponseDto } from './dto/states-response.dto';
-import { PhoneNumbersAndFlagsResponseDto } from './dto/phone-numbers-and-flags-response.dto';
+import { PhoneNumbersDto } from './dto/phone-numbers.dto';
+import { PhoneNumbersResponseDto } from './dto/phone-numbers-response.dto';
 
 @ApiTags('Common')
 @Controller('common')
 export class CommonController {
-  constructor(private readonly commonService: CommonService) {
-  }
+  constructor(private readonly commonService: CommonService) {}
 
   @ApiOperation({ summary: 'Get States Abbreviation' })
   @ApiOkResponse({ type: StatesResponseDto })
@@ -18,8 +18,11 @@ export class CommonController {
   }
 
   @ApiOperation({ summary: 'Get phone numbers and flags' })
+  @ApiOkResponse({ type: PhoneNumbersResponseDto })
   @Get('phone-numbers')
-  async getPhoneNumbersAndFlags(): Promise<PhoneNumbersAndFlagsResponseDto[]> {
-    return await this.commonService.getPhoneNumbersAndFlags();
+  async getPhoneNumbers(
+    @Query() phoneNumbersDto: PhoneNumbersDto,
+  ): Promise<PhoneNumbersResponseDto> {
+    return await this.commonService.getPhoneNumbers(phoneNumbersDto);
   }
 }
